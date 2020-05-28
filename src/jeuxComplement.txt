@@ -1,0 +1,6 @@
+UBISOFT;Just Dance 2020;E;SWITCH
+UBISOFT;Trials Rising;T;SWITCH
+FOCUS;Vampyr;PG;MAC,SWITCH
+UBISOFT;Gods & Monsters;RP;MAC,SWITCH
+EA;The Sims 5;M;PS4,XONE,PC
+NINTENDO;Animal Crossing New Horizons;E;SWITCH

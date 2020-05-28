@@ -1,3 +1,4 @@
+import java.io.IOException;
 import java.util.*;
 /**
 	Pour la correction du devoir, nous allons nous batîr
@@ -14,9 +15,9 @@ public interface TestInterface {
 
 	public Jeu getJeu(String titre, String fabricant);
 
-	public void addBdd(String nomFile);
+	public void addBdd(String nomFile) throws IOException;
 
-	public void loadBdd(String nomFile);
+	public void loadBdd(String nomFile) throws IOException;
 
 	public ArrayList<Jeu> chercheConsole(String console);
 

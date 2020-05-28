@@ -26,24 +26,28 @@ public class Bdd implements TestInterface {
 
     public void addJeu(Jeu unJeu) {
 
-    	// vérifier si le fabricant est déjà dans la base de données ???
-		String unFabriquant = unJeu.getFabricant();
+		String unFabricant = unJeu.getFabricant();
 
-		if (baseDeDonnees.containsKey(unFabriquant)) {
-			System.out.println("Le fabriquant est dans la base de données.");
-			// Si le jeu est déjà présent pour ce fabricant, il faut s’assurer d’ajouter toutes les consoles, du jeu passé en paramètre, au jeu déjà dans la liste.
-			TreeSet<Jeu> ts = baseDeDonnees.get(unFabriquant);
-			Collection<String> consoles = unJeu.getConsoles();
+		// vérifier si le fabricant est déjà dans la base de données
+		if (baseDeDonnees.containsKey(unFabricant)) {
+			// Si le jeu est déjà présent pour ce fabricant, il faut s’assurer d’ajouter toutes les consoles,
+			// du jeu passé en paramètre, au jeu déjà dans la liste. Testé avec le fichier jeuxComplement	??? Intro???
+			TreeSet<Jeu> ts = baseDeDonnees.get(unFabricant);
 
-			Iterator<String> it = consoles.iterator();
+			if (ts.contains(unJeu)) {
 
-			while(it.hasNext()){
-				String courant = it.next();
-				System.out.println("addJeu - Console courante: " + courant);	// ??? à enlever
-				/// rendu ici????
+				Collection<String> consoles = unJeu.getConsoles();
+				Iterator<String> it = consoles.iterator();
+
+				while (it.hasNext()) {
+					String courant = it.next();
+					System.out.println("addJeu " + unFabricant + ": " + unJeu.getTitre() + " - Console courante: " + courant);    // ??? à enlever
+
+					Objects.requireNonNull(ts.floor(unJeu)).addConsole(courant);	// requireNonNull pour éviter un nullPointerException
+				}
+			} else {
+				ts.add(unJeu);
 			}
-
-
 		} else {
 			TreeSet<Jeu> ts = new TreeSet<Jeu>();
 			ts.add(unJeu);
@@ -58,28 +62,61 @@ public class Bdd implements TestInterface {
 
     	if (listeJeux != null) {
 			Iterator<Jeu> it = listeJeux.iterator();
-			//boolean trouve = false;
 
 			while(resultat == null && it.hasNext()) {
 				Jeu courant = it.next();
 				if (courant.getTitre().equals(titre)) {
 					//System.out.println("Test iterator getJeu" + courant);	?????
 					resultat = courant;
-					//trouve = true;
 				}
 			}
 		}
 		return resultat;
 	}
 
+	public void addBdd(String nomFile) throws IOException {
 
+		FileReader fr = null;
+		boolean existeFichier = true;
+		boolean finFichier = false;
 
-	public void addBdd(String nomFile){
-// � compl�ter
+		try {
+			fr = new FileReader(nomFile);
+		} catch (java.io.FileNotFoundException e) {
+			System.out.println("Probleme d'ouverture du fichier " + nomFile);
+			existeFichier = false;
+		}
+
+		if (existeFichier) {
+			BufferedReader entree = new BufferedReader(fr);
+
+			while (!finFichier) {
+				String ligne = entree.readLine();		// null si fin de fichier
+				if (ligne != null) {
+
+					/*Format d'une entrée:	split(;)
+					 						[0]	[1]		[2]		[3] -> consoles
+					 						EA;NHL 2020;E;PS4,WIIU,XONE,PC */
+					String[] parametres = ligne.split(";");
+					String[] consoles = parametres[3].split(",");
+
+					Jeu nouveau = new Jeu(parametres[0], parametres[1], parametres[2]);
+
+					for (String console : consoles) {
+						nouveau.addConsole(console);
+					}
+					this.addJeu(nouveau);
+
+				} else finFichier = true;
+			}
+			entree.close();
+		}
 	}
 
-	public void loadBdd(String nomFile){
-// � compl�ter
+	public void loadBdd(String nomFile) throws IOException {
+
+    	baseDeDonnees = new LinkedHashMap<>();
+    	addBdd(nomFile);
 	}
 
 	public ArrayList<Jeu> chercheConsole(String console){

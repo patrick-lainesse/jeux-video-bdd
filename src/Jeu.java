@@ -61,7 +61,7 @@ public class Jeu implements Comparable<Jeu> {
     @Override
     public String toString() {
         //EA;NHL 2020;E;PS4,WIIU,XONE,PC
-        return fabricant + ";" + titre + ";" + cote + printConsoles(consoles);
+        return fabricant + ";" + titre + ";" + cote + ";" + printConsoles(consoles);
     }
 // hashcode à redéfinir?????
 

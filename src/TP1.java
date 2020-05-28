@@ -1,4 +1,4 @@
-import java.util.*;
+import java.io.IOException;
 
 public class TP1 {
 
@@ -15,7 +15,7 @@ public class TP1 {
 
 
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
 
     	TestInterface laBase = new Bdd();
     	Jeu unJeu;
@@ -30,7 +30,7 @@ public class TP1 {
 		//System.out.println(laBase.getJeu("The Sims 5", "EA"));
     	afficherJeu(laBase, "EA", "The Sims 5");
 
-    	/*laBase.loadBdd("jeux.txt");
+    	laBase.loadBdd("jeux.txt");
 
     	System.out.println("\n\nAprès le load, les infos sur les Sims 5 : ");
     	afficherJeu(laBase, "EA", "The Sims 5");
@@ -54,7 +54,7 @@ public class TP1 {
     	afficherJeu(laBase, "FOCUS", "Vampyr");
 
 		System.out.println("\n\nLes jeux disponibles sur la SWITCH sont :");
-		List<Jeu> lstSwitch = laBase.chercheConsole("SWITCH");
+		/*List<Jeu> lstSwitch = laBase.chercheConsole("SWITCH");
 
 		for(Jeu j : lstSwitch)
 			System.out.println(j);

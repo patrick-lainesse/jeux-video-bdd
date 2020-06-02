@@ -3,7 +3,7 @@ import java.util.*;
 
 public class Tp1{
 
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) {
 
 		Signatures BdDonnees = new Bdd();
 
@@ -11,13 +11,13 @@ public class Tp1{
 		BdDonnees.lireBddLivre("Livres.txt");
 
 		Auteur unAuteur = new Auteur("KING, STEPHEN", 1,"USA");
-		BdDonnees.addAuteur(unAuteur); //code existe déjà, doit être ignoré
+		BdDonnees.addAuteur(unAuteur); //code existe dï¿½jï¿½, doit ï¿½tre ignorï¿½
 
 		unAuteur = new Auteur("KING, STEPHEN", 321,"USA");
 		BdDonnees.addAuteur(unAuteur);
 
 		Livre unLivre = new Livre("Carrie", 222, 0,"Roman",645, 7.99);
-		BdDonnees.addLivre(unLivre); //auteur inexistant, à ignorer
+		BdDonnees.addLivre(unLivre); //auteur inexistant, ï¿½ ignorer
 
         unLivre = new Livre("Carrie", 222, 321,"Roman",645, 7.99);
 		BdDonnees.addLivre(unLivre);
@@ -29,7 +29,7 @@ public class Tp1{
 		//Pour afficher les livres d'un auteur par son nom
 		unAuteur = BdDonnees.getAuteur("VERNE, JULES");
 		Collection oeuvres = BdDonnees.getColLivresAut(unAuteur);
-		if(oeuvres != null)  /* prévoyez la méthode getNom dans Auteur */
+		if(oeuvres != null)  /* prï¿½voyez la mï¿½thode getNom dans Auteur */
 		   System.out.println("Les oeuvres de " + unAuteur.getNom() + "\n"+ oeuvres);
 
 		//Pour afficher les livres d'un auteur par son code
@@ -38,18 +38,18 @@ public class Tp1{
 		if(oeuvres != null)
 		   System.out.println("Les oeuvres de " + unAuteur.getNom() + "\n"+ oeuvres);
 
-        //afficher un livre selon son titre et afficher aussi le nom l'auteur (pas si évident)
+        //afficher un livre selon son titre et afficher aussi le nom l'auteur (pas si ï¿½vident)
 		unLivre = BdDonnees.getLivre("ROBINSON CRUSOE");
 		if(unLivre != null)
-		{  int codeNum = unLivre.getCodeAuteur();  //prévoyez cette méthode dans Livre
+		{  int codeNum = unLivre.getCodeAuteur();  //prï¿½voyez cette mï¿½thode dans Livre
 		   System.out.println(unLivre + " de " + BdDonnees.getAuteur(codeNum).getNom());
 		}
 
-		//Créer les fichiers de rapports
+		//Crï¿½er les fichiers de rapports
 		BdDonnees.rapportParAuteurs();
 		BdDonnees.rapportParLivres();
 
-		System.out.println(BdDonnees);  //Prévoyez un toString dans Bdd pour faire afficher
+		System.out.println(BdDonnees);  //Prï¿½voyez un toString dans Bdd pour faire afficher
 										//en ordre de saisie des auteurs
 
 
@@ -58,7 +58,7 @@ public class Tp1{
 }
 
 /*
- *  Prévoyez les méthodes d'accès de Livre
+ *  Prï¿½voyez les mï¿½thodes d'accï¿½s de Livre
 	String getTitre()
 	int getCode()
 	int getCodeAuteur()
@@ -71,6 +71,6 @@ public class Tp1{
 	int getCode()
 	String getPays()
 
-	Elles pourraient être testées à la correction
+	Elles pourraient ï¿½tre testï¿½es ï¿½ la correction
  *
  **/

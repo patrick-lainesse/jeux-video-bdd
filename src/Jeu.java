@@ -22,7 +22,7 @@ public class Jeu implements Comparable<Jeu> {
         this.fabricant = fabricant;
         this.titre = titre;
         this.cote = cote;
-        consoles = new LinkedHashSet<String>();
+        consoles = new LinkedHashSet<>();
     }
 
     /*
@@ -115,7 +115,5 @@ public class Jeu implements Comparable<Jeu> {
         this.consoles = consoles;
     }
 
-    /**
-     * Fin des méthodes get et set pour tous les paramètres de la classe
-     */
+    // Fin des méthodes get et set pour tous les paramètres de la classe
 }

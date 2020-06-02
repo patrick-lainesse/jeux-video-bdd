@@ -37,19 +37,17 @@ public class Bdd implements TestInterface {
 			if (ts.contains(unJeu)) {
 
 				Collection<String> consoles = unJeu.getConsoles();
-				Iterator<String> it = consoles.iterator();
 
-				while (it.hasNext()) {
-					String courant = it.next();
+				for (String courant : consoles) {
 					System.out.println("addJeu " + unFabricant + ": " + unJeu.getTitre() + " - Console courante: " + courant);    // ??? à enlever
 
-					Objects.requireNonNull(ts.floor(unJeu)).addConsole(courant);	// requireNonNull pour éviter un nullPointerException
+					Objects.requireNonNull(ts.floor(unJeu)).addConsole(courant);    // requireNonNull pour éviter un nullPointerException
 				}
 			} else {
 				ts.add(unJeu);
 			}
 		} else {
-			TreeSet<Jeu> ts = new TreeSet<Jeu>();
+			TreeSet<Jeu> ts = new TreeSet<>();
 			ts.add(unJeu);
 			baseDeDonnees.put(unJeu.getFabricant(), ts);
 		}
@@ -74,7 +72,7 @@ public class Bdd implements TestInterface {
 		return resultat;
 	}
 
-	public void addBdd(String nomFile) throws IOException {
+	public void addBdd(String nomFile) {
 
 		FileReader fr = null;
 		boolean existeFichier = true;
@@ -91,7 +89,12 @@ public class Bdd implements TestInterface {
 			BufferedReader entree = new BufferedReader(fr);
 
 			while (!finFichier) {
-				String ligne = entree.readLine();		// null si fin de fichier
+				String ligne = null;		// null si fin de fichier
+				try {
+					ligne = entree.readLine();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 				if (ligne != null) {
 
 					/*Format d'une entrée:	split(;)
@@ -109,11 +112,15 @@ public class Bdd implements TestInterface {
 
 				} else finFichier = true;
 			}
-			entree.close();
+			try {
+				entree.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 
-	public void loadBdd(String nomFile) throws IOException {
+	public void loadBdd(String nomFile) {
 
     	baseDeDonnees = new LinkedHashMap<>();
     	addBdd(nomFile);

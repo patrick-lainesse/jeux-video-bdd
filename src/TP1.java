@@ -1,5 +1,3 @@
-import java.io.IOException;
-
 public class TP1 {
 
 	// Pour faire afficher un jeu.  À modifier pour le tp2
@@ -15,7 +13,7 @@ public class TP1 {
 
 
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
 
     	TestInterface laBase = new Bdd();
     	Jeu unJeu;

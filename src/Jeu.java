@@ -6,13 +6,14 @@
 //
 // Auteur:						Patrick Lainesse
 // Matricule:					740302
-// Sources:						aucune
+// Sources:						docs.oracle.com
+//								https://www.journaldev.com/878/java-write-to-file
 //////////////////////////////////////////////////////////////////////////////
 
 import java.util.*;
 
 // pour la recherche, on pourrait aussi construire un objet bidon
-// et donc prévoir des constructeurs pour objets bidons selon tel paramètre
+// et donc prévoir des constructeurs pour objets bidons selon tel paramètre ???
 public class Jeu implements Comparable<Jeu> {
 
     private String fabricant;
@@ -27,19 +28,35 @@ public class Jeu implements Comparable<Jeu> {
         consoles = new LinkedHashSet<>();
     }
 
-    /*
-    * On peut simplement ajouter des consoles à la liste sans vérifier si elles s'y retrouvent déjà, car selon
-    * la documentation d'Oracle, le rajout d'un élément déjà présent dans un LinkedHashSet ne change pas l'ordre existant
-    */
+    /* Ajoute une console à la liste des consoles du jeu.
+     * On peut simplement ajouter des consoles à la liste sans vérifier si elles s'y retrouvent déjà, car
+     * l'ajout d'un élément déjà présent dans un LinkedHashSet ne change pas l'ordre des éléments s'y trouvant.
+     * @parm console    Nom de la console à ajouter à la liste */
     // ??? à tester
+    // prévoir une méthode pour ajouter plusieurs consoles??? penser à addAll JavaDocs ???
     public void addConsole(String console) {
         consoles.add(console);
     }
 
-    /**
-     * Redéfinition des méthodes pour permettre l'implémentation de l'interface Comparable,
-     * afin de permettre le tri des jeux dans la base de données
-     */
+    /* toString pour une liste de consoles associées au jeu, facilite l'écriture à l'écran ou dans un fichier txt
+     * format: PS4,XONE,PC,MAC,SWITCH */
+    private String printConsoles(Collection<String> consoles) {
+
+        StringBuilder liste = new StringBuilder();
+        for (String console : consoles) {
+            liste.append(console).append(",");
+        }
+        if (liste.length() > 0) {
+            liste = new StringBuilder(liste.substring(0, liste.length() - 1));
+        }
+        return liste.toString();
+    }
+    // vérifier si possibilité de bug si on n'ajoute pas de liste de consoles à un jeu????
+
+    /*****************************************************************************************************
+     * REDÉFINITIONS
+     * Méthodes pour permettre différentes opérations sur la base de données (tri, recherche, etc.)
+     *****************************************************************************************************/
     @Override
     public boolean equals(Object obj) {
         Jeu autre;
@@ -65,27 +82,19 @@ public class Jeu implements Comparable<Jeu> {
         //EA;NHL 2020;E;PS4,WIIU,XONE,PC
         return fabricant + ";" + titre + ";" + cote + ";" + printConsoles(consoles);
     }
-// hashcode à redéfinir?????
 
-    private String printConsoles(Collection<String> consoles) {
-
-        String liste = "";
-        for (String console : consoles) {
-            // String builder??????
-            liste += console + ",";
-        }
-        if (liste.length() > 0) {
-            liste = liste.substring(0, liste.length() - 1);
-        }
-        return liste;
+    /* Nécessaire puisque equals est redéfinie et les jeux seront placés dans un LinkedHashSet
+     * Seuls le fabricant et le titre des jeux sont utilisés, soient les même paramètres utilisés
+     * pour la comparaison avec equals() */
+    @Override
+    public int hashCode() {
+        return fabricant.hashCode() * 444 + titre.hashCode() * 19;
     }
-    // vérifier si possibilité de bug si on n'ajoute pas de liste de consoles à un jeu????
 
-    // devrait ajouter addConsoles, semble idéal ????
-
-    /**
-     * Début des get et set pour tous les paramètres de la classe
-     */
+    /*****************************************************************************************************
+     * GET & SET
+     * Méthodes get et set pour les paramètres de la classe
+     *****************************************************************************************************/
     public String getTitre() {
         return titre;
     }
@@ -117,6 +126,4 @@ public class Jeu implements Comparable<Jeu> {
     public void setConsoles(Collection<String> consoles) {
         this.consoles = consoles;
     }
-
-    // Fin des méthodes get et set pour tous les paramètres de la classe
 }

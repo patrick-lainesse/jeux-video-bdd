@@ -19,7 +19,7 @@ import java.io.*;
 // dans addBdd, mieux de faire l'union de deux Set...????
 public class Bdd implements TestInterface {
 
-	//private LinkedHashMap<String, Collection<Jeu>> baseDeDonnees;
+	//private LinkedHashMap<String, Collection<Jeu>> baseDeDonnees;	???
 	private Map<String, TreeSet<Jeu>> baseDeDonnees;
 
     public Bdd() {
@@ -29,25 +29,32 @@ public class Bdd implements TestInterface {
     }
 
 
+    /* Vérifie si un jeu existe déjà dans la base de données.
+     * Si le jeu s'y retrouve déjà, ajout des consoles à l'entrée existante
+     * Sinon, le jeu est ajouté à la base de données, ainsi que le fabricant si nécessaire
+     * @param unJeu		Le jeu à ajouter à la base de données */
     public void addJeu(Jeu unJeu) {
 
 		String unFabricant = unJeu.getFabricant();
 
-		/* vérifier si le fabricant est déjà dans la base de données,
-		 * sinon, créer une nouvelle entrée pour ce fabricant dans la base de données */
+		/* vérifie si le fabricant est déjà dans la base de données,
+		 * sinon, crée une nouvelle entrée pour ce fabricant dans la base de données */
 		if (baseDeDonnees.containsKey(unFabricant)) {
 
 			TreeSet<Jeu> ts = baseDeDonnees.get(unFabricant);
 
-			/* vérifier si le jeu est présent dans la liste des jeux de ce fabricant, et si oui,
-			 * y ajouter la liste de consoles du jeu passé en paramètres à addJeu(),
-			 * sinon simplement ajouter le jeu passé en paramètre */
+			/* vérifie si le jeu est présent dans la liste des jeux de ce fabricant, et si oui,
+			 * y ajoute la liste de consoles du jeu passé en paramètres à addJeu().
+			 * Sinon, ajoute simplement le jeu passé en paramètre */
 			if (ts.contains(unJeu)) {
 
 				Collection<String> consoles = unJeu.getConsoles();
 
+				// plus simple de faire un add all au jeu en question JavaDocs, plus vérifier si conserve ordre de saisie???
 				for (String courant : consoles) {
-					Objects.requireNonNull(ts.floor(unJeu)).addConsole(courant);    // requireNonNull pour éviter un nullPointerException
+					/* Utilise floor pour retrouver le jeu courant dans le TreeSet contenant les jeux associés à ce fabricant
+					 * Utilise requireNonNull pour éviter un nullPointerException */
+					Objects.requireNonNull(ts.floor(unJeu)).addConsole(courant);
 				}
 			} else {
 				ts.add(unJeu);
@@ -55,12 +62,18 @@ public class Bdd implements TestInterface {
 		} else {
 			TreeSet<Jeu> ts = new TreeSet<>();
 			ts.add(unJeu);
-			baseDeDonnees.put(unJeu.getFabricant(), ts);
+			baseDeDonnees.put(unFabricant, ts);
+			//baseDeDonnees.put(unJeu.getFabricant(), ts);	????
 		}
     }
 
+    /* Recherche un jeu dans la base de données
+     * @param titre			Le nom de ce jeu
+     * @param fabricant		Le nom du fabricant pour ce jeu
+     * @return		L'objet Jeu correspondant à la recherche, null si non trouvé */
 	public Jeu getJeu(String titre, String fabricant) {
 
+		// binarySearch????
 		TreeSet<Jeu> listeJeux = baseDeDonnees.get(fabricant);
 		Jeu resultat = null;
 
@@ -80,6 +93,10 @@ public class Bdd implements TestInterface {
 		return resultat;
 	}
 
+	/* Lit une liste de jeux contenue dans un fichier .txt et les ajoute à la base de données
+	 * ou ajoute les consoles associées à ce jeu s'il s'y trouve déjà.
+	 * @param nomFile		Le nom du fichier .txt à lire */
+	// tester avec nom de fichier dans un path???
 	public void addBdd(String nomFile) {
 
 		FileReader fr = null;
@@ -88,8 +105,6 @@ public class Bdd implements TestInterface {
 
 		try {
 			fr = new FileReader(nomFile);
-
-			// déplacer catch pour laisser remplir quand même????
 		} catch (java.io.FileNotFoundException e) {
 			System.out.println("Probleme d'ouverture du fichier " + nomFile);
 			existeFichier = false;
@@ -130,17 +145,22 @@ public class Bdd implements TestInterface {
 		}
 	}
 
+	/* Vide la base de données puis fait appel à addBdd pour lire un nouveau fichier. */
+	// Attention: efface si mal formé nom de fichier????
 	public void loadBdd(String nomFile) {
 
     	baseDeDonnees = new LinkedHashMap<>();
     	addBdd(nomFile);
 	}
 
+	/* Parcourt la base de données et dresse une liste de jeux compatibles avec une certaine console
+	 * @param console		La console pour laquelle on cherche à dresser une liste
+	 * @return		ArrayList de jeux compatibles avec la console voulue, vide si la console n'est pas dans la base de données. */
 	public ArrayList<Jeu> chercheConsole(String console) {
 
     	ArrayList<Jeu> compatibles = new ArrayList<>();
 
-		//private Map<String, TreeSet<Jeu>> baseDeDonnees;
+		//private Map<String, TreeSet<Jeu>> baseDeDonnees;	???
 		Set<String> cles = baseDeDonnees.keySet();
     	for (String cle: cles) {
 			//System.out.println(cle);		???
@@ -159,12 +179,20 @@ public class Bdd implements TestInterface {
 		return compatibles;
 	}
 
+	/* Retourne la liste de jeux associés à un fabricant.
+	 * @param fabricant		Fabricant pour lequel on veut imprimer la liste
+	 * @return		Collection contenant la liste des jeux associés à ce fabricant, null si ne s'y trouve pas */
+	// tester null???
 	public Collection<Jeu> getJeuxFabricant(String fabricant) {
 
-		//Collection<Jeu> reponse = baseDeDonnees.get(fabricant);
+		//Collection<Jeu> reponse = baseDeDonnees.get(fabricant);	???
 		return baseDeDonnees.get(fabricant);
 	}
 
+	/* Écrit les informations de la base de données dans un fichier .txt sous le format:
+	 * FOCUS;Vampyr;PG;PS4,XONE,PC,MAC,SWITCH
+	 * @param nomFichier		Le nom du fichier .txt à créer */
+	// tester avec un nom de fichier qui fonctionne pas et gérer???
 	public void saveBdd(String nomFichier) {
 
     	File fichier = new File(nomFichier);
@@ -176,18 +204,21 @@ public class Bdd implements TestInterface {
 
 		} catch (IOException e) {
 			e.printStackTrace();
-			// ajout message d'erreur???
+			System.out.println("Erreur lors de l'écriture du fichier.");
 		} finally {
     		try {
     			fr.close();
 			} catch (IOException e) {
 				e.printStackTrace();
-				// ajout message d'erreur???
+				System.out.println("Erreur lors de la tentative du fermeture du fichier après l'écriture.");
 			}
 		}
 	}
+	// chercheCote: affiche à l'écran toutes les informations relatives aux jeux ayant une cote passée en paramètre.???
 
-	// redéfinition de la méthode toString, utile pour tester et utilisée dans saveBdd
+	/* Redéfinition de la méthode toString pour écir les informations de la base de données sous le format:
+	 * FOCUS;Vampyr;PG;PS4,XONE,PC,MAC,SWITCH
+	 * Utilise un StringBuilder pour améliorer la performance à l'écriture */
 	@Override
 	public String toString() {
 
@@ -200,10 +231,9 @@ public class Bdd implements TestInterface {
 
 			while (it.hasNext()) {
 				Jeu jeuCourant = it.next();
-				epeler.append(jeuCourant.toString() + "\n");
+				epeler.append(jeuCourant.toString()).append("\n");
 			}
 		}
-
 		return epeler.toString();
 	}
 }

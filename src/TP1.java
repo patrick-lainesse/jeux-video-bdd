@@ -1,3 +1,6 @@
+import java.util.Collection;
+import java.util.List;
+
 public class TP1 {
 
 	// Pour faire afficher un jeu.  À modifier pour le tp2
@@ -11,7 +14,29 @@ public class TP1 {
 	}
 
 
+// pour ajout de consoles, penser à ajouter carrément la liste complète, va pas rajouter si déjà là (TreeSet)
+	// tester sauvegarder puis relire la même Bdd???
+	/*
+ *  Pr?voyez les m?thodes d'acc?s de Livre
+	String getTitre()
+	int getCode()
+	int getCodeAuteur()
+	String getCategorie()
+	int getNbPages()
+	double getPrix()
 
+	Et pour Auteur :
+	String getNom()
+	int getCode()
+	String getPays()
+
+	Elles pourraient ?tre test?es ? la correction
+ *
+ **/
+	//Pr?voyez un toString dans Bdd pour faire afficher
+	//en ordre de saisie des auteurs
+	//code existe d?j?, doit ?tre ignor?
+	//auteur inexistant, ? ignorer
 
     public static void main(String[] args) {
 
@@ -52,7 +77,7 @@ public class TP1 {
     	afficherJeu(laBase, "FOCUS", "Vampyr");
 
 		System.out.println("\n\nLes jeux disponibles sur la SWITCH sont :");
-		/*List<Jeu> lstSwitch = laBase.chercheConsole("SWITCH");
+		List<Jeu> lstSwitch = laBase.chercheConsole("SWITCH");
 
 		for(Jeu j : lstSwitch)
 			System.out.println(j);
@@ -66,6 +91,10 @@ public class TP1 {
 			System.out.println(j);
 		}
 
-		laBase.saveBdd("sauvegarde.txt");*/
+		System.out.println("Imprimer la base de données:\n");
+		System.out.println(laBase);
+
+		laBase.saveBdd("sauvegarde.txt");
+		// essayer save et relire le fichier sauvegardé...????
     }
 }

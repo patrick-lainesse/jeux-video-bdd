@@ -12,7 +12,11 @@
 import java.util.*;
 import java.io.*;
 
-
+// addJeu plus facile à implémtenter avec un objet bidon!!???
+// si on implémente un HashSet, va falloir implémenter hashCode pour chercher???
+// pour chercher dans la liste de consoles, préférable de coder qqch qui va pas "jouer" là-dedans, et qui retourne
+// true ou false par exemple, pour protéger nos données??? (34 min)
+// dans addBdd, mieux de faire l'union de deux Set...????
 public class Bdd implements TestInterface {
 
 	//private LinkedHashMap<String, Collection<Jeu>> baseDeDonnees;
@@ -80,6 +84,8 @@ public class Bdd implements TestInterface {
 
 		try {
 			fr = new FileReader(nomFile);
+
+			// déplacer catch pour laisser remplir quand même????
 		} catch (java.io.FileNotFoundException e) {
 			System.out.println("Probleme d'ouverture du fichier " + nomFile);
 			existeFichier = false;
@@ -126,18 +132,74 @@ public class Bdd implements TestInterface {
     	addBdd(nomFile);
 	}
 
-	public ArrayList<Jeu> chercheConsole(String console){
-	// � compl�ter et changer l'instruction du return
-		return null;
+	public ArrayList<Jeu> chercheConsole(String console) {
+
+    	ArrayList<Jeu> compatibles = new ArrayList<>();
+
+		//private Map<String, TreeSet<Jeu>> baseDeDonnees;
+		Set<String> cles = baseDeDonnees.keySet();
+    	for (String cle: cles) {
+			//System.out.println(cle);		???
+			TreeSet<Jeu> listeFabricant = baseDeDonnees.get(cle);
+			Iterator<Jeu> it = listeFabricant.iterator();
+
+			while (it.hasNext()) {
+				Jeu jeuCourant = it.next();
+				if (jeuCourant.getConsoles().contains(console)) {
+					compatibles.add(jeuCourant);
+				}
+			}
+		}
+
+		// essayer vide et trier??? imprimer différemment???
+		return compatibles;
 	}
 
-	public Collection<Jeu> getJeuxFabricant(String fabricant){
-	// � compl�ter et potentiellement changer l'instruction du return
-		return null;
+	public Collection<Jeu> getJeuxFabricant(String fabricant) {
+
+		//Collection<Jeu> reponse = baseDeDonnees.get(fabricant);
+		return baseDeDonnees.get(fabricant);
 	}
 
-	public void saveBdd(String nomFichier){
-	//A compl�ter
+	public void saveBdd(String nomFichier) {
+
+    	File fichier = new File(nomFichier);
+    	FileWriter fr = null;
+
+    	try {
+    		fr = new FileWriter(fichier);
+    		fr.write(this.toString());
+
+		} catch (IOException e) {
+			e.printStackTrace();
+			// ajout message d'erreur???
+		} finally {
+    		try {
+    			fr.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+				// ajout message d'erreur???
+			}
+		}
 	}
 
+	// redéfinition de la méthode toString, utile pour tester et utilisée dans saveBdd
+	@Override
+	public String toString() {
+
+    	StringBuilder epeler = new StringBuilder();
+
+		Set<String> cles = baseDeDonnees.keySet();
+		for (String cle: cles) {
+			TreeSet<Jeu> listeFabricant = baseDeDonnees.get(cle);
+			Iterator<Jeu> it = listeFabricant.iterator();
+
+			while (it.hasNext()) {
+				Jeu jeuCourant = it.next();
+				epeler.append(jeuCourant.toString() + "\n");
+			}
+		}
+
+		return epeler.toString();
+	}
 }

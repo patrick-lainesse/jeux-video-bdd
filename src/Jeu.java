@@ -11,6 +11,8 @@
 
 import java.util.*;
 
+// pour la recherche, on pourrait aussi construire un objet bidon
+// et donc prévoir des constructeurs pour objets bidons selon tel paramètre
 public class Jeu implements Comparable<Jeu> {
 
     private String fabricant;
@@ -79,6 +81,7 @@ public class Jeu implements Comparable<Jeu> {
     }
     // vérifier si possibilité de bug si on n'ajoute pas de liste de consoles à un jeu????
 
+    // devrait ajouter addConsoles, semble idéal ????
 
     /**
      * Début des get et set pour tous les paramètres de la classe

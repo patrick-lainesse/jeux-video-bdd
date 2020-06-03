@@ -6,13 +6,13 @@
 //
 // Auteur:						Patrick Lainesse
 // Matricule:					740302
-// Sources:						aucune
+// Sources:						docs.oracle.com
+//								https://www.journaldev.com/878/java-write-to-file
 //////////////////////////////////////////////////////////////////////////////
 
 import java.util.*;
 import java.io.*;
 
-// addJeu plus facile à implémtenter avec un objet bidon!!???
 // si on implémente un HashSet, va falloir implémenter hashCode pour chercher???
 // pour chercher dans la liste de consoles, préférable de coder qqch qui va pas "jouer" là-dedans, et qui retourne
 // true ou false par exemple, pour protéger nos données??? (34 min)
@@ -24,6 +24,7 @@ public class Bdd implements TestInterface {
 
     public Bdd() {
     	//Collection<Jeu> listeJeux = new TreeSet<Jeu>();
+		// vérifier ce qui se passe quand on ajoute un bdd sans TreeSet associé et qu'on tente d'y avoir accès???
     	baseDeDonnees = new LinkedHashMap<>();
     }
 
@@ -32,19 +33,20 @@ public class Bdd implements TestInterface {
 
 		String unFabricant = unJeu.getFabricant();
 
-		// vérifier si le fabricant est déjà dans la base de données
+		/* vérifier si le fabricant est déjà dans la base de données,
+		 * sinon, créer une nouvelle entrée pour ce fabricant dans la base de données */
 		if (baseDeDonnees.containsKey(unFabricant)) {
-			// Si le jeu est déjà présent pour ce fabricant, il faut s’assurer d’ajouter toutes les consoles,
-			// du jeu passé en paramètre, au jeu déjà dans la liste. Testé avec le fichier jeuxComplement	??? Intro???
+
 			TreeSet<Jeu> ts = baseDeDonnees.get(unFabricant);
 
+			/* vérifier si le jeu est présent dans la liste des jeux de ce fabricant, et si oui,
+			 * y ajouter la liste de consoles du jeu passé en paramètres à addJeu(),
+			 * sinon simplement ajouter le jeu passé en paramètre */
 			if (ts.contains(unJeu)) {
 
 				Collection<String> consoles = unJeu.getConsoles();
 
 				for (String courant : consoles) {
-					System.out.println("addJeu " + unFabricant + ": " + unJeu.getTitre() + " - Console courante: " + courant);    // ??? à enlever
-
 					Objects.requireNonNull(ts.floor(unJeu)).addConsole(courant);    // requireNonNull pour éviter un nullPointerException
 				}
 			} else {
@@ -62,13 +64,15 @@ public class Bdd implements TestInterface {
 		TreeSet<Jeu> listeJeux = baseDeDonnees.get(fabricant);
 		Jeu resultat = null;
 
+		/* Si la liste de jeux pour le fabricant passé en paramètre n'est pas nulle, parcourir cette liste
+		 * pour voir si ce jeu s'y retrouve */
     	if (listeJeux != null) {
 			Iterator<Jeu> it = listeJeux.iterator();
 
+			// arrêter la recherche dès qu'on obtient un résultat
 			while(resultat == null && it.hasNext()) {
 				Jeu courant = it.next();
 				if (courant.getTitre().equals(titre)) {
-					//System.out.println("Test iterator getJeu" + courant);	?????
 					resultat = courant;
 				}
 			}

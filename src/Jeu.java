@@ -12,14 +12,12 @@
 
 import java.util.*;
 
-// pour la recherche, on pourrait aussi construire un objet bidon
-// et donc prévoir des constructeurs pour objets bidons selon tel paramètre ???
 public class Jeu implements Comparable<Jeu> {
 
-    private String fabricant;
-    private String titre;
-    private String cote;
-    private Collection<String> consoles;
+    final private String fabricant;
+    final private String titre;
+    final private String cote;
+    final private Collection<String> consoles;
 
     public Jeu(String fabricant, String titre, String cote) {
         this.fabricant = fabricant;
@@ -31,14 +29,13 @@ public class Jeu implements Comparable<Jeu> {
     /* Ajoute une console à la liste des consoles du jeu.
      * On peut simplement ajouter des consoles à la liste sans vérifier si elles s'y retrouvent déjà, car
      * l'ajout d'un élément déjà présent dans un LinkedHashSet ne change pas l'ordre des éléments s'y trouvant.
+     *
      * @parm console    Nom de la console à ajouter à la liste */
-    // ??? à tester
-    // prévoir une méthode pour ajouter plusieurs consoles??? penser à addAll JavaDocs ???
     public void addConsole(String console) {
         consoles.add(console);
     }
 
-    /* toString pour une liste de consoles associées au jeu, facilite l'écriture à l'écran ou dans un fichier txt
+    /* Méthode toString() pour une liste de consoles associées au jeu, facilite l'écriture à l'écran ou dans un fichier txt
      * format: PS4,XONE,PC,MAC,SWITCH */
     private String printConsoles(Collection<String> consoles) {
 
@@ -51,7 +48,6 @@ public class Jeu implements Comparable<Jeu> {
         }
         return liste.toString();
     }
-    // vérifier si possibilité de bug si on n'ajoute pas de liste de consoles à un jeu????
 
     /*****************************************************************************************************
      * REDÉFINITIONS
@@ -79,7 +75,7 @@ public class Jeu implements Comparable<Jeu> {
 
     @Override
     public String toString() {
-        //EA;NHL 2020;E;PS4,WIIU,XONE,PC
+        //Format d'un jeu: EA;NHL 2020;E;PS4,WIIU,XONE,PC
         return fabricant + ";" + titre + ";" + cote + ";" + printConsoles(consoles);
     }
 
@@ -93,37 +89,20 @@ public class Jeu implements Comparable<Jeu> {
 
     /*****************************************************************************************************
      * GET & SET
-     * Méthodes get et set pour les paramètres de la classe
      *****************************************************************************************************/
     public String getTitre() {
         return titre;
-    }
-
-    public void setTitre(String titre) {
-        this.titre = titre;
     }
 
     public String getFabricant() {
         return fabricant;
     }
 
-    public void setFabricant(String fabricant) {
-        this.fabricant = fabricant;
-    }
-
     public String getCote() {
         return cote;
     }
 
-    public void setCote(String cote) {
-        this.cote = cote;
-    }
-
     public Collection<String> getConsoles() {
         return consoles;
-    }
-
-    public void setConsoles(Collection<String> consoles) {
-        this.consoles = consoles;
     }
 }

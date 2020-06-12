@@ -3,7 +3,6 @@ import java.util.List;
 
 public class TP1 {
 
-	// Pour faire afficher un jeu.  À modifier pour le tp2
 	public static void afficherJeu(TestInterface b, String fab, String titre ){
 		Jeu aAfficher = b.getJeu(titre, fab);
 
@@ -13,34 +12,9 @@ public class TP1 {
 			System.out.println(titre + " n'est pas dans la banque de données");
 	}
 
-
-// pour ajout de consoles, penser à ajouter carrément la liste complète, va pas rajouter si déjà là (TreeSet)
-	// tester sauvegarder puis relire la même Bdd???
-	/*
- *  Pr?voyez les m?thodes d'acc?s de Livre
-	String getTitre()
-	int getCode()
-	int getCodeAuteur()
-	String getCategorie()
-	int getNbPages()
-	double getPrix()
-
-	Et pour Auteur :
-	String getNom()
-	int getCode()
-	String getPays()
-
-	Elles pourraient ?tre test?es ? la correction
- *
- **/
-	//Pr?voyez un toString dans Bdd pour faire afficher
-	//en ordre de saisie des auteurs
-	//code existe d?j?, doit ?tre ignor?
-	//auteur inexistant, ? ignorer
-
     public static void main(String[] args) {
 
-    	TestInterface laBase = new Bdd();
+    	Bdd laBase = new Bdd();
     	Jeu unJeu;
 
     	unJeu = new Jeu("EA", "The Sims 5", "M");
@@ -94,7 +68,21 @@ public class TP1 {
 		System.out.println("Imprimer la base de données:\n");
 		System.out.println(laBase);
 
+
 		laBase.saveBdd("sauvegarde.txt");
-		// essayer save et relire le fichier sauvegardé...????
+		laBase.loadBdd("malforme.txt");
+
+		System.out.println("Les infos sur NHL 20 : ");
+		afficherJeu(laBase, "EA", "NHL 2020");
+
+		System.out.println(laBase.getJeuxFabricant("pipo"));
+
+		laBase.chercheCote("M");
+
+		laBase.loadBdd("sauvegarde.txt");
+		System.out.println("Imprimer la base de données:\n");
+		System.out.println(laBase);
+
+
     }
 }

@@ -1,8 +1,8 @@
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 public class TP1 {
 
+	// Pour faire afficher un jeu.  À modifier pour le tp2
 	public static void afficherJeu(TestInterface b, String fab, String titre ){
 		Jeu aAfficher = b.getJeu(titre, fab);
 
@@ -12,9 +12,12 @@ public class TP1 {
 			System.out.println(titre + " n'est pas dans la banque de données");
 	}
 
+
+
+
     public static void main(String[] args) {
 
-    	Bdd laBase = new Bdd();
+    	TestInterface laBase = new Bdd();
     	Jeu unJeu;
 
     	unJeu = new Jeu("EA", "The Sims 5", "M");
@@ -24,7 +27,6 @@ public class TP1 {
     	unJeu.addConsole("XONE");
 
     	System.out.println("Les infos sur les Sims 5 : ");
-		//System.out.println(laBase.getJeu("The Sims 5", "EA"));
     	afficherJeu(laBase, "EA", "The Sims 5");
 
     	laBase.loadBdd("jeux.txt");
@@ -65,24 +67,6 @@ public class TP1 {
 			System.out.println(j);
 		}
 
-		System.out.println("Imprimer la base de données:\n");
-		System.out.println(laBase);
-
-
 		laBase.saveBdd("sauvegarde.txt");
-		laBase.loadBdd("malforme.txt");
-
-		System.out.println("Les infos sur NHL 20 : ");
-		afficherJeu(laBase, "EA", "NHL 2020");
-
-		System.out.println(laBase.getJeuxFabricant("pipo"));
-
-		laBase.chercheCote("M");
-
-		laBase.loadBdd("sauvegarde.txt");
-		System.out.println("Imprimer la base de données:\n");
-		System.out.println(laBase);
-
-
     }
 }

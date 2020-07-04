@@ -1,12 +1,13 @@
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
-public class GUI extends Frame implements ActionListener {
+public class GUI extends JFrame implements ActionListener {
 
-    private MenuBar menu;
+    private JMenuBar menu;
 
     public GUI(int largeur, int hauteur, String titre) {
 
@@ -21,13 +22,13 @@ public class GUI extends Frame implements ActionListener {
         );
 
         // Barre de menu de l'application
-        menu = new MenuBar();
-        MenuItem menuItemCourant;       // servira à ajouter les différents éléments au menu
-        Menu baseDonnees = new Menu("Base de donn\u00e9es");
-        Menu jeux = new Menu("Recherche");
+        menu = new JMenuBar();
+        JMenuItem menuItemCourant;       // servira à ajouter les différents éléments au menu
+        JMenu baseDonnees = new JMenu("Base de donn\u00e9es");
+        JMenu jeux = new JMenu("Recherche");
 
         // Option charger base de données à partir d'un fichier
-        menuItemCourant = new MenuItem("Charger base de donn\u00e9es");
+        menuItemCourant = new JMenuItem("Charger base de donn\u00e9es");
         menuItemCourant.addActionListener(this);
 
         // Ajouts au menu base de données
@@ -36,15 +37,24 @@ public class GUI extends Frame implements ActionListener {
         // Ajouts des sous-menus à la barre de menu
         menu.add(baseDonnees);
         menu.add(jeux);
-        menu.addNotify();
+        menu.addNotify();   // TODO: Comprendre à quoi sert cette ligne
 
-        setMenuBar(menu);
+        setJMenuBar(menu);
         setVisible(true);   // remplace show(), deprecated depuis JDK 1.5
     }
 
 
     @Override
     public void actionPerformed(ActionEvent e) {
+
+        //((JMenuItem)e.getSource()).getText();
+
+        final JFileChooser fileChooser = new JFileChooser();
+        //In response to a button click:
+        int returnVal = fileChooser.showOpenDialog(menu);
+
+        Bdd baseDeDonnees = new Bdd();
+        //baseDeDonnées.loadBdd(fichierBdd);
 
     }
 

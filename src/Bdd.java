@@ -236,4 +236,9 @@ public class Bdd implements TestInterface {
 		}
 		return epeler.toString();
 	}
+
+	// TODO: Ajouté pour GUI
+	public Map<String, TreeSet<Jeu>> getBaseDeDonnees() {
+		return baseDeDonnees;
+	}
 }

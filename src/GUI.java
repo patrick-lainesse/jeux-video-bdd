@@ -10,13 +10,22 @@ import java.util.*;
 public class GUI extends JFrame implements ActionListener {
 
     private JMenuBar menu;
-    private JFrame jFrame;
+    private Container container;
     private Bdd baseDeDonnees;
+    Dimension screenSize;
 
-    public GUI(int largeur, int hauteur, String titre) {
+    public GUI(String titre) {
+
+        // Ouvrir en quart d'écran
+        screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        this.setSize(screenSize.width * 3 / 4, screenSize.height * 3 / 4);
 
         setTitle(titre);
-        setSize(largeur, hauteur);
+
+        container = getContentPane();
+        //container.setLayout(new FlowLayout());
+        container.setLayout(new BorderLayout());
+
 
         addWindowListener(new WindowAdapter() {
                               public void windowClosing(WindowEvent e) {
@@ -49,18 +58,19 @@ public class GUI extends JFrame implements ActionListener {
         menu.addNotify();   // TODO: Comprendre à quoi sert cette ligne
 
         setJMenuBar(menu);
-        setVisible(true);   // remplace show(), deprecated depuis JDK 1.5
+
+        setVisible(true);
     }
 
 
     @Override
     public void actionPerformed(ActionEvent e) {
 
-        //((JMenuItem)e.getSource()).getText();
+        //TODO
+        // ((JMenuItem)e.getSource()).getText();
 
         final JFileChooser fileChooser = new JFileChooser();
 
-        //if (((JMenuItem)e.getSource()).getText() == "Charger base de donn\u00e9es") {
         switch (((JMenuItem) e.getSource()).getText()) {
 
             case "Charger base de donn\u00e9es":
@@ -75,52 +85,34 @@ public class GUI extends JFrame implements ActionListener {
                     System.out.println("Annul\u00e9 par l'utilisateur.");
                 }
                 break;
+
             case "Afficher":
-                System.out.println("Les infos sur Vampyr : ");
-                afficherJeu(baseDeDonnees, "FOCUS", "Vampyr");
+                String[] colonnes = {"Titre", "Fabricant", "Cote", "Consoles"};
+                Object[][] data = new Object[50][4];    // TODO: Trouver manière adaptative
 
-                String[] columnNames = {"First Name",
-                        "Last Name",
-                        "Sport",
-                        "# of Years",
-                        "Vegetarian"};
+                int x = 0;
+                for (Collection<Jeu> collectionJeux : baseDeDonnees.getBaseDeDonnees().values()) {
+                    for (Jeu jeu : collectionJeux) {
+                        data[x][0] = jeu.getTitre();
+                        data[x][1] = jeu.getFabricant();
+                        data[x][2] = jeu.getCote();
+                        data[x][3] = "";
 
-                //Its data is initialized and stored in a two-dimensional Object array:
-                Object[][] data = {
-                        {"Kathy", "Smith",
-                                "Snowboarding", 5, Boolean.FALSE},
-                        {"John", "Doe",
-                                "Rowing", 3, Boolean.TRUE},
-                        {"Sue", "Black",
-                                "Knitting", 2, Boolean.FALSE},
-                        {"Jane", "White",
-                                "Speed reading", 20, Boolean.TRUE},
-                        {"Joe", "Brown",
-                                "Pool", 10, Boolean.FALSE}
-                };
+                        Collection<String> consoles = jeu.getConsoles();
+                        for (String console : consoles) {
+                            data[x][3] += console + ", ";
+                        }
+                        x++;
+                    }
+                }
 
-                //Then the Table is constructed using these data and columnNames:
-                JTable table = new JTable(data, columnNames);
-                table.setBounds(30,40,200,300);
+                // Construction de la table à partir de la base de données
+                JTable table = new JTable(data, colonnes);
                 JScrollPane scrollPane = new JScrollPane(table);
-                jFrame = new JFrame();
-                jFrame.add(scrollPane);
-                jFrame.setSize(300,400);
-                jFrame.setVisible(true);
 
-                /*add(scrollPane);
-
-                table.setFillsViewportHeight(true);
-                JPanel container = new JPanel();
-
-                container.setLayout(new BorderLayout());
-                container.add(table.getTableHeader(), BorderLayout.PAGE_START);
-                container.add(table, BorderLayout.CENTER);
-
-                add(container, BorderLayout.SOUTH);*/
-
+                container.add(scrollPane, BorderLayout.CENTER);
+                setVisible(true);
                 break;
-
         }
     }
 
@@ -135,6 +127,6 @@ public class GUI extends JFrame implements ActionListener {
     }
 
     public static void main(String[] args) {
-        new GUI(250, 300, "Boutique de jeux");
+        new GUI("Boutique de jeux");
     }
 }

@@ -17,7 +17,7 @@ public class GUI extends JFrame implements ActionListener {
      */
     private static final String BDD = "Base de donn\u00e9es";
     private static final String RECHERCHE = "Recherche";
-    private static final String CHARGER = "Charger une nouvelle base de donn\u00e9es";
+    private static final String CHARGER = "Charger nouvelle base de donn\u00e9es";
     private static final String RAFRAICHIR = "Actualiser l'affichage de la base de donn\u00e9es";
     private static final String AJOUT_FICHIER = "Ajouter fichier de base de donn\u00e9es";
 
@@ -51,16 +51,15 @@ public class GUI extends JFrame implements ActionListener {
         JMenu menuRecherche = new JMenu(RECHERCHE);
         JMenuItem menuItemCourant; // servira à ajouter les différents items aux menus
 
-        // Ajouter des options au menu base de données avec leur raccourcis clavier
-        menuItemCourant = new JMenuItem(CHARGER);
-        menuItemCourant.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, 2));
+        menuItemCourant = new JMenuItem(CHARGER, KeyEvent.VK_N);
+        menuItemCourant.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_DOWN_MASK));
         menuBaseDonnees.add(menuItemCourant);
 
         menuItemCourant = new JMenuItem(RAFRAICHIR);
         menuItemCourant.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, 2));
         menuBaseDonnees.add(menuItemCourant);
 
-        menuItemCourant = new JMenuItem(AJOUT_FICHIER);
+        menuItemCourant = new JMenuItem(AJOUT_FICHIER, KeyEvent.VK_F);
         menuItemCourant.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F, 2));
         menuBaseDonnees.add(menuItemCourant);
 

@@ -105,4 +105,23 @@ public class Jeu implements Comparable<Jeu> {
     public Collection<String> getConsoles() {
         return consoles;
     }
+
+    /*****************************************************************************************************
+     * Fonction utiles pour transposer à l'interface graphique (GUI)
+     *****************************************************************************************************/
+
+    /* Place chacun des attribut du jeu dans un vecteur de String, afin de faciliter son ajout sous forme d'une
+     * ligne dans un JTable.
+     *
+     * @return	Un vecteur String contenant chacun des attributs d'un jeu */
+    public Vector<String> vectoriser() {
+
+        Vector<String> ligne = new Vector<>();
+        ligne.add(this.titre);
+        ligne.add(this.fabricant);
+        ligne.add(this.cote);
+        ligne.add(this.printConsoles(this.getConsoles()));
+
+        return ligne;
+    }
 }

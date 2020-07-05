@@ -237,8 +237,35 @@ public class Bdd implements TestInterface {
 		return epeler.toString();
 	}
 
-	// TODO: Ajouté pour GUI
+
+	/*****************************************************************************************************
+	 * Fonction utiles pour transposer à l'interface graphique (GUI)
+	 *****************************************************************************************************/
+
+	/* Getter pour obtenir la base de données
+	 * @return		Une référence sur la base de données pour pouvoir y extraire des jeux */
+	// TODO: Vraiment nécessaire? Essayer de me débrouiller sans cette méthode
 	public Map<String, TreeSet<Jeu>> getBaseDeDonnees() {
 		return baseDeDonnees;
+	}
+
+	/* Parcourt la base de données et ajoute un vecteur de String pour chacun des jeux, dans le but
+	 * de l'afficher dans un JTable.
+	 *
+	 * @return	Un vecteur de jeux, dont chacun de ses attributs sont regroupés dans un vecteur de String */
+	public Vector<Vector<String>> vectoriser() {
+
+		Vector<Vector<String>> vecteurJeu = new Vector<>();
+
+		Set<String> cles = baseDeDonnees.keySet();
+		for (String cle: cles) {
+			TreeSet<Jeu> listeFabricant = baseDeDonnees.get(cle);
+
+			for (Jeu jeuCourant : listeFabricant) {
+				vecteurJeu.add(jeuCourant.vectoriser());
+			}
+		}
+
+		return vecteurJeu;
 	}
 }

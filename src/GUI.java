@@ -52,6 +52,10 @@ public class GUI extends JFrame implements ActionListener {
         menuItemCourant.addActionListener(this);
         baseDonnees.add(menuItemCourant);
 
+        menuItemCourant = new JMenuItem("Ajouter fichier de base de donn\u00e9es");
+        menuItemCourant.addActionListener(this);
+        baseDonnees.add(menuItemCourant);
+
         // Ajouts des sous-menus à la barre de menu
         menu.add(baseDonnees);
         menu.add(jeux);
@@ -87,32 +91,26 @@ public class GUI extends JFrame implements ActionListener {
                 break;
 
             case "Afficher":
-                String[] colonnes = {"Titre", "Fabricant", "Cote", "Consoles"};
-                Object[][] data = new Object[50][4];    // TODO: Trouver manière adaptative
-
-                int x = 0;
-                for (Collection<Jeu> collectionJeux : baseDeDonnees.getBaseDeDonnees().values()) {
-                    for (Jeu jeu : collectionJeux) {
-                        data[x][0] = jeu.getTitre();
-                        data[x][1] = jeu.getFabricant();
-                        data[x][2] = jeu.getCote();
-                        data[x][3] = "";
-
-                        Collection<String> consoles = jeu.getConsoles();
-                        for (String console : consoles) {
-                            data[x][3] += console + ", ";
-                        }
-                        x++;
-                    }
-                }
-
                 // Construction de la table à partir de la base de données
-                JTable table = new JTable(data, colonnes);
+                Vector<String> nomColonnes = new Vector<>();
+                nomColonnes.add("Titre");
+                nomColonnes.add("Fabricant");
+                nomColonnes.add("Cote");
+                nomColonnes.add("Consoles");
+
+                Vector<Vector<String>> lignes = baseDeDonnees.vectoriser();
+
+                JTable table = new JTable(lignes, nomColonnes);
+
+
                 JScrollPane scrollPane = new JScrollPane(table);
 
                 container.add(scrollPane, BorderLayout.CENTER);
                 setVisible(true);
                 break;
+
+            case "Ajouter fichier de base de donn\u00e9es":
+
         }
     }
 

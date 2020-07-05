@@ -9,23 +9,26 @@ import java.util.*;
 
 public class GUI extends JFrame implements ActionListener {
 
-    private JMenuBar menu;
-    private Container container;
+    private final JMenuBar menu;
+    private final Container container;
     private Bdd baseDeDonnees;
-    Dimension screenSize;
+
+    /** Texte constant des options des menus */
+    private static final String BDD = "Base de donn\u00e9es";
+    private static final String RECHERCHE = "Recherche";
+    private static final String CHARGER = "Charger base de donn\u00e9es";
+    private static final String AFFICHER = "Afficher";
+    private static final String AJOUT_FICHIER = "Ajouter fichier de base de donn\u00e9es";
 
     public GUI(String titre) {
 
-        // Ouvrir en quart d'écran
-        screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        // Ouvrir le programme pour qu'il occupe les trois quarts de l'écran
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         this.setSize(screenSize.width * 3 / 4, screenSize.height * 3 / 4);
 
         setTitle(titre);
-
         container = getContentPane();
-        //container.setLayout(new FlowLayout());
         container.setLayout(new BorderLayout());
-
 
         addWindowListener(new WindowAdapter() {
                               public void windowClosing(WindowEvent e) {
@@ -34,35 +37,27 @@ public class GUI extends JFrame implements ActionListener {
                           }
         );
 
-        // Barre de menu de l'application
+        // Créer une barre de menu et les différents menus principaux
         menu = new JMenuBar();
-        JMenuItem menuItemCourant;       // servira à ajouter les différents éléments au menu
-        JMenu baseDonnees = new JMenu("Base de donn\u00e9es");
-        JMenu jeux = new JMenu("Recherche");
+        JMenu menuBaseDonnees = new JMenu(BDD);
+        JMenu menuRecherche = new JMenu(RECHERCHE);
 
-        // Option charger base de données à partir d'un fichier
-        menuItemCourant = new JMenuItem("Charger base de donn\u00e9es");
-        menuItemCourant.addActionListener(this);
+        // Ajouter des options au menu base de données
+        menuBaseDonnees.add(new JMenuItem(CHARGER));
+        menuBaseDonnees.add(new JMenuItem(AFFICHER));
+        menuBaseDonnees.add(new JMenuItem(AJOUT_FICHIER));
 
-        // Ajout au menu base de données
-        baseDonnees.add(menuItemCourant);
+        // Ajouter des écouteurs d'événements sur les options du menu
+        for (int i = 0; i < menuBaseDonnees.getItemCount(); i++) {
+            menuBaseDonnees.getItem(i).addActionListener(this);
+        }
 
-        // Option afficher la base de données chargée
-        menuItemCourant = new JMenuItem("Afficher");
-        menuItemCourant.addActionListener(this);
-        baseDonnees.add(menuItemCourant);
-
-        menuItemCourant = new JMenuItem("Ajouter fichier de base de donn\u00e9es");
-        menuItemCourant.addActionListener(this);
-        baseDonnees.add(menuItemCourant);
-
-        // Ajouts des sous-menus à la barre de menu
-        menu.add(baseDonnees);
-        menu.add(jeux);
+        // Ajouter les menus à la barre de menus
+        menu.add(menuBaseDonnees);
+        menu.add(menuRecherche);
         menu.addNotify();   // TODO: Comprendre à quoi sert cette ligne
 
         setJMenuBar(menu);
-
         setVisible(true);
     }
 
@@ -77,7 +72,8 @@ public class GUI extends JFrame implements ActionListener {
 
         switch (((JMenuItem) e.getSource()).getText()) {
 
-            case "Charger base de donn\u00e9es":
+            //case "Charger base de donn\u00e9es":
+            case CHARGER:
                 int returnVal = fileChooser.showOpenDialog(menu);
 
                 if (returnVal == JFileChooser.APPROVE_OPTION) {
@@ -90,7 +86,7 @@ public class GUI extends JFrame implements ActionListener {
                 }
                 break;
 
-            case "Afficher":
+            case AFFICHER:
                 // Construction de la table à partir de la base de données
                 Vector<String> nomColonnes = new Vector<>();
                 nomColonnes.add("Titre");
@@ -109,8 +105,8 @@ public class GUI extends JFrame implements ActionListener {
                 setVisible(true);
                 break;
 
-            case "Ajouter fichier de base de donn\u00e9es":
-
+            case AJOUT_FICHIER:
+                break;
         }
     }
 

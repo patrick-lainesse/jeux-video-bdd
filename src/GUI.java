@@ -1,9 +1,6 @@
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.event.*;
 import java.io.File;
 import java.util.*;
 
@@ -20,14 +17,15 @@ public class GUI extends JFrame implements ActionListener {
      */
     private static final String BDD = "Base de donn\u00e9es";
     private static final String RECHERCHE = "Recherche";
-    private static final String CHARGER = "Charger base de donn\u00e9es";
-    private static final String AFFICHER = "Afficher";
+    private static final String CHARGER = "Charger une nouvelle base de donn\u00e9es";
+    private static final String RAFRAICHIR = "Actualiser l'affichage de la base de donn\u00e9es";
     private static final String AJOUT_FICHIER = "Ajouter fichier de base de donn\u00e9es";
 
     /**
      * Messages pouvant s'afficher dans le programme
      */
     private static final String ANNULE = "Annul\u00e9 par l'utilisateur.";
+    // TODO: Boîte de dialogue pour avertir que possible de perdre des données non sauvegardées
 
     // TODO: En-tête
     public GUI(String titre) {
@@ -51,11 +49,20 @@ public class GUI extends JFrame implements ActionListener {
         menu = new JMenuBar();
         JMenu menuBaseDonnees = new JMenu(BDD);
         JMenu menuRecherche = new JMenu(RECHERCHE);
+        JMenuItem menuItemCourant; // servira à ajouter les différents items aux menus
 
-        // Ajouter des options au menu base de données
-        menuBaseDonnees.add(new JMenuItem(CHARGER));
-        menuBaseDonnees.add(new JMenuItem(AFFICHER));
-        menuBaseDonnees.add(new JMenuItem(AJOUT_FICHIER));
+        // Ajouter des options au menu base de données avec leur raccourcis clavier
+        menuItemCourant = new JMenuItem(CHARGER);
+        menuItemCourant.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, 2));
+        menuBaseDonnees.add(menuItemCourant);
+
+        menuItemCourant = new JMenuItem(RAFRAICHIR);
+        menuItemCourant.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, 2));
+        menuBaseDonnees.add(menuItemCourant);
+
+        menuItemCourant = new JMenuItem(AJOUT_FICHIER);
+        menuItemCourant.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F, 2));
+        menuBaseDonnees.add(menuItemCourant);
 
         // Ajouter des écouteurs d'événements sur les options du menu
         for (int i = 0; i < menuBaseDonnees.getItemCount(); i++) {
@@ -69,6 +76,10 @@ public class GUI extends JFrame implements ActionListener {
 
         setJMenuBar(menu);
         setVisible(true);
+
+        // TODO: on ne peut pas sélectionner certaines options tant que pas charger une bdd
+        //texte.setEnabled(false);
+        //texte.setDisabledTextColor(Color.black);
     }
 
     // TODO: En-tête
@@ -84,11 +95,11 @@ public class GUI extends JFrame implements ActionListener {
                 if (fichier != ANNULE) {
                     baseDeDonnees = new Bdd();
                     baseDeDonnees.loadBdd(fichier);
+                    afficherBdd();
                 } else System.out.println(ANNULE);
-                afficherBdd();
                 break;
 
-            case AFFICHER:
+            case RAFRAICHIR:
                 afficherBdd();
                 break;
 
@@ -140,6 +151,6 @@ public class GUI extends JFrame implements ActionListener {
     }
 
     public static void main(String[] args) {
-        new GUI("Boutique de jeux vidéo");
+        new GUI("Boutique de jeux vid\u00e9o");
     }
 }

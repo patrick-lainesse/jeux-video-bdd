@@ -11,15 +11,25 @@ public class GUI extends JFrame implements ActionListener {
 
     private final JMenuBar menu;
     private final Container container;
+
+    JScrollPane tableauScrollPane = new JScrollPane();
     private Bdd baseDeDonnees;
 
-    /** Texte constant des options des menus */
+    /**
+     * Texte des options des menus
+     */
     private static final String BDD = "Base de donn\u00e9es";
     private static final String RECHERCHE = "Recherche";
     private static final String CHARGER = "Charger base de donn\u00e9es";
     private static final String AFFICHER = "Afficher";
     private static final String AJOUT_FICHIER = "Ajouter fichier de base de donn\u00e9es";
 
+    /**
+     * Messages pouvant s'afficher dans le programme
+     */
+    private static final String ANNULE = "Annul\u00e9 par l'utilisateur.";
+
+    // TODO: En-tête
     public GUI(String titre) {
 
         // Ouvrir le programme pour qu'il occupe les trois quarts de l'écran
@@ -61,63 +71,72 @@ public class GUI extends JFrame implements ActionListener {
         setVisible(true);
     }
 
-
+    // TODO: En-tête
     @Override
     public void actionPerformed(ActionEvent e) {
 
-        //TODO
-        // ((JMenuItem)e.getSource()).getText();
+        //final JFileChooser fileChooser = new JFileChooser();
 
-        final JFileChooser fileChooser = new JFileChooser();
-
+        // Déterminer quelle option du menu a été sélectionnée
         switch (((JMenuItem) e.getSource()).getText()) {
-
-            //case "Charger base de donn\u00e9es":
             case CHARGER:
-                int returnVal = fileChooser.showOpenDialog(menu);
-
-                if (returnVal == JFileChooser.APPROVE_OPTION) {
-                    File fichier = fileChooser.getSelectedFile();
+                String fichier = choisirFichier();
+                if (fichier != ANNULE) {
                     baseDeDonnees = new Bdd();
-                    baseDeDonnees.loadBdd(fichier.getAbsolutePath());
-                    // TODO: Afficher message comme quoi ça a fonctionné
-                } else {
-                    System.out.println("Annul\u00e9 par l'utilisateur.");
-                }
+                    baseDeDonnees.loadBdd(fichier);
+                } else System.out.println(ANNULE);
+                afficherBdd();
                 break;
 
             case AFFICHER:
-                // Construction de la table à partir de la base de données
-                Vector<String> nomColonnes = new Vector<>();
-                nomColonnes.add("Titre");
-                nomColonnes.add("Fabricant");
-                nomColonnes.add("Cote");
-                nomColonnes.add("Consoles");
-
-                Vector<Vector<String>> lignes = baseDeDonnees.vectoriser();
-
-                JTable table = new JTable(lignes, nomColonnes);
-
-
-                JScrollPane scrollPane = new JScrollPane(table);
-
-                container.add(scrollPane, BorderLayout.CENTER);
-                setVisible(true);
+                afficherBdd();
                 break;
 
             case AJOUT_FICHIER:
+                String fichierAjout = choisirFichier();
+                if (fichierAjout != ANNULE) {
+                    baseDeDonnees.addBdd(fichierAjout);
+                } else System.out.println(ANNULE);
+                afficherBdd();
                 break;
         }
     }
 
-    // Pour faire afficher un jeu.  À modifier pour le tp2
-    public static void afficherJeu(TestInterface b, String fab, String titre) {
-        Jeu aAfficher = b.getJeu(titre, fab);
+    // TODO: En-tête
+    // Construction de la table à partir de la base de données
+    public void afficherBdd() {
 
-        if (aAfficher != null)
-            System.out.println(aAfficher);
-        else
-            System.out.println(titre + " n'est pas dans la banque de données");
+        if (tableauScrollPane.getParent() != null) {
+            container.remove(tableauScrollPane);
+        }
+
+        // TODO: Mieux de sortir ce code d'ici pour pas le refaire à chaque fois
+        Vector<String> nomColonnes = new Vector<>();
+        nomColonnes.add("Titre");
+        nomColonnes.add("Fabricant");
+        nomColonnes.add("Cote");
+        nomColonnes.add("Consoles");
+
+        Vector<Vector<String>> lignes = baseDeDonnees.vectoriser();
+
+        // TODO: Problème de superposition
+        JTable table = new JTable(lignes, nomColonnes);
+        tableauScrollPane = new JScrollPane(table);
+
+        container.add(tableauScrollPane, BorderLayout.CENTER);
+        setVisible(true);
+    }
+
+    public String choisirFichier() {
+        final JFileChooser fileChooser = new JFileChooser();
+
+        int returnVal = fileChooser.showOpenDialog(menu);
+
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
+            File fichier = fileChooser.getSelectedFile();
+
+            return fichier.getAbsolutePath();
+        } else return ANNULE;
     }
 
     public static void main(String[] args) {

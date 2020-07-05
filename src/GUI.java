@@ -140,6 +140,6 @@ public class GUI extends JFrame implements ActionListener {
     }
 
     public static void main(String[] args) {
-        new GUI("Boutique de jeux");
+        new GUI("Boutique de jeux vidéo");
     }
 }

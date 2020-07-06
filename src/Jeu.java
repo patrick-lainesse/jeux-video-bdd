@@ -19,6 +19,24 @@ public class Jeu implements Comparable<Jeu> {
     final private String cote;
     final private Collection<String> consoles;
 
+    // TODO: voir common pitfalls et intégrer ça
+    public enum ATTRIBUTS_JEU {
+        FABRICANT("Fabricant"),
+        TITRE("Titre"),
+        COTE("Cote"),
+        CONSOLES("Consoles");
+
+        private String attribut;
+        private ATTRIBUTS_JEU(String attribut)
+        {
+            this.attribut = attribut;
+        }
+
+        public String getAttribut() {return attribut;}
+    }
+
+
+
     public Jeu(String fabricant, String titre, String cote) {
         this.fabricant = fabricant;
         this.titre = titre;

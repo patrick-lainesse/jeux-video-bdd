@@ -5,6 +5,7 @@ import java.io.File;
 import java.util.*;
 import javax.swing.border.TitledBorder;
 
+// TODO: Créer une fonction pour lancer un dialog box avec les infos du jeu lorsqu'on double clique un jeu dans le tableau
 public class GUI extends JFrame implements ActionListener {
 
     /**
@@ -19,6 +20,14 @@ public class GUI extends JFrame implements ActionListener {
     JPanel panelFormulaire;              // Affiche un formulaire pour saisir les informations 'un jeu
     JScrollPane tableauScrollPane;  // Affiche un tableau d'informations sur les jeux
     private Bdd baseDeDonnees;
+
+    /**
+     * Éléments de formulaires pouvant se retrouver dans le programme à un moment ou un autre.
+     */
+
+    CustomTxtField tfFabricant;
+    CustomTxtField tfTitre;
+    // TODO: ajouter les autres possibles
 
     /**
      * Texte des options des menus
@@ -55,9 +64,12 @@ public class GUI extends JFrame implements ActionListener {
     private static final String AJOUT_JEU = "+ Ajouter un nouveau jeu";
 
     public static final String BTN_AJOUT_JEU = "Ajouter le jeu";
+    public static final String BTN_RECHERCHER = "Rechercher";
 
     public static final String TITRE_CONTENU_BDD = "Jeux contenus dans la base de donn\u00e9es";
     public static final String TITRE_AJOUT_JEU = "Ajouter un jeu";
+    public static final String TITRE_RECH_JEU = "Rechercher un jeu";
+
 
     /**
      * Messages pouvant s'afficher dans le programme
@@ -84,6 +96,7 @@ public class GUI extends JFrame implements ActionListener {
                           }
         );
 
+        // TODO: créer une classe ou fonction pour générer le menu
         // Créer une barre de menu et les différents menus principaux
         menu = new JMenuBar();
         JMenu menuBaseDonnees = new JMenu(BDD);
@@ -113,6 +126,10 @@ public class GUI extends JFrame implements ActionListener {
         // Ajouter des écouteurs d'événements sur les options du menu
         for (int i = 0; i < menuBaseDonnees.getItemCount(); i++) {
             menuBaseDonnees.getItem(i).addActionListener(this);
+        }
+
+        for (int i = 0; i < menuRecherche.getItemCount(); i++) {
+            menuRecherche.getItem(i).addActionListener(this);
         }
 
         // Ajouter les menus à la barre de menus
@@ -156,7 +173,7 @@ public class GUI extends JFrame implements ActionListener {
                 rechercheJeu();
                 break;
             case AJOUT_JEU:
-                afficherForm();
+                ajouterJeu();
                 break;
             case BTN_AJOUT_JEU:
                 break;
@@ -200,24 +217,33 @@ public class GUI extends JFrame implements ActionListener {
         } else return ANNULE;
     }
 
-    // TODO: écrire rechercheJeu
+    /* Fait apparaître un formulaire pour saisir un fabricant et le titre d'un jeu.
+     * Fait également apparaître un bouton qui, lorsque cliqué, lance la recherche dans la base de données.
+     * Affiche ensuite les informations sur le jeu s'il est trouvé. */
     public void rechercheJeu() {
 
-        //public Jeu getJeu(String titre, String fabricant) {
-        JTextField textField = new JTextField(20);
+        preparerFormulaire(TITRE_RECH_JEU);
+
+        // Ajouter TextField pour saisir les infos du jeu à rechercher
+        tfFabricant = new CustomTxtField(Jeu.AttributsJeu.FABRICANT.getAttribut());
+        tfTitre = new CustomTxtField(Jeu.AttributsJeu.TITRE.getAttribut());
+
+        panelFormulaire.add(tfFabricant);
+        panelFormulaire.add(tfTitre);
+
+        // Ajouter un bouton pour lancer la recherche
+        BoutonFlow bouton = new BoutonFlow(BTN_RECHERCHER);
+        panelNorth.add(bouton, BorderLayout.EAST);
+
+        setVisible(true);
     }
 
-    /* Crée un formulaire pour saisir les données d'un nouveau jeu à ajouter à la base de données.
-     * Le formulaire est placé dans un panel, lui-même est placé dans un autre panel pour bien le placer
-     * au coin supérieur gauche du container principal. */
-    public void afficherForm() {
+    /* Fait apparaître formulaire pour saisir les données d'un nouveau jeu à ajouter à la base de données.
+     * Au clic sur le bouton, le jeu est ajouté à la base de données. */
+    // TODO: Afficher message comme quoi ça a fonctionné et afficher le contenu de la bdd à nouveau?
+    public void ajouterJeu() {
 
-        viderContainer();
-        panelFormulaire = new JPanel();      // TODO: voir ce qui est le plus pertinent entre global ou non. Ici, c'est un sous-panel déjà...
-        panelNorth = new JPanel();
-        panelNorth.setLayout(new BorderLayout());
-
-        panelFormulaire.setLayout(new BoxLayout(panelFormulaire, BoxLayout.PAGE_AXIS));
+        preparerFormulaire(TITRE_AJOUT_JEU);
 
         // TextField pour saisir le fabricant et le titre du jeu
         CustomTxtField tfFabricant = new CustomTxtField(Jeu.AttributsJeu.FABRICANT.getAttribut());
@@ -229,41 +255,41 @@ public class GUI extends JFrame implements ActionListener {
         CotesPanel cotesPanel = new CotesPanel();
         panelFormulaire.add(cotesPanel);
 
-        // TODO: txtField et bouton pour ajouter des consoles?
-        // Ou afficher msg pour ne pas oublier d'ajouter les consoles
-        //panelFormulaire.add(new CustomTxtField("Console"));
-
-
-        //panelFormulaire.setBorder(BorderFactory.createEmptyBorder(35, 15, 5, 5));
-        panelFormulaire.setAlignmentX(Component.LEFT_ALIGNMENT);
-
-        panelNorth.add(panelFormulaire, BorderLayout.NORTH);
-
-        JPanel flowPanel = new JPanel(new FlowLayout());
-        JButton boutonCreer = new JButton(BTN_AJOUT_JEU);
-        boutonCreer.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                Jeu nouveauJeu = new Jeu(tfFabricant.getText(), tfTitre.getText(), cotesPanel.getChoix());
-                baseDeDonnees.addJeu(nouveauJeu);
-            }
-        });
-        flowPanel.add(boutonCreer);
-
-        panelNorth.add(flowPanel, BorderLayout.EAST);
-        panelNorth.setAlignmentX(Component.LEFT_ALIGNMENT);
-
-        titrerPanel(panelNorth, TITRE_AJOUT_JEU);
-        container.add(panelNorth, BorderLayout.WEST);
+        BoutonFlow bouton = new BoutonFlow(BTN_AJOUT_JEU);
+        panelNorth.add(bouton, BorderLayout.EAST);
 
         setVisible(true);
     }
 
-    /* Ajoute un titre et en encadré pour un panel */
+    /* Ajoute un titre et en encadré pour un panel.
+     * @param component     Le panneau sur lequel on veut apposer un titre
+     * @param titre         Le titre à afficher */
     public void titrerPanel(JComponent component, String titre) {
         component.setBorder(BorderFactory.createTitledBorder(
                 BorderFactory.createEtchedBorder(), titre, TitledBorder.LEFT,
                 TitledBorder.TOP));
+    }
+
+    /* Prépare le container principal pour y insérer des éléments de formulaires.
+     *  Éléments positionnés:
+     *           - panelFormulaire: Panneau contenant les zones de textes, boutons radio, etc, inséré dans le panelNorth
+     *           - panelNorth: Panneau situé au haut du container principal.
+     *                         Les boutons sont placés après le panneau du formulaire.
+     * @param titre     Le titre qui s'affiche au haut du cadre du formulaire */
+    public void preparerFormulaire(String titre) {
+        viderContainer();
+
+        panelFormulaire = new JPanel();
+        panelFormulaire.setLayout(new BoxLayout(panelFormulaire, BoxLayout.PAGE_AXIS));
+        panelFormulaire.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        panelNorth = new JPanel();
+        panelNorth.setLayout(new BorderLayout());
+        panelNorth.add(panelFormulaire, BorderLayout.NORTH);
+        panelNorth.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        titrerPanel(panelNorth, titre);
+        container.add(panelNorth, BorderLayout.WEST);
     }
 
     /* Vide le contenant principal de toutes ses composantes */
@@ -275,76 +301,134 @@ public class GUI extends JFrame implements ActionListener {
     public static void main(String[] args) {
         new GUI("Boutique de jeux vid\u00e9o");
     }
-}
 
-/*****************************************************************************************************
- * Classes pour créer certains éléments graphiques réutilisables
- *****************************************************************************************************/
+    /*****************************************************************************************************
+     * Classes personnalisées pour gérer certains éléments graphiques réutilisables.
+     *****************************************************************************************************/
 
-/**
- * Crée un JPanel contenant un textfield et un label associé.
- */
-class CustomTxtField extends JPanel {
+    /**
+     * Classe pour gérer les TextField ainsi que les labels qui leur sont associés
+     * Crée un JPanel contenant un textfield et un label associé.
+     */
+    private static class CustomTxtField extends JPanel {
 
-    public static final Dimension TXT_FIELD_SIZE = new Dimension(700, 20);
-    JTextField jTextField;
+        public final Dimension TXT_FIELD_SIZE = new Dimension(700, 20);
+        JTextField jTextField;
 
-    /* Constructeur
-     * @parm nomLabel    Le texte du label qui s'affichera à côté du JTextField */
-    public CustomTxtField(String nomLabel) {
+        /* Constructeur
+         * @parm nomLabel    Le texte du label qui s'affichera à côté du JTextField */
+        public CustomTxtField(String nomLabel) {
 
-        JPanel panel = new JPanel();
-        JLabel jLabel = new JLabel(nomLabel);
+            JPanel panel = new JPanel();
+            JLabel jLabel = new JLabel(nomLabel);
 
-        panel.add(jLabel, BorderLayout.LINE_START);
-        jTextField = new JTextField();
-        jTextField.setColumns(15);
-        jTextField.setMaximumSize(TXT_FIELD_SIZE);
-        panel.add(jTextField, BorderLayout.LINE_END);
+            panel.add(jLabel, BorderLayout.LINE_START);
+            jTextField = new JTextField();
+            jTextField.setColumns(15);
+            jTextField.setMaximumSize(TXT_FIELD_SIZE);
+            panel.add(jTextField, BorderLayout.LINE_END);
 
-        add(panel);
+            add(panel);
+        }
+
+        /* Retourne le texte saisi dans le textField.
+         * @return	La cote sélectionnée pour le jeu à créer */
+        public String getText() {
+            return jTextField.getText();
+        }
     }
 
-    /* Retourne le texte saisi dans le textField.
-     * @return	La cote sélectionnée pour le jeu à créer */
-    public String getText() {
-        return jTextField.getText();
+    /**
+     * Classe pour gérer les boutons radio.
+     * Crée un JPanel pour le groupe de boutons radio afin de sélectionner la cote du jeu lors de sa création.
+     */
+    private static class CotesPanel extends JPanel {
+
+        private final ButtonGroup buttonGroup = new ButtonGroup();
+
+        public CotesPanel() {
+
+            JPanel panel = new JPanel();
+            JLabel jLabel = new JLabel("Cote");
+
+            panel.add(jLabel);
+
+            // Ajouter un radio button pour chaque cote possible dans la classe Jeu
+            for (Jeu.Cotes cote : Jeu.Cotes.values()) {
+                JRadioButton radioButton = new JRadioButton(cote.getCote());
+                radioButton.setActionCommand(radioButton.getText());
+                panel.add(radioButton);
+                buttonGroup.add(radioButton);
+
+                // Sélectionner la cote "E" par défaut
+                if (buttonGroup.getSelection() == null) {
+                    buttonGroup.setSelected(radioButton.getModel(), true);
+                }
+            }
+            add(panel);
+        }
+
+        /* Retourne la cote associée au bouton sélectionné.
+         * @return	La cote sélectionnée pour le jeu à créer */
+        public String getChoix() {
+            ButtonModel model = buttonGroup.getSelection();
+            return model.getActionCommand();
+        }
     }
-}
 
-/**
- * Crée un JPanel pour le groupe de boutons radio afin de sélectionner la cote du jeu lors de sa création.
- */
-class CotesPanel extends JPanel {
+    /**
+     * Classe pour gérer les boutons. Crée un JPanel contenant un bouton.
+     *
+     * @requires Un formulaire déjà créé (des TextFields) pour que le ActionListener puisse aller chercher les données
+     * nécessaires pour lancer la méthode associée.
+     */
+    private class BoutonFlow extends JPanel {
 
-    private ButtonGroup buttonGroup = new ButtonGroup();
+        // Texte à afficher sur les différents boutons
+        public static final String BTN_AJOUT_JEU = "Ajouter le jeu";
+        public static final String BTN_RECHERCHER = "Rechercher";
 
-    public CotesPanel() {
+        private JButton bouton;
 
-        JPanel panel = new JPanel();
-        JLabel jLabel = new JLabel("Cote");
+        /* Constructeur
+         * @parm nomBouton    Le texte qui s'affichera sur le bouton */
+        public BoutonFlow(String nomBouton) {
 
-        panel.add(jLabel);
+            setLayout(new FlowLayout());
+            JButton bouton = new JButton(nomBouton);
+            bouton.addActionListener(new ClickListener());
+            add(bouton);
+        }
 
-        // Ajouter un radio button pour chaque cote possible dans la classe Jeu
-        for (Jeu.Cotes cote : Jeu.Cotes.values()) {
-            JRadioButton radioButton = new JRadioButton(cote.getCote());
-            radioButton.setActionCommand(radioButton.getText());
-            panel.add(radioButton);
-            buttonGroup.add(radioButton);
+        /* @return	Le texte qui s'affiche sur le bouton */
+        public String getText() {
+            return bouton.getText();
+        }
 
-            // Sélectionner la cote "E" par défaut
-            if (buttonGroup.getSelection() == null) {
-                buttonGroup.setSelected(radioButton.getModel(), true);
+        public JButton getBouton() {
+            return bouton;
+        }
+    }
+
+    /**
+     * Classe pour ajouter et gérer les clics sur les boutons
+     *
+     * @requires Un formulaire déjà créé pour pouvoir aller chercher les données.
+     */
+    private class ClickListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            // Identifier le bouton qui a déclenché l'action listener
+            JButton button = (JButton) e.getSource();
+
+            switch (button.getText()) {
+                case BTN_AJOUT_JEU:
+                    break;
+                case BTN_RECHERCHER:
+                    Jeu jeuCherche = baseDeDonnees.getJeu(tfTitre.getText(), tfFabricant.getText());
+                    System.out.println(jeuCherche); // TODO: Afficher le résultat dans le container
+                    break;
             }
         }
-        add(panel);
-    }
-
-    /* Retourne la cote associée au bouton sélectionné.
-     * @return	La cote sélectionnée pour le jeu à créer */
-    public String getChoix() {
-        ButtonModel model = buttonGroup.getSelection();
-        return model.getActionCommand();
     }
 }

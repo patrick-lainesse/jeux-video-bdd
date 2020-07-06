@@ -19,22 +19,46 @@ public class Jeu implements Comparable<Jeu> {
     final private String cote;
     final private Collection<String> consoles;
 
-    // TODO: voir common pitfalls et intégrer ça
-    public enum ATTRIBUTS_JEU {
+    /*****************************************************************************************************
+     * CONSTANTES STRING
+     * enum pour stocker des constantes String qui sont réutilisées à plusieurs endroits dans le code.
+     * *** Section ajoutée pour le TP2 *** TODO: Ajouter au Readme
+     *****************************************************************************************************/
+
+    // TODO: utiliser dans Jeu.java et Bdd.java
+    public enum AttributsJeu {
         FABRICANT("Fabricant"),
         TITRE("Titre"),
         COTE("Cote"),
         CONSOLES("Consoles");
 
-        private String attribut;
-        private ATTRIBUTS_JEU(String attribut)
-        {
+        private final String attribut;
+
+        AttributsJeu(String attribut) {
             this.attribut = attribut;
         }
 
-        public String getAttribut() {return attribut;}
+        public String getAttribut() {
+            return attribut;
+        }
     }
 
+    public enum Cotes {
+        E("E"),
+        PG("PG"),
+        T("T"),
+        M("M");
+
+        private String cote;
+
+        Cotes(String cote) {
+            this.cote = cote;
+        }
+
+        public String getCote() {
+            return cote;
+        }
+    }
 
 
     public Jeu(String fabricant, String titre, String cote) {
@@ -135,8 +159,8 @@ public class Jeu implements Comparable<Jeu> {
     public Vector<String> vectoriser() {
 
         Vector<String> ligne = new Vector<>();
-        ligne.add(this.titre);
         ligne.add(this.fabricant);
+        ligne.add(this.titre);
         ligne.add(this.cote);
         ligne.add(this.printConsoles(this.getConsoles()));
 

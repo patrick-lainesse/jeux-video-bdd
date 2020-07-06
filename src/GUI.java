@@ -3,6 +3,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
 import java.util.*;
+import javax.swing.border.TitledBorder;
 
 public class GUI extends JFrame implements ActionListener {
 
@@ -13,16 +14,37 @@ public class GUI extends JFrame implements ActionListener {
     private final JMenuBar menu;
     private final Container container;
 
-    // TODO: ne pas faire new ici?
-    JPanel panelNorth = new JPanel();   // TODO: Réflichir à si c'est plus pertinent que ce soit global ou non
-    JPanel panelFormulaire = new JPanel();              // Affiche un formulaire pour saisir les informations 'un jeu
-    JScrollPane tableauScrollPane = new JScrollPane();  // Affiche un tableau d'informations sur les jeux
+    // TODO: Réflichir à si c'est plus pertinent que ce soit global ou non.
+    JPanel panelNorth;
+    JPanel panelFormulaire;              // Affiche un formulaire pour saisir les informations 'un jeu
+    JScrollPane tableauScrollPane;  // Affiche un tableau d'informations sur les jeux
     private Bdd baseDeDonnees;
 
     /**
      * Texte des options des menus
      * TODO: Enum à la place? + séparer menus des items des menus
      */
+/*
+    public enum DescMenu {
+         BDD("Base de donn\u00e9es"),
+         RECHERCHE("Recherche"),
+         CHARGER("Charger nouvelle base de donn\u00e9es"),
+         RAFRAICHIR("Actualiser l'affichage de la base de donn\u00e9es"),
+         AJOUT_FICHIER("Ajouter fichier de base de donn\u00e9es"),
+         RECHERCHE_JEU("Rechercher un jeu"),
+         AJOUT_JEU("+ Ajouter un nouveau jeu");
+
+        private static String description;
+        //private final String description;
+
+        DescMenu(String description) {
+            this.description = description;
+        }
+
+        public static String getDescription() {
+            return description;
+        }
+    }*/
     private static final String BDD = "Base de donn\u00e9es";
     private static final String RECHERCHE = "Recherche";
 
@@ -34,13 +56,17 @@ public class GUI extends JFrame implements ActionListener {
 
     public static final String BTN_AJOUT_JEU = "Ajouter le jeu";
 
+    public static final String TITRE_CONTENU_BDD = "Jeux contenus dans la base de donn\u00e9es";
+    public static final String TITRE_AJOUT_JEU = "Ajouter un jeu";
+
     /**
      * Messages pouvant s'afficher dans le programme
      */
     private static final String ANNULE = "Annul\u00e9 par l'utilisateur.";
     // TODO: Boîte de dialogue pour avertir que possible de perdre des données non sauvegardées
 
-    // TODO: En-tête
+    /* Crée la fenêtre pour afficher le programme et initialise le menu principal.
+     * Initialisé avec un container principal vide. */
     public GUI(String titre) {
 
         // Ouvrir le programme pour qu'il occupe les trois quarts de l'écran
@@ -50,7 +76,6 @@ public class GUI extends JFrame implements ActionListener {
 
         setTitle(titre);
         container = getContentPane();
-        container.setLayout(new BorderLayout());    // TODO: C'est pas par défaut?
 
         addWindowListener(new WindowAdapter() {
                               public void windowClosing(WindowEvent e) {
@@ -93,7 +118,6 @@ public class GUI extends JFrame implements ActionListener {
         // Ajouter les menus à la barre de menus
         menu.add(menuBaseDonnees);
         menu.add(menuRecherche);
-        menu.addNotify();   // TODO: Comprendre à quoi sert cette ligne
 
         setJMenuBar(menu);
         setVisible(true);
@@ -112,7 +136,7 @@ public class GUI extends JFrame implements ActionListener {
         switch (((JMenuItem) e.getSource()).getText()) {
             case CHARGER:
                 String fichier = choisirFichier();
-                if (fichier != ANNULE) {
+                if (!fichier.equals(ANNULE)) {
                     baseDeDonnees = new Bdd();
                     baseDeDonnees.loadBdd(fichier);
                     afficherBdd();
@@ -123,7 +147,7 @@ public class GUI extends JFrame implements ActionListener {
                 break;
             case AJOUT_FICHIER:
                 String fichierAjout = choisirFichier();
-                if (fichierAjout != ANNULE) {
+                if (!fichierAjout.equals(ANNULE)) {
                     baseDeDonnees.addBdd(fichierAjout);
                 } else System.out.println(ANNULE);
                 afficherBdd();
@@ -145,17 +169,19 @@ public class GUI extends JFrame implements ActionListener {
 
         viderContainer();
 
-        // TODO: Utiliser un enum dans la classe jeu
+        // Crée l'en-tête du tableau
         Vector<String> nomColonnes = new Vector<>();
-        nomColonnes.add("Titre");
-        nomColonnes.add("Fabricant");
-        nomColonnes.add("Cote");
-        nomColonnes.add("Consoles");
+        for (Jeu.AttributsJeu attribut : Jeu.AttributsJeu.values()) {
+            nomColonnes.add(attribut.getAttribut());
+        }
 
+        // Ajoute chaque jeu ligne par ligne au tableau
         Vector<Vector<String>> lignes = baseDeDonnees.vectoriser();
 
+        // Ajoute le tableau au container principal du GUI
         JTable table = new JTable(lignes, nomColonnes);
         tableauScrollPane = new JScrollPane(table);
+        titrerPanel(tableauScrollPane, TITRE_CONTENU_BDD);
 
         container.add(tableauScrollPane, BorderLayout.CENTER);
         setVisible(true);
@@ -174,7 +200,7 @@ public class GUI extends JFrame implements ActionListener {
         } else return ANNULE;
     }
 
-    // TODO
+    // TODO: écrire rechercheJeu
     public void rechercheJeu() {
 
         //public Jeu getJeu(String titre, String fabricant) {
@@ -188,17 +214,14 @@ public class GUI extends JFrame implements ActionListener {
 
         viderContainer();
         panelFormulaire = new JPanel();      // TODO: voir ce qui est le plus pertinent entre global ou non. Ici, c'est un sous-panel déjà...
-
-        // TODO: Utiliser un enum dans la classe jeu
-        String[] attributsJeu = {"Fabricant", "Titre", "Cote", "Consoles"};
         panelNorth = new JPanel();
         panelNorth.setLayout(new BorderLayout());
 
         panelFormulaire.setLayout(new BoxLayout(panelFormulaire, BoxLayout.PAGE_AXIS));
 
         // TextField pour saisir le fabricant et le titre du jeu
-        CustomTxtField tfFabricant = new CustomTxtField("Fabricant");
-        CustomTxtField tfTitre = new CustomTxtField("Titre");
+        CustomTxtField tfFabricant = new CustomTxtField(Jeu.AttributsJeu.FABRICANT.getAttribut());
+        CustomTxtField tfTitre = new CustomTxtField(Jeu.AttributsJeu.TITRE.getAttribut());
         panelFormulaire.add(tfFabricant);
         panelFormulaire.add(tfTitre);
 
@@ -221,7 +244,6 @@ public class GUI extends JFrame implements ActionListener {
         boutonCreer.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                //public Jeu(String fabricant, String titre, String cote)
                 Jeu nouveauJeu = new Jeu(tfFabricant.getText(), tfTitre.getText(), cotesPanel.getChoix());
                 baseDeDonnees.addJeu(nouveauJeu);
             }
@@ -230,16 +252,23 @@ public class GUI extends JFrame implements ActionListener {
 
         panelNorth.add(flowPanel, BorderLayout.EAST);
         panelNorth.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        titrerPanel(panelNorth, TITRE_AJOUT_JEU);
         container.add(panelNorth, BorderLayout.WEST);
 
         setVisible(true);
     }
 
+    /* Ajoute un titre et en encadré pour un panel */
+    public void titrerPanel(JComponent component, String titre) {
+        component.setBorder(BorderFactory.createTitledBorder(
+                BorderFactory.createEtchedBorder(), titre, TitledBorder.LEFT,
+                TitledBorder.TOP));
+    }
+
     /* Vide le contenant principal de toutes ses composantes */
     public void viderContainer() {
-
         container.removeAll();
-        container.validate();   // TODO: vérifier ce que ça signifie
         container.repaint();
     }
 
@@ -261,7 +290,6 @@ class CustomTxtField extends JPanel {
     JTextField jTextField;
 
     /* Constructeur
-     *
      * @parm nomLabel    Le texte du label qui s'affichera à côté du JTextField */
     public CustomTxtField(String nomLabel) {
 
@@ -289,9 +317,7 @@ class CustomTxtField extends JPanel {
  */
 class CotesPanel extends JPanel {
 
-    // TODO: enum dans la classe Jeu pour stocker les cotes possibles
     private ButtonGroup buttonGroup = new ButtonGroup();
-    String[] cotes = {"E", "PG", "T", "M"};
 
     public CotesPanel() {
 
@@ -300,8 +326,9 @@ class CotesPanel extends JPanel {
 
         panel.add(jLabel);
 
-        for (String cote : cotes) {
-            JRadioButton radioButton = new JRadioButton(cote);
+        // Ajouter un radio button pour chaque cote possible dans la classe Jeu
+        for (Jeu.Cotes cote : Jeu.Cotes.values()) {
+            JRadioButton radioButton = new JRadioButton(cote.getCote());
             radioButton.setActionCommand(radioButton.getText());
             panel.add(radioButton);
             buttonGroup.add(radioButton);

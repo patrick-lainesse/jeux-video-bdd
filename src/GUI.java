@@ -39,6 +39,8 @@ public class GUI extends JFrame implements ActionListener {
 
     CustomTxtField tfFabricant;
     CustomTxtField tfTitre;
+
+    RadioPanel radioPanelRecherche;      // TODO: expliquer qu'il sera utilisé seulement pour les recherches
     // TODO: ajouter les autres possibles
 
     /**
@@ -82,6 +84,7 @@ public class GUI extends JFrame implements ActionListener {
     public static final String TITRE_CONTENU_BDD = "Jeux contenus dans la base de donn\u00e9es";
     public static final String TITRE_AJOUT_JEU = "Ajouter un jeu";
     public static final String TITRE_RECH_JEU = "Rechercher un jeu";
+    public static final String TITRE_RECH_CONSOLES = "Afficher les jeux pour cette console";
     public static final String TITRE_RESULTAT = "R\u00E9sultat de la recherche";
 
 
@@ -274,8 +277,8 @@ public class GUI extends JFrame implements ActionListener {
         panelFormulaire.add(tfTitre);
 
         // Boutons radio pour le choix de la cote
-        RadioPanel radioPanel = new RadioPanel(Jeu.Attributs.COTE);
-        panelFormulaire.add(radioPanel);
+        radioPanelRecherche = new RadioPanel(Jeu.Attributs.COTE);
+        panelFormulaire.add(radioPanelRecherche);
 
         BoutonFlow bouton = new BoutonFlow(BTN_AJOUT_JEU);
         panelNorth.add(bouton, BorderLayout.EAST);
@@ -324,12 +327,17 @@ public class GUI extends JFrame implements ActionListener {
         JFrame fenetre = new JFrame();
 
         // Boutons radio pour le choix de la console
-        RadioPanel panel = new RadioPanel(Jeu.Attributs.CONSOLES);
-        fenetre.add(panel);
-        fenetre.pack();
-        fenetre.setVisible(true);
+        //RadioPanel panel = new RadioPanel(Jeu.Attributs.CONSOLES);
+        radioPanelRecherche = new RadioPanel(Jeu.Attributs.CONSOLES);
+        fenetre.add(radioPanelRecherche, BorderLayout.CENTER);
 
         // TODO: Ajouter bouton, rendu ici???
+        BoutonFlow bouton = new BoutonFlow(BTN_RECHERCHER);
+        fenetre.add(bouton, BorderLayout.SOUTH);
+
+        titrerPanel(radioPanelRecherche, TITRE_RECH_CONSOLES);
+        fenetre.pack();
+        fenetre.setVisible(true);
     }
 
     public static void main(String[] args) {
@@ -374,7 +382,7 @@ public class GUI extends JFrame implements ActionListener {
 
     /**
      * Classe pour gérer les boutons radio.
-     * Crée un JPanel pour un groupe de boutons radio selon un attribut de la classe Jeu.
+     * Crée un JPanel pour un groupe de boutons radio selon un attribut enum de la classe Jeu.
      */
     private static class RadioPanel extends JPanel {
 
@@ -382,20 +390,18 @@ public class GUI extends JFrame implements ActionListener {
         private final JPanel panel;
 
         /* Retourne la cote associée au bouton sélectionné.
-         * @param	Une des valeurs de l'enum des attributs de jeu (consoles ou cotes), lesquels contiennent
+         * @param	Une des valeurs de l'enum des Attributs de jeu (consoles ou cotes), lesquels contiennent
          *          à leur tour un enum contenant les différentes consoles ou cotes possibles */
         public RadioPanel(Jeu.Attributs attribut) {
 
             panel = new JPanel();
-
             JLabel jLabel = new JLabel(attribut.getAttribut());
             panel.add(jLabel);
 
             // Ajouter un radio button pour chaque option possible de l'enum correspondant dans la classe Jeu
             for (Enum item : attribut.getValues()) {
                 JRadioButton radioButton = new JRadioButton(item.toString());
-                System.out.println(item.toString());
-                panel.add(radioButton);
+                ajouterAuPanneau(radioButton);
             }
             add(panel);
         }
@@ -405,7 +411,7 @@ public class GUI extends JFrame implements ActionListener {
             panel.add(radioButton);
             buttonGroup.add(radioButton);
 
-            // Sélectionner la cote "E" par défaut
+            // Sélectionner le premier élément par défaut
             if (buttonGroup.getSelection() == null) {
                 buttonGroup.setSelected(radioButton.getModel(), true);
             }
@@ -468,15 +474,32 @@ public class GUI extends JFrame implements ActionListener {
                 case BTN_AJOUT_JEU:
                     break;
                 case BTN_RECHERCHER:
-                    Jeu jeuCherche = baseDeDonnees.getJeu(tfTitre.getText(), tfFabricant.getText());
-                    if (jeuCherche != null) {
-                        Vector<Vector<String>> jeu = new Vector<>();
-                        jeu.add(jeuCherche.vectoriser());
-                        afficherResultat(jeu, TITRE_RESULTAT);
+
+                    JPanel panelBouton = (JPanel) button.getParent().getParent();
+
+                    // Si recherche d'un jeu en particulier
+                    if (panelBouton == panelNorth) {
+
+                        Jeu jeuCherche = baseDeDonnees.getJeu(tfTitre.getText(), tfFabricant.getText());
+                        if (jeuCherche != null) {
+                            Vector<Vector<String>> jeu = new Vector<>();
+                            jeu.add(jeuCherche.vectoriser());
+                            afficherResultat(jeu, TITRE_RESULTAT);
+                        } else {
+                            // TODO: Implémenter dialogBox pour si non trouvé
+                        }
+
+                        // Si recherche des jeux associés à une console
                     } else {
-                        // TODO: Implémenter dialogBox pour si non trouvé
+                        String consoleCherchee = radioPanelRecherche.getChoix();
+                        ArrayList<Jeu> listeJeux = baseDeDonnees.chercheConsole(Jeu.Consoles.getAbbreviation(consoleCherchee));
+
+                        if (listeJeux != null) {
+                            afficherResultat(Jeu.vectoriserArrayList(listeJeux), TITRE_RESULTAT);
+                        } else  {
+                            // TODO: Implémenter dialogBox pour si non trouvé
+                        }
                     }
-                    break;
             }
         }
     }

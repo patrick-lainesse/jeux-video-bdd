@@ -35,7 +35,6 @@ public class Jeu implements Comparable<Jeu> {
         CONSOLES("Consoles", Jeu.Consoles.values());
 
         private final String attribut;
-        private String stringValue;
         Enum[] values;
 
         Attributs(String attribut, Enum[] values) {
@@ -47,6 +46,11 @@ public class Jeu implements Comparable<Jeu> {
             return attribut;
         }
 
+        /*  Fonction essentielle de cet enum, elle retourne l'énumération des attributs associés à un des enum contenus
+         *  dans Jeu.
+         *
+         *  @return     Un tableau des valeurs possibles associés à l'attribut de Jeu */
+        // TODO: Utiliser Enum Set serait probablement plus performant...
         public Enum[] getValues() {
             return values;
         }
@@ -64,12 +68,17 @@ public class Jeu implements Comparable<Jeu> {
         T("T"),
         M("M");
 
-        private String cote;
+        private final String cote;
 
         Cotes(String cote) {
             this.cote = cote;
         }
 
+        public String getCote() {
+            return cote;
+        }
+
+        @Override
         public String toString() {
             return cote;
         }
@@ -77,27 +86,56 @@ public class Jeu implements Comparable<Jeu> {
 
     // TODO: en-tête
     public enum Consoles {
-        PC("PC"),
-        GAMECUBE("GameCube"),
-        MAC("Mac"),
-        PS2("Playstation 2"),
-        PS4("Playstation 4"),
-        SWITCH("Switch"),
-        WIIU("Wii U"),
-        X360("Xbox 360"),
-        XONE("Xbox One");
+        PC("PC", "PC"),
+        GAMECUBE("GameCube", "GAMECUBE"),
+        MAC("Mac", "MAC"),
+        PS2("Playstation 2", "PS2"),
+        PS4("Playstation 4", "PS4"),
+        SWITCH("Switch", "SWITCH"),
+        WIIU("Wii U", "WIIU"),
+        X360("Xbox 360", "X360"),
+        XONE("Xbox One", "XONE");
 
-        private String console;
+        private final String console;
+        private final String abbreviation;
 
-        Consoles(String console) {
+        Consoles(String console, String abbreviation) {
             this.console = console;
+            this.abbreviation = abbreviation;
         }
 
+        @Override
         public String toString() {
             return console;
         }
+
+        public String getConsole() {
+            return console;
+        }
+
+        /*  Fonction qui retourne l'abbréviation associée au nom d'une console, nécessaire pour effectuer une
+         *  recherche dans la base de données ou pour enregistrer la base de données en format .txt
+         *
+         *  @return     L'abbréviation de la console en format String */
+        public String getAbbreviation() {
+            return abbreviation;
+        }
+
+        /*  Surcharge de la méthode. Permet d'être appelée statiquement pour comparer un String à l'ensemble
+         *  des constantes de l'enum Consoles.
+         *
+         *  @return     L'abbréviation de la console en format String */
+        public static String getAbbreviation(String console) {
+            for(Consoles c : Consoles.values()) {
+                if(console.equals(c.toString())) return c.abbreviation;
+            }
+            return null;
+        }
     }
 
+    /*****************************************************************************************************
+     * CODE PRINCIPAL DE LA CLASSE JEU
+     *****************************************************************************************************/
     public Jeu(String fabricant, String titre, String cote) {
         this.fabricant = fabricant;
         this.titre = titre;
@@ -202,5 +240,20 @@ public class Jeu implements Comparable<Jeu> {
         ligne.add(this.printConsoles(this.getConsoles()));
 
         return ligne;
+    }
+
+    /* Ajoute chaque Jeu contenu dans un ArrayList à un vecteur de vecteurs de String,
+     * afin de les afficher dans un JTable.
+     *
+     * @return	Un vecteur de vecteurs de String représentant les attributs de chaque jeu */
+    public static Vector<Vector<String>> vectoriserArrayList(ArrayList<Jeu> arrayList) {
+
+        Vector<Vector<String>> vecteurJeu = new Vector<>();
+
+        for (Jeu jeu: arrayList) {
+            vecteurJeu.add(jeu.vectoriser());
+        }
+
+        return vecteurJeu;
     }
 }

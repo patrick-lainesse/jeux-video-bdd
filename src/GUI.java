@@ -69,6 +69,7 @@ public class GUI extends JFrame implements ActionListener {
     public static final String TITRE_CONTENU_BDD = "Jeux contenus dans la base de donn\u00e9es";
     public static final String TITRE_AJOUT_JEU = "Ajouter un jeu";
     public static final String TITRE_RECH_JEU = "Rechercher un jeu";
+    public static final String TITRE_RESULTAT = "R\u00E9sultat de la recherche";
 
 
     /**
@@ -170,7 +171,7 @@ public class GUI extends JFrame implements ActionListener {
                 afficherBdd();
                 break;
             case RECHERCHE_JEU:
-                rechercheJeu();
+                formRechercheJeu();
                 break;
             case AJOUT_JEU:
                 ajouterJeu();
@@ -180,11 +181,15 @@ public class GUI extends JFrame implements ActionListener {
         }
     }
 
-    /* Crée un tableau qui prend toute la largeur du container principal pour y afficher
-     * la liste de jeux de la base de données et leurs attributs. */
+    /* Parcourt la base de données pour l'ajouter à un vecteur et l'afficher dans un tableau. */
     public void afficherBdd() {
+        Vector<Vector<String>> lignes = baseDeDonnees.vectoriser();
+        afficherResultat(lignes, TITRE_CONTENU_BDD);
+    }
 
-        viderContainer();
+    /* Crée un tableau qui prend toute la largeur du container principal pour y afficher
+     * le résultat d'une recherche de jeu(x). */
+    public void afficherResultat(Vector<Vector<String>> listeJeux, String titre) {
 
         // Crée l'en-tête du tableau
         Vector<String> nomColonnes = new Vector<>();
@@ -192,13 +197,12 @@ public class GUI extends JFrame implements ActionListener {
             nomColonnes.add(attribut.getAttribut());
         }
 
-        // Ajoute chaque jeu ligne par ligne au tableau
-        Vector<Vector<String>> lignes = baseDeDonnees.vectoriser();
+        // Crée une table pour afficher le tableau
+        JTable table = new JTable(listeJeux, nomColonnes);
 
-        // Ajoute le tableau au container principal du GUI
-        JTable table = new JTable(lignes, nomColonnes);
+        viderContainer();
         tableauScrollPane = new JScrollPane(table);
-        titrerPanel(tableauScrollPane, TITRE_CONTENU_BDD);
+        titrerPanel(tableauScrollPane, titre);
 
         container.add(tableauScrollPane, BorderLayout.CENTER);
         setVisible(true);
@@ -220,7 +224,7 @@ public class GUI extends JFrame implements ActionListener {
     /* Fait apparaître un formulaire pour saisir un fabricant et le titre d'un jeu.
      * Fait également apparaître un bouton qui, lorsque cliqué, lance la recherche dans la base de données.
      * Affiche ensuite les informations sur le jeu s'il est trouvé. */
-    public void rechercheJeu() {
+    public void formRechercheJeu() {
 
         preparerFormulaire(TITRE_RECH_JEU);
 
@@ -426,7 +430,13 @@ public class GUI extends JFrame implements ActionListener {
                     break;
                 case BTN_RECHERCHER:
                     Jeu jeuCherche = baseDeDonnees.getJeu(tfTitre.getText(), tfFabricant.getText());
-                    System.out.println(jeuCherche); // TODO: Afficher le résultat dans le container
+                    if (jeuCherche != null) {
+                        Vector<Vector<String>> jeu = new Vector<>();
+                        jeu.add(jeuCherche.vectoriser());
+                        afficherResultat(jeu, TITRE_RESULTAT);
+                    } else {
+                        // TODO: Implémenter dialogBox pour si non trouvé
+                    }
                     break;
             }
         }

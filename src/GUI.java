@@ -1,3 +1,15 @@
+///////////////////////////////////////////////////////////////////////////////
+//
+// Fichier de la classe Main:	GUI.java
+// Fichier:						GUI.java
+// Session:						Été 2020
+//
+// Auteur:						Patrick Lainesse
+// Matricule:					740302
+// Sources:						docs.oracle.com
+//								https://docs.oracle.com/javase/tutorial/displayCode.html?code=https://docs.oracle.com/javase/tutorial/uiswing/examples/misc/ActionDemoProject/src/misc/ActionDemo.java
+//////////////////////////////////////////////////////////////////////////////
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -62,6 +74,7 @@ public class GUI extends JFrame implements ActionListener {
     private static final String AJOUT_FICHIER = "Ajouter fichier de base de donn\u00e9es";
     private static final String RECHERCHE_JEU = "Rechercher un jeu";
     private static final String AJOUT_JEU = "+ Ajouter un nouveau jeu";
+    public static final String RECHERCHE_CONSOLE = "Afficher les jeux par console";
 
     public static final String BTN_AJOUT_JEU = "Ajouter le jeu";
     public static final String BTN_RECHERCHER = "Rechercher";
@@ -124,6 +137,10 @@ public class GUI extends JFrame implements ActionListener {
         menuItemCourant.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_J, 2));
         menuRecherche.add(menuItemCourant);
 
+        menuItemCourant = new JMenuItem(RECHERCHE_CONSOLE, KeyEvent.VK_M);
+        menuItemCourant.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M, 2));
+        menuRecherche.add(menuItemCourant);
+
         // Ajouter des écouteurs d'événements sur les options du menu
         for (int i = 0; i < menuBaseDonnees.getItemCount(); i++) {
             menuBaseDonnees.getItem(i).addActionListener(this);
@@ -176,7 +193,8 @@ public class GUI extends JFrame implements ActionListener {
             case AJOUT_JEU:
                 ajouterJeu();
                 break;
-            case BTN_AJOUT_JEU:
+            case RECHERCHE_CONSOLE:
+                frameConsole();
                 break;
         }
     }
@@ -193,7 +211,7 @@ public class GUI extends JFrame implements ActionListener {
 
         // Crée l'en-tête du tableau
         Vector<String> nomColonnes = new Vector<>();
-        for (Jeu.AttributsJeu attribut : Jeu.AttributsJeu.values()) {
+        for (Jeu.Attributs attribut : Jeu.Attributs.values()) {
             nomColonnes.add(attribut.getAttribut());
         }
 
@@ -229,8 +247,8 @@ public class GUI extends JFrame implements ActionListener {
         preparerFormulaire(TITRE_RECH_JEU);
 
         // Ajouter TextField pour saisir les infos du jeu à rechercher
-        tfFabricant = new CustomTxtField(Jeu.AttributsJeu.FABRICANT.getAttribut());
-        tfTitre = new CustomTxtField(Jeu.AttributsJeu.TITRE.getAttribut());
+        tfFabricant = new CustomTxtField(Jeu.Attributs.FABRICANT.getAttribut());
+        tfTitre = new CustomTxtField(Jeu.Attributs.TITRE.getAttribut());
 
         panelFormulaire.add(tfFabricant);
         panelFormulaire.add(tfTitre);
@@ -250,14 +268,14 @@ public class GUI extends JFrame implements ActionListener {
         preparerFormulaire(TITRE_AJOUT_JEU);
 
         // TextField pour saisir le fabricant et le titre du jeu
-        CustomTxtField tfFabricant = new CustomTxtField(Jeu.AttributsJeu.FABRICANT.getAttribut());
-        CustomTxtField tfTitre = new CustomTxtField(Jeu.AttributsJeu.TITRE.getAttribut());
+        CustomTxtField tfFabricant = new CustomTxtField(Jeu.Attributs.FABRICANT.getAttribut());
+        CustomTxtField tfTitre = new CustomTxtField(Jeu.Attributs.TITRE.getAttribut());
         panelFormulaire.add(tfFabricant);
         panelFormulaire.add(tfTitre);
 
         // Boutons radio pour le choix de la cote
-        CotesPanel cotesPanel = new CotesPanel();
-        panelFormulaire.add(cotesPanel);
+        RadioPanel radioPanel = new RadioPanel(Jeu.Attributs.COTE);
+        panelFormulaire.add(radioPanel);
 
         BoutonFlow bouton = new BoutonFlow(BTN_AJOUT_JEU);
         panelNorth.add(bouton, BorderLayout.EAST);
@@ -302,6 +320,18 @@ public class GUI extends JFrame implements ActionListener {
         container.repaint();
     }
 
+    public void frameConsole() {
+        JFrame fenetre = new JFrame();
+
+        // Boutons radio pour le choix de la console
+        RadioPanel panel = new RadioPanel(Jeu.Attributs.CONSOLES);
+        fenetre.add(panel);
+        fenetre.pack();
+        fenetre.setVisible(true);
+
+        // TODO: Ajouter bouton, rendu ici???
+    }
+
     public static void main(String[] args) {
         new GUI("Boutique de jeux vid\u00e9o");
     }
@@ -344,32 +374,41 @@ public class GUI extends JFrame implements ActionListener {
 
     /**
      * Classe pour gérer les boutons radio.
-     * Crée un JPanel pour le groupe de boutons radio afin de sélectionner la cote du jeu lors de sa création.
+     * Crée un JPanel pour un groupe de boutons radio selon un attribut de la classe Jeu.
      */
-    private static class CotesPanel extends JPanel {
+    private static class RadioPanel extends JPanel {
 
         private final ButtonGroup buttonGroup = new ButtonGroup();
+        private final JPanel panel;
 
-        public CotesPanel() {
+        /* Retourne la cote associée au bouton sélectionné.
+         * @param	Une des valeurs de l'enum des attributs de jeu (consoles ou cotes), lesquels contiennent
+         *          à leur tour un enum contenant les différentes consoles ou cotes possibles */
+        public RadioPanel(Jeu.Attributs attribut) {
 
-            JPanel panel = new JPanel();
-            JLabel jLabel = new JLabel("Cote");
+            panel = new JPanel();
 
+            JLabel jLabel = new JLabel(attribut.getAttribut());
             panel.add(jLabel);
 
-            // Ajouter un radio button pour chaque cote possible dans la classe Jeu
-            for (Jeu.Cotes cote : Jeu.Cotes.values()) {
-                JRadioButton radioButton = new JRadioButton(cote.getCote());
-                radioButton.setActionCommand(radioButton.getText());
+            // Ajouter un radio button pour chaque option possible de l'enum correspondant dans la classe Jeu
+            for (Enum item : attribut.getValues()) {
+                JRadioButton radioButton = new JRadioButton(item.toString());
+                System.out.println(item.toString());
                 panel.add(radioButton);
-                buttonGroup.add(radioButton);
-
-                // Sélectionner la cote "E" par défaut
-                if (buttonGroup.getSelection() == null) {
-                    buttonGroup.setSelected(radioButton.getModel(), true);
-                }
             }
             add(panel);
+        }
+
+        private void ajouterAuPanneau(JRadioButton radioButton) {
+            radioButton.setActionCommand(radioButton.getText());
+            panel.add(radioButton);
+            buttonGroup.add(radioButton);
+
+            // Sélectionner la cote "E" par défaut
+            if (buttonGroup.getSelection() == null) {
+                buttonGroup.setSelected(radioButton.getModel(), true);
+            }
         }
 
         /* Retourne la cote associée au bouton sélectionné.

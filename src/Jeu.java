@@ -20,29 +20,44 @@ public class Jeu implements Comparable<Jeu> {
     final private Collection<String> consoles;
 
     /*****************************************************************************************************
+     * ### Section ajoutée pour le TP2 ### TODO: Ajouter au Readme
+     *
      * CONSTANTES STRING
      * enum pour stocker des constantes String qui sont réutilisées à plusieurs endroits dans le code.
-     * *** Section ajoutée pour le TP2 *** TODO: Ajouter au Readme
      *****************************************************************************************************/
 
     // TODO: utiliser dans Jeu.java et Bdd.java
-    public enum AttributsJeu {
-        FABRICANT("Fabricant"),
-        TITRE("Titre"),
-        COTE("Cote"),
-        CONSOLES("Consoles");
+    // Todo: en-tête
+    public enum Attributs {
+        FABRICANT("Fabricant", null),
+        TITRE("Titre", null),
+        COTE("Cote", Cotes.values()),
+        CONSOLES("Consoles", Jeu.Consoles.values());
 
         private final String attribut;
+        private String stringValue;
+        Enum[] values;
 
-        AttributsJeu(String attribut) {
+        Attributs(String attribut, Enum[] values) {
             this.attribut = attribut;
+            this.values = values;
         }
 
         public String getAttribut() {
             return attribut;
         }
+
+        public Enum[] getValues() {
+            return values;
+        }
+
+        @Override
+        public String toString() {
+            return attribut;
+        }
     }
 
+    // TODO: en-tête
     public enum Cotes {
         E("E"),
         PG("PG"),
@@ -55,11 +70,33 @@ public class Jeu implements Comparable<Jeu> {
             this.cote = cote;
         }
 
-        public String getCote() {
+        public String toString() {
             return cote;
         }
     }
 
+    // TODO: en-tête
+    public enum Consoles {
+        PC("PC"),
+        GAMECUBE("GameCube"),
+        MAC("Mac"),
+        PS2("Playstation 2"),
+        PS4("Playstation 4"),
+        SWITCH("Switch"),
+        WIIU("Wii U"),
+        X360("Xbox 360"),
+        XONE("Xbox One");
+
+        private String console;
+
+        Consoles(String console) {
+            this.console = console;
+        }
+
+        public String toString() {
+            return console;
+        }
+    }
 
     public Jeu(String fabricant, String titre, String cote) {
         this.fabricant = fabricant;

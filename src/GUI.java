@@ -18,7 +18,7 @@ import java.util.*;
 import javax.swing.border.TitledBorder;
 
 // TODO: Créer une fonction pour lancer un dialog box avec les infos du jeu lorsqu'on double clique un jeu dans le tableau
-public class GUI extends JFrame /*implements ActionListener*/ {
+public class GUI extends JFrame {
 
     /**
      * Panneaux principaux où s'affichent les différents éléments graphiques de l'appli.
@@ -75,14 +75,9 @@ public class GUI extends JFrame /*implements ActionListener*/ {
     private static final String AJOUT_FICHIER = "Ajouter fichier de base de donn\u00e9es";
     private static final String RECHERCHE_JEU = "Rechercher un jeu";
     private static final String AJOUT_JEU = "+ Ajouter un nouveau jeu";
-    public static final String RECHERCHE_PAR_CONSOLE = "Afficher les jeux par console";
-    public static final String RECHERCHE_PAR_COTE = "Afficher les jeux par cote";
-    public static final String QUITTER = "Quitter";
-
-    public static final String BTN_AJOUT_JEU = "Ajouter le jeu";
-    public static final String BTN_RECHERCHER = "Rechercher";
-    public static final String BTN_RECHERCHE_COTE = "Afficher";
-    // TODO: Problème de plusieurs boutons avec même def...
+    private static final String RECHERCHE_PAR_CONSOLE = "Afficher les jeux par console";
+    private static final String RECHERCHE_PAR_COTE = "Afficher les jeux par cote";
+    private static final String QUITTER = "Quitter";
 
     public static final String TITRE_CONTENU_BDD = "Jeux contenus dans la base de donn\u00e9es";
     public static final String TITRE_AJOUT_JEU = "Ajouter un jeu";
@@ -130,7 +125,7 @@ public class GUI extends JFrame /*implements ActionListener*/ {
         public ActionCharger() {
             super(CHARGER);
             putValue(MNEMONIC_KEY, KeyEvent.VK_N);
-            putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_N, 2));
+            putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_DOWN_MASK));
         }
 
         public void actionPerformed(ActionEvent e) {
@@ -327,7 +322,7 @@ public class GUI extends JFrame /*implements ActionListener*/ {
         panelFormulaire.add(tfTitre);
 
         // Ajouter un bouton pour lancer la recherche
-        BoutonFlow bouton = new BoutonFlow(BTN_RECHERCHER);
+        BoutonFlow bouton = new BoutonFlow(new ActionBtnRechJeu());
         formParent.add(bouton, BorderLayout.EAST);
 
         setVisible(true);
@@ -352,7 +347,7 @@ public class GUI extends JFrame /*implements ActionListener*/ {
 
         // TODO: Liste des consoles en checkbox
 
-        BoutonFlow bouton = new BoutonFlow(BTN_AJOUT_JEU);
+        BoutonFlow bouton = new BoutonFlow(new ActionBtnAjoutJeu());
         formParent.add(bouton, BorderLayout.EAST);
 
         setVisible(true);
@@ -405,7 +400,7 @@ public class GUI extends JFrame /*implements ActionListener*/ {
         titrerPanel(radioPanelRecherche, TITRE_RECH_CONSOLES);
         fenetre.add(radioPanelRecherche, BorderLayout.CENTER);
 
-        BoutonFlow bouton = new BoutonFlow(BTN_RECHERCHER);
+        BoutonFlow bouton = new BoutonFlow(new ActionBtnRechConsole());
         fenetre.add(bouton, BorderLayout.SOUTH);
 
         fenetre.pack();
@@ -420,7 +415,7 @@ public class GUI extends JFrame /*implements ActionListener*/ {
         titrerPanel(radioPanelRecherche, TITRE_RECH_COTE);
         fenetre.add(radioPanelRecherche, BorderLayout.CENTER);
 
-        BoutonFlow bouton = new BoutonFlow(BTN_RECHERCHE_COTE);
+        BoutonFlow bouton = new BoutonFlow(new ActionBtnRechCote());
         fenetre.add(bouton, BorderLayout.SOUTH);
         fenetre.pack();
         fenetre.setVisible(true);
@@ -511,6 +506,69 @@ public class GUI extends JFrame /*implements ActionListener*/ {
         }
     }
 
+    /**TODO: Réécrire
+     * Classe pour ajouter et gérer les clics sur les boutons
+     *
+     * @requires Un formulaire déjà créé pour pouvoir aller chercher les données.
+     */
+    public class ActionBtnAjoutJeu extends AbstractAction {
+        public ActionBtnAjoutJeu() {
+            super(BoutonFlow.BTN_AJOUT_JEU);
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            Jeu nouveauJeu = new Jeu(tfFabricant.getText(), tfTitre.getText(), radioPanelRecherche.getChoix());
+            baseDeDonnees.addJeu(nouveauJeu);
+            afficherBdd();
+        }
+    }
+
+    public class ActionBtnRechJeu extends AbstractAction {
+        public ActionBtnRechJeu() {
+            super(BoutonFlow.BTN_RECHERCHER);
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            Jeu jeuCherche = baseDeDonnees.getJeu(tfTitre.getText(), tfFabricant.getText());
+            if (jeuCherche != null) {
+                Vector<Vector<String>> jeu = new Vector<>();
+                jeu.add(jeuCherche.vectoriser());
+                afficherResultat(jeu, TITRE_RESULTAT);
+            } else {
+                // TODO: Implémenter dialogBox pour si non trouvé
+            }
+        }
+    }
+
+    public class ActionBtnRechConsole extends AbstractAction {
+        public ActionBtnRechConsole() {
+            super(BoutonFlow.BTN_RECHERCHER);
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            String consoleCherchee = radioPanelRecherche.getChoix();
+            ArrayList<Jeu> listeJeux = baseDeDonnees.chercheConsole(Jeu.Consoles.getAbbreviation(consoleCherchee));
+
+            if (listeJeux != null) {
+                afficherResultat(Jeu.vectoriserArrayList(listeJeux), TITRE_RESULTAT);
+            } else {
+                // TODO: Implémenter dialogBox pour si non trouvé
+            }
+        }
+    }
+
+    public class ActionBtnRechCote extends AbstractAction {
+        public ActionBtnRechCote() {
+            super(BoutonFlow.BTN_RECHERCHER);
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            String coteCherchee = radioPanelRecherche.getChoix();
+            ArrayList<Jeu> liste = baseDeDonnees.chercheCote(coteCherchee);
+            afficherResultat(Jeu.vectoriserArrayList(liste), TITRE_RESULTAT);
+        }
+    }
+
     /**
      * Classe pour gérer les boutons. Crée un JPanel contenant un bouton.
      *
@@ -522,16 +580,17 @@ public class GUI extends JFrame /*implements ActionListener*/ {
         // Texte à afficher sur les différents boutons
         public static final String BTN_AJOUT_JEU = "Ajouter le jeu";
         public static final String BTN_RECHERCHER = "Rechercher";
+        // TODO: Un énum qui associe le texte et l'action du bouton?
+        // TODO: cette classe semble inutile avec les actions...
 
         private JButton bouton;
 
         /* Constructeur
-         * @parm nomBouton    Le texte qui s'affichera sur le bouton */
-        public BoutonFlow(String nomBouton) {
+         * @parm action    L'action associée au bouton */
+        public BoutonFlow(Action action) {
 
             setLayout(new FlowLayout());
-            JButton bouton = new JButton(nomBouton);
-            bouton.addActionListener(new ClickListener());
+            JButton bouton = new JButton(action);
             add(bouton);
         }
 
@@ -542,60 +601,6 @@ public class GUI extends JFrame /*implements ActionListener*/ {
 
         public JButton getBouton() {
             return bouton;
-        }
-    }
-
-    /**
-     * Classe pour ajouter et gérer les clics sur les boutons
-     *
-     * @requires Un formulaire déjà créé pour pouvoir aller chercher les données.
-     */
-    private class ClickListener implements ActionListener {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            // Identifier le bouton qui a déclenché l'action listener
-            JButton button = (JButton) e.getSource();
-
-            switch (button.getText()) {
-                case BTN_AJOUT_JEU:
-                    Jeu nouveauJeu = new Jeu(tfFabricant.getText(), tfTitre.getText(), radioPanelRecherche.getChoix());
-                    baseDeDonnees.addJeu(nouveauJeu);
-                    afficherBdd();
-                    break;
-                case BTN_RECHERCHER:
-
-                    JPanel panelBouton = (JPanel) button.getParent().getParent();
-
-                    // Si recherche d'un jeu en particulier
-                    if (panelBouton == formParent) {
-
-                        Jeu jeuCherche = baseDeDonnees.getJeu(tfTitre.getText(), tfFabricant.getText());
-                        if (jeuCherche != null) {
-                            Vector<Vector<String>> jeu = new Vector<>();
-                            jeu.add(jeuCherche.vectoriser());
-                            afficherResultat(jeu, TITRE_RESULTAT);
-                        } else {
-                            // TODO: Implémenter dialogBox pour si non trouvé
-                        }
-
-                        // Si recherche des jeux associés à une console
-                    } else {
-                        String consoleCherchee = radioPanelRecherche.getChoix();
-                        ArrayList<Jeu> listeJeux = baseDeDonnees.chercheConsole(Jeu.Consoles.getAbbreviation(consoleCherchee));
-
-                        if (listeJeux != null) {
-                            afficherResultat(Jeu.vectoriserArrayList(listeJeux), TITRE_RESULTAT);
-                        } else {
-                            // TODO: Implémenter dialogBox pour si non trouvé
-                        }
-                    }
-                    break;
-                case BTN_RECHERCHE_COTE:
-                    String coteCherchee = radioPanelRecherche.getChoix();
-                    ArrayList<Jeu> liste = baseDeDonnees.chercheCote(coteCherchee);
-                    afficherResultat(Jeu.vectoriserArrayList(liste), TITRE_RESULTAT);
-                    break;
-            }
         }
     }
 }

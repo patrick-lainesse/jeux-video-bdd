@@ -90,6 +90,7 @@ public class Jeu implements Comparable<Jeu> {
         GAMECUBE("GameCube", "GAMECUBE"),
         MAC("Mac", "MAC"),
         PS2("Playstation 2", "PS2"),
+        PS3("Playstation 3", "PS3"),
         PS4("Playstation 4", "PS4"),
         SWITCH("Switch", "SWITCH"),
         WIIU("Wii U", "WIIU"),

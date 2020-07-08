@@ -13,14 +13,14 @@
 import java.util.*;
 import java.io.*;
 
-public class Bdd implements TestInterface {
+public class Bdd {
 
 	private Map<String, TreeSet<Jeu>> baseDeDonnees;
 
     public Bdd() {
     	baseDeDonnees = new LinkedHashMap<>();
     }
-
+// TODO: vérifier code du prof et améliorer le mien si possible
 
     /* Vérifie si le fabricant et/ou le jeu existe déjà dans la base de données.
      * Si le jeu s'y retrouve déjà, ajout des consoles à l'entrée existante

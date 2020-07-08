@@ -321,6 +321,8 @@ public class GUI extends JFrame implements ActionListener {
     /* Vide le contenant principal de toutes ses composantes */
     public void viderContainer() {
         container.removeAll();
+        // TODO:
+        //  container.add(Box.createHorizontalStrut(100));
         container.repaint();
     }
 
@@ -328,7 +330,6 @@ public class GUI extends JFrame implements ActionListener {
         JFrame fenetre = new JFrame();
 
         // Boutons radio pour le choix de la console
-        //RadioPanel panel = new RadioPanel(Jeu.Attributs.CONSOLES);
         radioPanelRecherche = new RadioPanel(Jeu.Attributs.CONSOLES);
         fenetre.add(radioPanelRecherche, BorderLayout.CENTER);
 

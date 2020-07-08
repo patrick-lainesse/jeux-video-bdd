@@ -7,7 +7,7 @@
 // Auteur:						Patrick Lainesse
 // Matricule:					740302
 // Sources:						docs.oracle.com
-//								https://docs.oracle.com/javase/tutorial/displayCode.html?code=https://docs.oracle.com/javase/tutorial/uiswing/examples/misc/ActionDemoProject/src/misc/ActionDemo.java
+//								Utilisation des titre des border: https://www.codota.com/code/java/methods/javax.swing.border.TitledBorder/getTitle
 //////////////////////////////////////////////////////////////////////////////
 
 import javax.swing.*;
@@ -18,7 +18,7 @@ import java.util.*;
 import javax.swing.border.TitledBorder;
 
 // TODO: Créer une fonction pour lancer un dialog box avec les infos du jeu lorsqu'on double clique un jeu dans le tableau
-public class GUI extends JFrame implements ActionListener {
+public class GUI extends JFrame /*implements ActionListener*/ {
 
     /**
      * Panneaux principaux où s'affichent les différents éléments graphiques de l'appli.
@@ -75,17 +75,21 @@ public class GUI extends JFrame implements ActionListener {
     private static final String AJOUT_FICHIER = "Ajouter fichier de base de donn\u00e9es";
     private static final String RECHERCHE_JEU = "Rechercher un jeu";
     private static final String AJOUT_JEU = "+ Ajouter un nouveau jeu";
-    public static final String RECHERCHE_CONSOLE = "Afficher les jeux par console";
+    public static final String RECHERCHE_PAR_CONSOLE = "Afficher les jeux par console";
+    public static final String RECHERCHE_PAR_COTE = "Afficher les jeux par cote";
+    public static final String QUITTER = "Quitter";
 
     public static final String BTN_AJOUT_JEU = "Ajouter le jeu";
     public static final String BTN_RECHERCHER = "Rechercher";
+    public static final String BTN_RECHERCHE_COTE = "Afficher";
+    // TODO: Problème de plusieurs boutons avec même def...
 
     public static final String TITRE_CONTENU_BDD = "Jeux contenus dans la base de donn\u00e9es";
     public static final String TITRE_AJOUT_JEU = "Ajouter un jeu";
     public static final String TITRE_RECH_JEU = "Rechercher un jeu";
     public static final String TITRE_RECH_CONSOLES = "Afficher les jeux pour cette console";
+    public static final String TITRE_RECH_COTE = "Afficher les jeux par cote";  // TODO: Duplicata RECHERCHE
     public static final String TITRE_RESULTAT = "R\u00E9sultat de la recherche";
-
 
     /**
      * Messages pouvant s'afficher dans le programme
@@ -112,93 +116,160 @@ public class GUI extends JFrame implements ActionListener {
                           }
         );
 
-        // TODO: créer une classe ou fonction pour générer le menu
-        // Créer une barre de menu et les différents menus principaux
-        menu = new JMenuBar();
-        JMenu menuBaseDonnees = new JMenu(BDD);
-        JMenu menuRecherche = new JMenu(RECHERCHE);
-        JMenuItem menuItemCourant; // servira à ajouter les différents items aux menus
-
-        menuItemCourant = new JMenuItem(CHARGER, KeyEvent.VK_N);
-        menuItemCourant.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_DOWN_MASK));
-        menuBaseDonnees.add(menuItemCourant);
-
-        menuItemCourant = new JMenuItem(RAFRAICHIR);
-        menuItemCourant.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, 2));
-        menuBaseDonnees.add(menuItemCourant);
-
-        menuItemCourant = new JMenuItem(AJOUT_FICHIER, KeyEvent.VK_F);
-        menuItemCourant.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F, 2));
-        menuBaseDonnees.add(menuItemCourant);
-
-        menuItemCourant = new JMenuItem(AJOUT_JEU, KeyEvent.VK_PLUS);
-        menuItemCourant.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_EQUALS, 2));
-        menuBaseDonnees.add(menuItemCourant);
-
-        menuItemCourant = new JMenuItem(RECHERCHE_JEU, KeyEvent.VK_J);
-        menuItemCourant.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_J, 2));
-        menuRecherche.add(menuItemCourant);
-
-        menuItemCourant = new JMenuItem(RECHERCHE_CONSOLE, KeyEvent.VK_M);
-        menuItemCourant.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M, 2));
-        menuRecherche.add(menuItemCourant);
-
-        // Ajouter des écouteurs d'événements sur les options du menu
-        for (int i = 0; i < menuBaseDonnees.getItemCount(); i++) {
-            menuBaseDonnees.getItem(i).addActionListener(this);
-        }
-
-        for (int i = 0; i < menuRecherche.getItemCount(); i++) {
-            menuRecherche.getItem(i).addActionListener(this);
-        }
-
-        // Ajouter les menus à la barre de menus
-        menu.add(menuBaseDonnees);
-        menu.add(menuRecherche);
-
+        menu = creerMenu();
         setJMenuBar(menu);
-        setVisible(true);
 
-        // TODO: on ne peut pas sélectionner certaines options tant que pas charger une bdd
-        //menuItemCourant.setEnabled(false);
-        //menuItemCourant.setDisabledTextColor(Color.black);
+        setVisible(true);
     }
 
-    /* Redirige vers les fonctions pertinentes selon la sélection qui est faite dans le menu principal.
+    // TODO: on ne peut pas sélectionner certaines options tant que pas charger une bdd
+    /* TODO: Ancien en-tête
+     * Redirige vers les fonctions pertinentes selon la sélection qui est faite dans le menu principal.
      * @param   L'élément qui a été sélectionné. */
-    @Override
-    public void actionPerformed(ActionEvent e) {
-
-        // Déterminer quelle option du menu a été sélectionnée
-        switch (((JMenuItem) e.getSource()).getText()) {
-            case CHARGER:
-                String fichier = choisirFichier();
-                if (!fichier.equals(ANNULE)) {
-                    baseDeDonnees = new Bdd();
-                    baseDeDonnees.loadBdd(fichier);
-                    afficherBdd();
-                } else System.out.println(ANNULE);
-                break;
-            case RAFRAICHIR:
-                afficherBdd();
-                break;
-            case AJOUT_FICHIER:
-                String fichierAjout = choisirFichier();
-                if (!fichierAjout.equals(ANNULE)) {
-                    baseDeDonnees.addBdd(fichierAjout);
-                } else System.out.println(ANNULE);
-                afficherBdd();
-                break;
-            case RECHERCHE_JEU:
-                formRechercheJeu();
-                break;
-            case AJOUT_JEU:
-                ajouterJeu();
-                break;
-            case RECHERCHE_CONSOLE:
-                frameConsole();
-                break;
+    public class ActionCharger extends AbstractAction {
+        public ActionCharger() {
+            super(CHARGER);
+            putValue(MNEMONIC_KEY, KeyEvent.VK_N);
+            putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_N, 2));
         }
+
+        public void actionPerformed(ActionEvent e) {
+            String fichier = choisirFichier();
+            if (!fichier.equals(ANNULE)) {
+                baseDeDonnees = new Bdd();
+                baseDeDonnees.loadBdd(fichier);
+                afficherBdd();
+            } else System.out.println(ANNULE);
+        }
+    }
+
+    public class ActionRafraichir extends AbstractAction {
+        public ActionRafraichir() {
+            super(RAFRAICHIR);
+            putValue(MNEMONIC_KEY, KeyEvent.VK_R);
+            putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_R, 2));
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            afficherBdd();
+        }
+    }
+
+    public class ActionAjoutFichier extends AbstractAction {
+        public ActionAjoutFichier() {
+            super(AJOUT_FICHIER);
+            putValue(MNEMONIC_KEY, KeyEvent.VK_F);
+            putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_F, 2));
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            String fichierAjout = choisirFichier();
+            if (!fichierAjout.equals(ANNULE)) {
+                baseDeDonnees.addBdd(fichierAjout);
+            } else System.out.println(ANNULE);
+            afficherBdd();
+        }
+    }
+
+    public class ActionAjoutJeu extends AbstractAction {
+        public ActionAjoutJeu() {
+            super(AJOUT_JEU);
+            putValue(MNEMONIC_KEY, KeyEvent.VK_PLUS);
+            putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_EQUALS, 2));
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            ajouterJeu();
+        }
+    }
+
+    public static class ActionQuitter extends AbstractAction {
+        public ActionQuitter() {
+            super(QUITTER);
+            putValue(MNEMONIC_KEY, KeyEvent.VK_Q);
+            putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_Q, 2));
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            System.exit(0);
+        }
+    }
+
+    public class ActionRechJeu extends AbstractAction {
+        public ActionRechJeu() {
+            super(RECHERCHE_JEU);
+            putValue(MNEMONIC_KEY, KeyEvent.VK_J);
+            putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_J, 2));
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            formRechercheJeu();
+        }
+    }
+
+    public class ActionRechParConsole extends AbstractAction {
+        public ActionRechParConsole() {
+            super(RECHERCHE_PAR_CONSOLE);
+            putValue(MNEMONIC_KEY, KeyEvent.VK_M);
+            putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_M, 2));
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            frameConsole();
+        }
+    }
+
+    public class ActionRechParCote extends AbstractAction {
+        public ActionRechParCote() {
+            super(RECHERCHE_PAR_COTE);
+            putValue(MNEMONIC_KEY, KeyEvent.VK_C);
+            putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_C, 2));
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            frameCote();
+        }
+    }
+
+    // TODO: En-tête
+    public JMenuBar creerMenu() {
+
+        Action[] actionsBdd = {
+                new ActionCharger(),
+                new ActionRafraichir(),
+                new ActionAjoutFichier(),
+                new ActionAjoutJeu(),
+                new ActionQuitter()
+        };
+
+        Action[] actionsRecherche = {
+                new ActionRechJeu(),
+                new ActionRechParConsole(),
+                new ActionRechParCote()
+        };
+
+        JMenuItem menuItem = null;
+        JMenuBar menuBar;
+        menuBar = new JMenuBar();
+
+        // Créer les menus principaux
+        JMenu menuBaseDeDonnees = new JMenu(BDD);
+        JMenu menuRecherche = new JMenu(RECHERCHE);
+
+        for (int i = 0; i < actionsBdd.length; i++) {
+            menuItem = new JMenuItem(actionsBdd[i]);
+            menuBaseDeDonnees.add(menuItem);
+        }
+
+        for (int i = 0; i < actionsRecherche.length; i++) {
+            menuItem = new JMenuItem(actionsRecherche[i]);
+            menuRecherche.add(menuItem);
+        }
+
+        menuBar.add(menuBaseDeDonnees);
+        menuBar.add(menuRecherche);
+
+        return menuBar;
     }
 
     /* Parcourt la base de données pour l'ajouter à un vecteur et l'afficher dans un tableau. */
@@ -331,13 +402,26 @@ public class GUI extends JFrame implements ActionListener {
 
         // Boutons radio pour le choix de la console
         radioPanelRecherche = new RadioPanel(Jeu.Attributs.CONSOLES);
+        titrerPanel(radioPanelRecherche, TITRE_RECH_CONSOLES);
         fenetre.add(radioPanelRecherche, BorderLayout.CENTER);
 
-        // TODO: Ajouter bouton, rendu ici???
         BoutonFlow bouton = new BoutonFlow(BTN_RECHERCHER);
         fenetre.add(bouton, BorderLayout.SOUTH);
 
-        titrerPanel(radioPanelRecherche, TITRE_RECH_CONSOLES);
+        fenetre.pack();
+        fenetre.setVisible(true);
+    }
+
+    public void frameCote() {
+        JFrame fenetre = new JFrame();
+
+        // Boutons radio pour le choix de la console
+        radioPanelRecherche = new RadioPanel(Jeu.Attributs.COTE);
+        titrerPanel(radioPanelRecherche, TITRE_RECH_COTE);
+        fenetre.add(radioPanelRecherche, BorderLayout.CENTER);
+
+        BoutonFlow bouton = new BoutonFlow(BTN_RECHERCHE_COTE);
+        fenetre.add(bouton, BorderLayout.SOUTH);
         fenetre.pack();
         fenetre.setVisible(true);
     }
@@ -501,10 +585,16 @@ public class GUI extends JFrame implements ActionListener {
 
                         if (listeJeux != null) {
                             afficherResultat(Jeu.vectoriserArrayList(listeJeux), TITRE_RESULTAT);
-                        } else  {
+                        } else {
                             // TODO: Implémenter dialogBox pour si non trouvé
                         }
                     }
+                    break;
+                case BTN_RECHERCHE_COTE:
+                    String coteCherchee = radioPanelRecherche.getChoix();
+                    ArrayList<Jeu> liste = baseDeDonnees.chercheCote(coteCherchee);
+                    afficherResultat(Jeu.vectoriserArrayList(liste), TITRE_RESULTAT);
+                    break;
             }
         }
     }

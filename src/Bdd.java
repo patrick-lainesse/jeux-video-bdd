@@ -201,21 +201,23 @@ public class Bdd {
 	}
 
 	/* Affiche à l'écran toutes les informations relatives aux jeux ayant une cote passée en paramètre
+	 * ##### Modifiée pour le TP2, afin de faire afficher le résultat dans l'interface graphique #####
 	 *
 	 * @param cote			La cote pour laquelle on cherche à afficher une liste */
-	public void chercheCote(String cote) {
+	public ArrayList<Jeu> chercheCote(String cote) {
 
-		System.out.println("\nJeux ayant la cote recherchée:");
+		ArrayList<Jeu> liste = new ArrayList<>();
 		Set<String> cles = baseDeDonnees.keySet();
 		for (String cle: cles) {
 			TreeSet<Jeu> listeFabricant = baseDeDonnees.get(cle);
 
 			for (Jeu jeuCourant : listeFabricant) {
 				if (jeuCourant.getCote().equals(cote)) {
-					System.out.println(jeuCourant);
+					liste.add(jeuCourant);
 				}
 			}
 		}
+		return liste;
 	}
 
 	/* Redéfinition de la méthode toString pour écire les informations de la base de données sous le format:

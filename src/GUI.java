@@ -28,8 +28,8 @@ public class GUI extends JFrame implements ActionListener {
     private final Container container;
 
     // TODO: Réflichir à si c'est plus pertinent que ce soit global ou non.
-    JPanel panelNorth;
-    JPanel panelFormulaire;              // Affiche un formulaire pour saisir les informations 'un jeu
+    JPanel formParent;              // Panel qui reçoit le panel du formulaire, permet plus de flexibilité dans le layout
+    JPanel panelFormulaire;         // Affiche un formulaire pour saisir les informations 'un jeu
     JScrollPane tableauScrollPane;  // Affiche un tableau d'informations sur les jeux
     private Bdd baseDeDonnees;
 
@@ -39,7 +39,6 @@ public class GUI extends JFrame implements ActionListener {
 
     CustomTxtField tfFabricant;
     CustomTxtField tfTitre;
-
     RadioPanel radioPanelRecherche;      // TODO: expliquer qu'il sera utilisé seulement pour les recherches
     // TODO: ajouter les autres possibles
 
@@ -258,7 +257,7 @@ public class GUI extends JFrame implements ActionListener {
 
         // Ajouter un bouton pour lancer la recherche
         BoutonFlow bouton = new BoutonFlow(BTN_RECHERCHER);
-        panelNorth.add(bouton, BorderLayout.EAST);
+        formParent.add(bouton, BorderLayout.EAST);
 
         setVisible(true);
     }
@@ -270,9 +269,9 @@ public class GUI extends JFrame implements ActionListener {
 
         preparerFormulaire(TITRE_AJOUT_JEU);
 
-        // TextField pour saisir le fabricant et le titre du jeu
-        CustomTxtField tfFabricant = new CustomTxtField(Jeu.Attributs.FABRICANT.getAttribut());
-        CustomTxtField tfTitre = new CustomTxtField(Jeu.Attributs.TITRE.getAttribut());
+        // Zones de texte pour saisir le fabricant et le titre du jeu
+        tfFabricant = new CustomTxtField(Jeu.Attributs.FABRICANT.getAttribut());
+        tfTitre = new CustomTxtField(Jeu.Attributs.TITRE.getAttribut());
         panelFormulaire.add(tfFabricant);
         panelFormulaire.add(tfTitre);
 
@@ -280,8 +279,10 @@ public class GUI extends JFrame implements ActionListener {
         radioPanelRecherche = new RadioPanel(Jeu.Attributs.COTE);
         panelFormulaire.add(radioPanelRecherche);
 
+        // TODO: Liste des consoles en checkbox
+
         BoutonFlow bouton = new BoutonFlow(BTN_AJOUT_JEU);
-        panelNorth.add(bouton, BorderLayout.EAST);
+        formParent.add(bouton, BorderLayout.EAST);
 
         setVisible(true);
     }
@@ -308,13 +309,13 @@ public class GUI extends JFrame implements ActionListener {
         panelFormulaire.setLayout(new BoxLayout(panelFormulaire, BoxLayout.PAGE_AXIS));
         panelFormulaire.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        panelNorth = new JPanel();
-        panelNorth.setLayout(new BorderLayout());
-        panelNorth.add(panelFormulaire, BorderLayout.NORTH);
-        panelNorth.setAlignmentX(Component.LEFT_ALIGNMENT);
+        formParent = new JPanel();
+        formParent.setLayout(new BorderLayout());
+        formParent.add(panelFormulaire, BorderLayout.NORTH);
+        formParent.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        titrerPanel(panelNorth, titre);
-        container.add(panelNorth, BorderLayout.WEST);
+        titrerPanel(formParent, titre);
+        container.add(formParent, BorderLayout.WEST);
     }
 
     /* Vide le contenant principal de toutes ses composantes */
@@ -472,13 +473,16 @@ public class GUI extends JFrame implements ActionListener {
 
             switch (button.getText()) {
                 case BTN_AJOUT_JEU:
+                    Jeu nouveauJeu = new Jeu(tfFabricant.getText(), tfTitre.getText(), radioPanelRecherche.getChoix());
+                    baseDeDonnees.addJeu(nouveauJeu);
+                    afficherBdd();
                     break;
                 case BTN_RECHERCHER:
 
                     JPanel panelBouton = (JPanel) button.getParent().getParent();
 
                     // Si recherche d'un jeu en particulier
-                    if (panelBouton == panelNorth) {
+                    if (panelBouton == formParent) {
 
                         Jeu jeuCherche = baseDeDonnees.getJeu(tfTitre.getText(), tfFabricant.getText());
                         if (jeuCherche != null) {

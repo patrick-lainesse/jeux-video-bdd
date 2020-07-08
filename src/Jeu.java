@@ -32,7 +32,7 @@ public class Jeu implements Comparable<Jeu> {
         FABRICANT("Fabricant", null),
         TITRE("Titre", null),
         COTE("Cote", Cotes.values()),
-        CONSOLES("Consoles", Jeu.Consoles.values());
+        CONSOLES("Consoles", Consoles.values());
 
         private final String attribut;
         Enum[] values;

@@ -77,6 +77,7 @@ public class GUI extends JFrame {
     private static final String AJOUT_JEU = "+ Ajouter un nouveau jeu";
     private static final String RECHERCHE_PAR_CONSOLE = "Afficher les jeux par console";
     private static final String RECHERCHE_PAR_COTE = "Afficher les jeux par cote";
+    private static final String ENREGISTRER = "Enregistrer sous...";
     private static final String QUITTER = "Quitter";
 
     public static final String TITRE_CONTENU_BDD = "Jeux contenus dans la base de donn\u00e9es";
@@ -178,6 +179,30 @@ public class GUI extends JFrame {
         }
     }
 
+    public class ActionEnregistrer extends AbstractAction {
+        public ActionEnregistrer() {
+            super(ENREGISTRER);
+            putValue(MNEMONIC_KEY, KeyEvent.VK_S);
+            putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_S, 2));
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            final JFileChooser fileChooser = new JFileChooser();
+            int selectionne = fileChooser.showSaveDialog(menu);
+            String nomFichier;
+
+            if (selectionne == JFileChooser.APPROVE_OPTION) {
+                File fichier = fileChooser.getSelectedFile();
+                nomFichier = fichier.getAbsolutePath();
+            } else nomFichier = ANNULE;
+
+            if (!nomFichier.equals(ANNULE)) {
+                baseDeDonnees.saveBdd(nomFichier);
+                // TODO: Afficher DialoBox pour dire que ça s'est fait
+            } else System.out.println(ANNULE);
+        }
+    }
+
     public static class ActionQuitter extends AbstractAction {
         public ActionQuitter() {
             super(QUITTER);
@@ -214,6 +239,7 @@ public class GUI extends JFrame {
         }
     }
 
+    // TODO: Problème que reste affiché si trouve pas de jeu (avant d'ajouter nouvelle bdd par exemple)
     public class ActionRechParCote extends AbstractAction {
         public ActionRechParCote() {
             super(RECHERCHE_PAR_COTE);
@@ -234,6 +260,7 @@ public class GUI extends JFrame {
                 new ActionRafraichir(),
                 new ActionAjoutFichier(),
                 new ActionAjoutJeu(),
+                new ActionEnregistrer(),
                 new ActionQuitter()
         };
 

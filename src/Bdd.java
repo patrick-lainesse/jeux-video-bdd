@@ -247,9 +247,9 @@ public class Bdd {
 	/* Getter pour obtenir la base de données
 	 * @return		Une référence sur la base de données pour pouvoir y extraire des jeux */
 	// TODO: Vraiment nécessaire? Essayer de me débrouiller sans cette méthode
-	public Map<String, TreeSet<Jeu>> getBaseDeDonnees() {
+	/*public Map<String, TreeSet<Jeu>> getBaseDeDonnees() {
 		return baseDeDonnees;
-	}
+	}*/
 
 	/* Parcourt la base de données et ajoute un vecteur de String pour chacun des jeux, dans le but
 	 * de l'afficher dans un JTable.

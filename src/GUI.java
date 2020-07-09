@@ -19,11 +19,7 @@ import java.util.*;
 import java.util.List;
 import javax.swing.border.TitledBorder;
 
-// TODO: Améliorer l'apparence pour les radio buttons et checkbox, en metant le label centré encadré, deux rangées pour checkbox?
-// TODO: On ne peut pas sélectionner certaines options tant que pas charger une bdd, utiliser les actions pour ce faire
-// TODO: à propos de...
-// TODO: Créer une fonction pour lancer un dialog box avec les infos du jeu lorsqu'on double-clique un jeu dans le tableau
-@SuppressWarnings("DanglingJavadoc")
+// TODO: Améliorer l'apparence pour les radio buttons et checkbox, en mettant le label centré encadré, deux rangées pour checkbox?
 public class GUI extends JFrame {
 
     /**
@@ -133,6 +129,10 @@ public class GUI extends JFrame {
         JMenu menuBaseDeDonnees = new JMenu(BDD);
         JMenu menuRecherche = new JMenu(RECHERCHE);
 
+        // Ajouté ActionCharger séparément car ce sera la seule active
+        // TODO: Mettre enabled ActionCharger, et tout le reste disabled, puis rendre enabled après avoir chargé une bdd
+        //menuBaseDeDonnees.add(new JMenuItem(new ActionCharger()));
+
         // Ajoute les actions (et donc leurs descriptions) à la barre de menu
         for (Action action : actionsBdd) {
             menuItem = new JMenuItem(action);
@@ -146,6 +146,9 @@ public class GUI extends JFrame {
 
         menuBar.add(menuBaseDeDonnees);
         menuBar.add(menuRecherche);
+
+        // Ajouter l'option À propos à la barre de menu
+        menuBar.add(new JMenuItem(new ActionAPropos()));
         return menuBar;
     }
 
@@ -409,6 +412,32 @@ public class GUI extends JFrame {
             setVisible(true);
         }
     }
+
+    /* Affiche un frame avec les informations sur le programme. */
+    public class ActionAPropos extends AbstractAction {
+
+        public static final String A_PROPOS = "\u00C0 propos de Cataloguideo";
+        // TODO: Ajouter une variable statique version no et faire un append dans ce message
+        public static final String MSG_A_PROPOS =
+                "Cataloguideo\n\n" +
+                        "Version : 1.0.0\n\n" +
+                        "Cataloguideo est un logiciel de gestion de catalogue pour une boutique de jeux vid\u00E9o,\n" +
+                        "permettant d'obtenir des informations sur les jeux en stock en un temps rapide\n" +
+                        "et avec une interface agr\u00E9able \u00E0 l'oeil et \u00E0 l'utilisation." +
+                        "\n\nCopyright \u00A9 1996 Patrick Lainesse.\n" +
+                        "Matricule: 740302";
+
+        public ActionAPropos() {
+            super(A_PROPOS);
+        }
+
+        public void actionPerformed(ActionEvent e) {
+
+            // TODO: ajouter un icone avec un logo laid
+            JOptionPane.showMessageDialog(new JFrame(), MSG_A_PROPOS);
+        }
+    }
+
     /*****************************************************************************************************
      * Méthodes potentiellement réutilisables dans les actions
      *****************************************************************************************************/
@@ -420,6 +449,7 @@ public class GUI extends JFrame {
 
     /* Crée un tableau qui prend toute la largeur du container principal pour y afficher
      * le résultat d'une recherche de jeu(x). */
+    // TODO: Créer une fonction pour lancer un dialog box avec les infos du jeu lorsqu'on double-clique un jeu dans le tableau
     public void afficherResultat(Vector<Vector<String>> listeJeux, String titre) {
 
         // Crée l'en-tête du tableau
@@ -462,7 +492,7 @@ public class GUI extends JFrame {
     }
 
     /* Prépare le container principal pour y insérer des éléments de formulaires.
-     *  Éléments positionnés:
+     * Éléments positionnés:
      *           - panelFormulaire: Panneau contenant les zones de textes, boutons radio, etc, inséré dans le panelNorth
      *           - panelNorth: Panneau situé au haut du container principal.
      *                         Les boutons sont placés après le panneau du formulaire.
@@ -489,10 +519,6 @@ public class GUI extends JFrame {
         // TODO:
         //  container.add(Box.createHorizontalStrut(100));
         container.repaint();
-    }
-
-    public static void main(String[] args) {
-        new GUI("Boutique de jeux vid\u00e9o");
     }
 
 /*****************************************************************************************************
@@ -550,7 +576,7 @@ public class GUI extends JFrame {
 
             // Ajouter un checkbox pour chaque option possible de l'enum correspondant dans la classe Jeu
             for (Enum item : attribut.getValues()) {
-                JCheckBox checkbox = new JCheckBox(item.toString(),false);
+                JCheckBox checkbox = new JCheckBox(item.toString(), false);
                 panel.add(checkbox);
                 listeCB.add(checkbox);
             }
@@ -563,7 +589,7 @@ public class GUI extends JFrame {
 
             ArrayList<String> choix = new ArrayList<>();
 
-            for (JCheckBox checkbox: listeCB) {
+            for (JCheckBox checkbox : listeCB) {
                 if (checkbox.isSelected()) {
                     choix.add(checkbox.getText());
                 }
@@ -600,7 +626,6 @@ public class GUI extends JFrame {
         }
 
         private void ajouterAuPanneau(JRadioButton radioButton) {
-            radioButton.setActionCommand(radioButton.getText());    // TODO: nécessaire avec actions?
             panel.add(radioButton);
             buttonGroup.add(radioButton);
 
@@ -629,8 +654,6 @@ public class GUI extends JFrame {
         }
 
         public void actionPerformed(ActionEvent e) {
-            //Jeu nouveauJeu = new Jeu(tfFabricant.getText(), tfTitre.getText(), radioPanelRecherche.getChoix());
-
             // Vérifier si des consoles ont été sélectionnées, car il est possible d'ajouter un jeu sans y associer de consoles.
             Collection<String> choixConsoles = checkBoxPanelConsoles.getChoix();
             Jeu nouveauJeu;
@@ -743,5 +766,9 @@ public class GUI extends JFrame {
             JButton bouton = new JButton(action);
             add(bouton);
         }
+    }
+
+    public static void main(String[] args) {
+        new GUI("Cataloguideo");
     }
 }

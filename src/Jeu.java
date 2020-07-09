@@ -132,6 +132,17 @@ public class Jeu implements Comparable<Jeu> {
             }
             return null;
         }
+
+        public static Collection<String> getAbbreviation(Collection<String> listeConsoles) {
+
+            Collection<String> listeTraduite = new LinkedHashSet<>();
+
+            for (String nomConsole : listeConsoles) {
+                listeTraduite.add(Consoles.getAbbreviation(nomConsole));
+            }
+
+            return listeTraduite;
+        }
     }
 
     /*****************************************************************************************************
@@ -143,7 +154,13 @@ public class Jeu implements Comparable<Jeu> {
         this.cote = cote;
         consoles = new LinkedHashSet<>();
     }
-    // TODO: nouveau constructeur avec consoles
+
+    public Jeu(String fabricant, String titre, String cote, Collection<String> consoles) {
+        this.fabricant = fabricant;
+        this.titre = titre;
+        this.cote = cote;
+        this.consoles = consoles;
+    }
 
     /* Ajoute une console à la liste des consoles du jeu.
      * On peut simplement ajouter des consoles à la liste sans vérifier si elles s'y retrouvent déjà, car
@@ -153,7 +170,7 @@ public class Jeu implements Comparable<Jeu> {
     public void addConsole(String console) {
         consoles.add(console);
     }
-    // TODO: addConsole, probablement dans une option "modifier jeu" de GUI
+    // TODO: addConsole, probablement dans une option "modifier jeu" de GUI. Pour l'instant, utilisé par addBdd() dans Bdd.java
 
     /* Méthode toString() pour une liste de consoles associées au jeu, facilite l'écriture à l'écran ou dans un fichier txt
      * format: PS4,XONE,PC,MAC,SWITCH */

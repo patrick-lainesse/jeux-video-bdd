@@ -19,8 +19,10 @@ import java.util.*;
 import java.util.List;
 import javax.swing.border.TitledBorder;
 
-// TODO: on ne peut pas sélectionner certaines options tant que pas charger une bdd
-// TODO: Créer une fonction pour lancer un dialog box avec les infos du jeu lorsqu'on double clique un jeu dans le tableau
+// TODO: Améliorer l'apparence pour les radio buttons et checkbox, en metant le label centré encadré, deux rangées pour checkbox?
+// TODO: On ne peut pas sélectionner certaines options tant que pas charger une bdd, utiliser les actions pour ce faire
+// TODO: à propos de...
+// TODO: Créer une fonction pour lancer un dialog box avec les infos du jeu lorsqu'on double-clique un jeu dans le tableau
 @SuppressWarnings("DanglingJavadoc")
 public class GUI extends JFrame {
 
@@ -41,6 +43,7 @@ public class GUI extends JFrame {
     CustomTxtField tfFabricant;
     CustomTxtField tfTitre;
     RadioPanel radioPanelRecherche;
+    CheckBoxPanel checkBoxPanelConsoles;
 
     /**
      * Texte des options des menus
@@ -251,15 +254,14 @@ public class GUI extends JFrame {
             radioPanelRecherche = new RadioPanel(Jeu.Attributs.COTE);
             panelFormulaire.add(radioPanelRecherche);
 
-            // TODO: Liste des consoles en checkbox
-            panelFormulaire.add(new CheckBoxPanel(Jeu.Attributs.CONSOLES));
+            // Panel de checkboxes pour sélectionner des consoles
+            checkBoxPanelConsoles = new CheckBoxPanel(Jeu.Attributs.CONSOLES);
+            panelFormulaire.add(checkBoxPanelConsoles);
 
             BoutonFlow bouton = new BoutonFlow(new ActionBtnAjoutJeu());
             formParent.add(bouton, BorderLayout.EAST);
 
             setVisible(true);
-            JOptionPane.showMessageDialog(new JFrame(),
-                    "Jeu ajout\u00E9 \u00E0 la base de donn\u00E9es.");
         }
     }
 
@@ -555,11 +557,11 @@ public class GUI extends JFrame {
             add(panel);
         }
 
-        /* Retourne la cote associée au bouton sélectionné.
-         * @return	La cote sélectionnée pour le jeu à créer */
-        public ArrayList<String> getChoix() {
+        /* Parcourt les checkbox du panneau et retourne une liste des textes correspondant aux checkboxes
+         * @return	La liste de consoles sélectionnées par l'utilisateur */
+        public Collection<String> getChoix() {
 
-            ArrayList<String> choix = null;
+            ArrayList<String> choix = new ArrayList<>();
 
             for (JCheckBox checkbox: listeCB) {
                 if (checkbox.isSelected()) {
@@ -627,8 +629,25 @@ public class GUI extends JFrame {
         }
 
         public void actionPerformed(ActionEvent e) {
-            Jeu nouveauJeu = new Jeu(tfFabricant.getText(), tfTitre.getText(), radioPanelRecherche.getChoix());
+            //Jeu nouveauJeu = new Jeu(tfFabricant.getText(), tfTitre.getText(), radioPanelRecherche.getChoix());
+
+            // Vérifier si des consoles ont été sélectionnées, car il est possible d'ajouter un jeu sans y associer de consoles.
+            Collection<String> choixConsoles = checkBoxPanelConsoles.getChoix();
+            Jeu nouveauJeu;
+
+            if (choixConsoles.isEmpty()) {
+                nouveauJeu = new Jeu(tfFabricant.getText(), tfTitre.getText(), radioPanelRecherche.getChoix());
+            } else {
+                /* Convertir les choix écrits au long en abbréviation pour comparer à la base de données
+                   Par exemple, Playstation 4 devient PS4 */
+                choixConsoles = Jeu.Consoles.getAbbreviation(choixConsoles);
+                nouveauJeu = new Jeu(tfFabricant.getText(), tfTitre.getText(), radioPanelRecherche.getChoix(), choixConsoles);
+            }
+
             baseDeDonnees.addJeu(nouveauJeu);
+
+            JOptionPane.showMessageDialog(new JFrame(),
+                    "Jeu ajout\u00E9 \u00E0 la base de donn\u00E9es.");
             afficherBdd();
         }
     }

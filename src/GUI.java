@@ -43,6 +43,7 @@ public class GUI extends JFrame {
 
     /**
      * Texte des options des menus
+     * TODO: Réécrire en deux enum, un par sous-menu, qui associe texte et action (éventuellement icône, etc.)
      */
     private static final String BDD = "Base de donn\u00e9es";
     private static final String RECHERCHE = "Recherche";
@@ -54,6 +55,7 @@ public class GUI extends JFrame {
     private static final String AJOUT_JEU = "+ Ajouter un nouveau jeu";
     private static final String RECHERCHE_PAR_CONSOLE = "Afficher les jeux par console";
     private static final String RECHERCHE_PAR_COTE = "Afficher les jeux par cote";
+    private static final String RECHERCHE_PAR_FABRICANT = "Afficher les jeux par fabricant";
     private static final String ENREGISTRER = "Enregistrer sous...";
     private static final String QUITTER = "Quitter";
 
@@ -115,7 +117,8 @@ public class GUI extends JFrame {
         Action[] actionsRecherche = {
                 new ActionRechJeu(),
                 new ActionRechParConsole(),
-                new ActionRechParCote()
+                new ActionRechParCote(),
+                new ActionRechParFabricant()
         };
 
         JMenuItem menuItem;
@@ -379,6 +382,29 @@ public class GUI extends JFrame {
         }
     }
 
+    /* Affiche un text field pour saisir un fabricant et afficher la liste de jeux
+     * publiés par ce fabricant. Aucun raccourcé clavier n'est associé à cette action. */
+    public class ActionRechParFabricant extends AbstractAction {
+        public ActionRechParFabricant() {
+            super(RECHERCHE_PAR_FABRICANT);
+        }
+
+        public void actionPerformed(ActionEvent e) {
+
+            // Zone de texte pour saisir le nom du fabricant
+            preparerFormulaire(TITRE_RECH_JEU);
+
+            // Ajouter TextField pour saisir les infos du jeu à rechercher
+            tfFabricant = new CustomTxtField(Jeu.Attributs.FABRICANT.getAttribut());
+            panelFormulaire.add(tfFabricant);
+
+            // Ajouter un bouton pour lancer la recherche
+            BoutonFlow bouton = new BoutonFlow(new ActionBtnRechFabricant());
+            formParent.add(bouton, BorderLayout.EAST);
+
+            setVisible(true);
+        }
+    }
     /*****************************************************************************************************
      * Méthodes potentiellement réutilisables dans les actions
      *****************************************************************************************************/
@@ -549,6 +575,7 @@ public class GUI extends JFrame {
     /**
      * ***************************** ACTIONS DES BOUTONS ***********************************************************
      * Action associés aux différents boutons du programme.
+     * *************************************************************************************************************
      */
     public class ActionBtnAjoutJeu extends AbstractAction {
         public ActionBtnAjoutJeu() {
@@ -611,6 +638,23 @@ public class GUI extends JFrame {
             } else {
                 JOptionPane.showMessageDialog(new JFrame(),
                         "Aucun jeu associé à cette cote dans la base de données.");
+            }
+        }
+    }
+
+    public class ActionBtnRechFabricant extends AbstractAction {
+        public ActionBtnRechFabricant() {
+            super(BoutonFlow.BTN_RECHERCHER);
+        }
+
+        public void actionPerformed(ActionEvent e) {
+
+            Collection<Jeu> listeJeux = baseDeDonnees.getJeuxFabricant(tfFabricant.getText());
+            if (listeJeux != null) {
+                afficherResultat(Jeu.vectoriserArrayList(listeJeux), TITRE_RESULTAT);
+            } else {
+                JOptionPane.showMessageDialog(new JFrame(),
+                        "Aucun jeu ne correspond à ce fabricant dans la base de données.");
             }
         }
     }

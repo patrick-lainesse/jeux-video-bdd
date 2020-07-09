@@ -249,7 +249,8 @@ public class Jeu implements Comparable<Jeu> {
      * afin de les afficher dans un JTable.
      *
      * @return	Un vecteur de vecteurs de String représentant les attributs de chaque jeu */
-    public static Vector<Vector<String>> vectoriserArrayList(ArrayList<Jeu> arrayList) {
+    //public static Vector<Vector<String>> vectoriserArrayList(ArrayList<Jeu> arrayList) {
+    public static Vector<Vector<String>> vectoriserArrayList(Collection<Jeu> arrayList) {
 
         Vector<Vector<String>> vecteurJeu = new Vector<>();
 

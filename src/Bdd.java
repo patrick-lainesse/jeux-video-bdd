@@ -13,6 +13,8 @@
 import java.util.*;
 import java.io.*;
 
+// TODO: vérifier code du prof et améliorer le mien si possible
+// TODO: Améliorer les recherches avec toUpper pour ignorer la casse
 public class Bdd {
 
 	private Map<String, TreeSet<Jeu>> baseDeDonnees;
@@ -20,7 +22,6 @@ public class Bdd {
     public Bdd() {
     	baseDeDonnees = new LinkedHashMap<>();
     }
-// TODO: vérifier code du prof et améliorer le mien si possible
 
     /* Vérifie si le fabricant et/ou le jeu existe déjà dans la base de données.
      * Si le jeu s'y retrouve déjà, ajout des consoles à l'entrée existante
@@ -172,7 +173,6 @@ public class Bdd {
 	 *
 	 * @param fabricant		Fabricant pour lequel on veut imprimer la liste
 	 * @return		Collection contenant la liste des jeux associés à ce fabricant, null si ne s'y trouve pas */
-	// TODO: getJeuxFabricant
 	public Collection<Jeu> getJeuxFabricant(String fabricant) { return baseDeDonnees.get(fabricant); }
 
 	/* Écrit les informations de la base de données dans un fichier .txt sous le format:

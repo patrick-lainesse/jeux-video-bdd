@@ -16,6 +16,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
 import java.util.*;
+import java.util.List;
 import javax.swing.border.TitledBorder;
 
 // TODO: on ne peut pas sélectionner certaines options tant que pas charger une bdd
@@ -251,6 +252,7 @@ public class GUI extends JFrame {
             panelFormulaire.add(radioPanelRecherche);
 
             // TODO: Liste des consoles en checkbox
+            panelFormulaire.add(new CheckBoxPanel(Jeu.Attributs.CONSOLES));
 
             BoutonFlow bouton = new BoutonFlow(new ActionBtnAjoutJeu());
             formParent.add(bouton, BorderLayout.EAST);
@@ -528,6 +530,48 @@ public class GUI extends JFrame {
     }
 
     /**
+     * Classe pour gérer les checkboxes.
+     * Crée un JPanel pour un groupe de checkboxes, permettant la sélection de plusieurs consoles.
+     */
+    private static class CheckBoxPanel extends JPanel {
+
+        private List<JCheckBox> listeCB = new LinkedList<>();
+
+        /* Constructeur du panel
+         * @param	Une des valeurs de l'enum des Attributs de jeu (consoles), lequel contient
+         *          à son tour un enum contenant les différentes consoles possibles */
+        public CheckBoxPanel(Jeu.Attributs attribut) {
+
+            JPanel panel = new JPanel();
+            JLabel jLabel = new JLabel(attribut.getAttribut());
+            panel.add(jLabel);
+
+            // Ajouter un checkbox pour chaque option possible de l'enum correspondant dans la classe Jeu
+            for (Enum item : attribut.getValues()) {
+                JCheckBox checkbox = new JCheckBox(item.toString(),false);
+                panel.add(checkbox);
+                listeCB.add(checkbox);
+            }
+            add(panel);
+        }
+
+        /* Retourne la cote associée au bouton sélectionné.
+         * @return	La cote sélectionnée pour le jeu à créer */
+        public ArrayList<String> getChoix() {
+
+            ArrayList<String> choix = null;
+
+            for (JCheckBox checkbox: listeCB) {
+                if (checkbox.isSelected()) {
+                    choix.add(checkbox.getText());
+                }
+
+            }
+            return choix;
+        }
+    }
+
+    /**
      * Classe pour gérer les boutons radio.
      * Crée un JPanel pour un groupe de boutons radio selon un attribut enum de la classe Jeu.
      */
@@ -536,7 +580,7 @@ public class GUI extends JFrame {
         private final ButtonGroup buttonGroup = new ButtonGroup();
         private final JPanel panel;
 
-        /* Retourne la cote associée au bouton sélectionné.
+        /* Constructeur du panel
          * @param	Une des valeurs de l'enum des Attributs de jeu (consoles ou cotes), lesquels contiennent
          *          à leur tour un enum contenant les différentes consoles ou cotes possibles */
         public RadioPanel(Jeu.Attributs attribut) {
@@ -554,7 +598,7 @@ public class GUI extends JFrame {
         }
 
         private void ajouterAuPanneau(JRadioButton radioButton) {
-            radioButton.setActionCommand(radioButton.getText());
+            radioButton.setActionCommand(radioButton.getText());    // TODO: nécessaire avec actions?
             panel.add(radioButton);
             buttonGroup.add(radioButton);
 

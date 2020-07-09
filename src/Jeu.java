@@ -37,7 +37,7 @@ public class Jeu implements Comparable<Jeu> {
         CONSOLES("Consoles", Consoles.values());
 
         private final String attribut;
-        Enum[] values;
+        final Enum[] values;
 
         Attributs(String attribut, Enum[] values) {
             this.attribut = attribut;

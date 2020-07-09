@@ -20,6 +20,7 @@ import javax.swing.border.TitledBorder;
 
 // TODO: on ne peut pas sélectionner certaines options tant que pas charger une bdd
 // TODO: Créer une fonction pour lancer un dialog box avec les infos du jeu lorsqu'on double clique un jeu dans le tableau
+@SuppressWarnings("DanglingJavadoc")
 public class GUI extends JFrame {
 
     /**
@@ -475,7 +476,7 @@ public class GUI extends JFrame {
     private static class CustomTxtField extends JPanel {
 
         public final Dimension TXT_FIELD_SIZE = new Dimension(700, 20);
-        JTextField jTextField;
+        final JTextField jTextField;
 
         /* Constructeur
          * @parm nomLabel    Le texte du label qui s'affichera à côté du JTextField */
@@ -574,7 +575,7 @@ public class GUI extends JFrame {
                 afficherResultat(jeu, TITRE_RESULTAT);
             } else {
                 JOptionPane.showMessageDialog(new JFrame(),
-                        "Aucun jeu ne correspond à ces critères dans la base de données.");
+                        "Aucun jeu ne correspond \u00E0 ces crit\u00E8res dans la base de donn\u00E9es.");
             }
         }
     }
@@ -617,10 +618,10 @@ public class GUI extends JFrame {
     /**
      * Classe pour gérer les boutons. Crée un JPanel contenant un bouton.
      *
-     * @requires Un formulaire déjà créé (des TextFields) pour que le ActionListener puisse aller chercher les données
+     * @requires formulaire déjà créé (des TextFields) pour que le ActionListener puisse aller chercher les données
      * nécessaires pour lancer la méthode associée.
      */
-    private class BoutonFlow extends JPanel {
+    private static class BoutonFlow extends JPanel {
 
         // Texte à afficher sur les différents boutons
         public static final String BTN_AJOUT_JEU = "Ajouter le jeu";

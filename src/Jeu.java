@@ -27,7 +27,9 @@ public class Jeu implements Comparable<Jeu> {
      *****************************************************************************************************/
 
     // TODO: utiliser dans Jeu.java et Bdd.java
-    // Todo: en-tête
+    /**
+     * enum contenant la liste des attributs d'un jeu, ainsi que l'enum qui est associé à cet attribut lorsqu'il existe.
+     */
     public enum Attributs {
         FABRICANT("Fabricant", null),
         TITRE("Titre", null),
@@ -50,7 +52,7 @@ public class Jeu implements Comparable<Jeu> {
          *  dans Jeu.
          *
          *  @return     Un tableau des valeurs possibles associés à l'attribut de Jeu */
-        // TODO: Utiliser Enum Set serait probablement plus performant...
+        // TODO: Utiliser Enum Set serait probablement plus performant
         public Enum[] getValues() {
             return values;
         }
@@ -61,7 +63,6 @@ public class Jeu implements Comparable<Jeu> {
         }
     }
 
-    // TODO: en-tête
     public enum Cotes {
         E("E"),
         PG("PG"),
@@ -84,7 +85,6 @@ public class Jeu implements Comparable<Jeu> {
         }
     }
 
-    // TODO: en-tête
     public enum Consoles {
         PC("PC", "PC"),
         GAMECUBE("GameCube", "GAMECUBE"),
@@ -143,6 +143,7 @@ public class Jeu implements Comparable<Jeu> {
         this.cote = cote;
         consoles = new LinkedHashSet<>();
     }
+    // TODO: nouveau constructeur avec consoles
 
     /* Ajoute une console à la liste des consoles du jeu.
      * On peut simplement ajouter des consoles à la liste sans vérifier si elles s'y retrouvent déjà, car
@@ -152,6 +153,7 @@ public class Jeu implements Comparable<Jeu> {
     public void addConsole(String console) {
         consoles.add(console);
     }
+    // TODO: addConsole, probablement dans une option "modifier jeu" de GUI
 
     /* Méthode toString() pour une liste de consoles associées au jeu, facilite l'écriture à l'écran ou dans un fichier txt
      * format: PS4,XONE,PC,MAC,SWITCH */
@@ -225,7 +227,7 @@ public class Jeu implements Comparable<Jeu> {
     }
 
     /*****************************************************************************************************
-     * Fonction utiles pour transposer à l'interface graphique (GUI)
+     * Fonction pour faciliter la transposition à l'interface graphique (GUI)
      *****************************************************************************************************/
 
     /* Place chacun des attribut du jeu dans un vecteur de String, afin de faciliter son ajout sous forme d'une

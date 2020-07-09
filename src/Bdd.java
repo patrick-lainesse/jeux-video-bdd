@@ -172,6 +172,7 @@ public class Bdd {
 	 *
 	 * @param fabricant		Fabricant pour lequel on veut imprimer la liste
 	 * @return		Collection contenant la liste des jeux associés à ce fabricant, null si ne s'y trouve pas */
+	// TODO: getJeuxFabricant
 	public Collection<Jeu> getJeuxFabricant(String fabricant) { return baseDeDonnees.get(fabricant); }
 
 	/* Écrit les informations de la base de données dans un fichier .txt sous le format:
@@ -243,13 +244,6 @@ public class Bdd {
 	/*****************************************************************************************************
 	 * Fonction utiles pour transposer à l'interface graphique (GUI)
 	 *****************************************************************************************************/
-
-	/* Getter pour obtenir la base de données
-	 * @return		Une référence sur la base de données pour pouvoir y extraire des jeux */
-	// TODO: Vraiment nécessaire? Essayer de me débrouiller sans cette méthode
-	/*public Map<String, TreeSet<Jeu>> getBaseDeDonnees() {
-		return baseDeDonnees;
-	}*/
 
 	/* Parcourt la base de données et ajoute un vecteur de String pour chacun des jeux, dans le but
 	 * de l'afficher dans un JTable.

@@ -23,4 +23,4 @@ méthodes qui ajoutent les données à des vecteurs de String pour faciliter l'a
 Code de l'interface graphique. Utilise des actions pour simplifier la lecture du code, qui associent des éléments de
 la barre de menu à des raccourcis clavier. Une autre section du code rassemble les actions associées aux boutons qui
 s'affichent sous les formulaires pour saisir des données ou des critères de recherche. Utilise également plusieurs classes
-internes pour simplifier l'utilisation des éléments de formulaires (textfields, radiobuttons, checkboxes, etc.)
+internes pour simplifier l'utilisation des éléments de formulaires (textfields, radiobuttons, checkboxes, etc.).

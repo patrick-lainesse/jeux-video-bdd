@@ -20,7 +20,7 @@ public class Jeu implements Comparable<Jeu> {
     final private Collection<String> consoles;
 
     /*****************************************************************************************************
-     * ### Section ajoutée pour le TP2 ### TODO: Ajouter au Readme
+     * ### Section ajoutée pour le TP2 ###
      *
      * CONSTANTES STRING
      * enum pour stocker des constantes String qui sont réutilisées à plusieurs endroits dans le code.

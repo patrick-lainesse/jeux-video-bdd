@@ -14,7 +14,7 @@ import java.util.*;
 import java.io.*;
 
 // TODO: vérifier code du prof et améliorer le mien si possible
-// TODO: Améliorer les recherches avec toUpper pour ignorer la casse
+// TODO: Améliorer les recherches avec toUpper pour ignorer la casse --> se fera avec la partie Bdd et le mot-clé LIKE
 public class Bdd {
 
 	private Map<String, TreeSet<Jeu>> baseDeDonnees;

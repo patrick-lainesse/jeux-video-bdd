@@ -19,7 +19,8 @@ import java.util.*;
 import java.util.List;
 import javax.swing.border.TitledBorder;
 
-// TODO: Améliorer l'apparence pour les radio buttons et checkbox, en mettant le label centré encadré, deux rangées pour checkbox?
+// TODO: Label des boutons radio et checkbox mal aligné
+// TODO: Padding au haut de chaque frame sauf les tableaux
 public class GUI extends JFrame {
 
     /**
@@ -340,7 +341,7 @@ public class GUI extends JFrame {
         }
     }
 
-    /* Affiche une nouvelle fenêtre avec une série de boutons radio invitant l'utilisateur à sélectionner une console.
+    /* Affiche une série de boutons radio invitant l'utilisateur à sélectionner une console.
      * Affiche ensuite dans un tableau les infos des jeux disponibles sur la console sélectionnée. */
     public class ActionRechParConsole extends AbstractAction {
         public ActionRechParConsole() {
@@ -350,22 +351,20 @@ public class GUI extends JFrame {
         }
 
         public void actionPerformed(ActionEvent e) {
-            JFrame fenetre = new JFrame();
+
+            preparerFormulaire(TITRE_RECH_CONSOLES);
 
             // Boutons radio pour le choix de la console
             radioPanelRecherche = new RadioPanel(Jeu.Attributs.CONSOLES);
-            titrerPanel(radioPanelRecherche, TITRE_RECH_CONSOLES);
-            fenetre.add(radioPanelRecherche, BorderLayout.CENTER);
-
             BoutonFlow bouton = new BoutonFlow(new ActionBtnRechConsole());
-            fenetre.add(bouton, BorderLayout.SOUTH);
 
-            fenetre.pack();
-            fenetre.setVisible(true);
+            panelFormulaire.add(radioPanelRecherche);
+            panelFormulaire.add(bouton);
+            setVisible(true);
         }
     }
 
-    /* Affiche une nouvelle fenêtre avec une série de boutons radio invitant l'utilisateur à sélectionner une cote.
+    /* Affiche une série de boutons radio invitant l'utilisateur à sélectionner une cote.
      * Affiche ensuite dans un tableau les infos des jeux disponibles pour la cote sélectionnée. */
     public class ActionRechParCote extends AbstractAction {
         public ActionRechParCote() {
@@ -375,17 +374,18 @@ public class GUI extends JFrame {
         }
 
         public void actionPerformed(ActionEvent e) {
-            JFrame fenetre = new JFrame();
+            preparerFormulaire(TITRE_RECH_COTE);
 
             // Boutons radio pour le choix de la console
             radioPanelRecherche = new RadioPanel(Jeu.Attributs.COTE);
-            titrerPanel(radioPanelRecherche, TITRE_RECH_COTE);
-            fenetre.add(radioPanelRecherche, BorderLayout.CENTER);
+            panelFormulaire.add(radioPanelRecherche);
 
             BoutonFlow bouton = new BoutonFlow(new ActionBtnRechCote());
-            fenetre.add(bouton, BorderLayout.SOUTH);
-            fenetre.pack();
-            fenetre.setVisible(true);
+            panelFormulaire.add(bouton);
+
+            // Ajuster la taille du formulaire pour que le titre s'affiche au complet
+            panelFormulaire.setPreferredSize(new Dimension(200, 200));
+            setVisible(true);
         }
     }
 
@@ -414,7 +414,7 @@ public class GUI extends JFrame {
     }
 
     /* Affiche un frame avec les informations sur le programme. */
-    public class ActionAPropos extends AbstractAction {
+    public static class ActionAPropos extends AbstractAction {
 
         public static final String A_PROPOS = "\u00C0 propos de Cataloguideo";
         // TODO: Ajouter une variable statique version no et faire un append dans ce message
@@ -516,8 +516,6 @@ public class GUI extends JFrame {
     /* Vide le contenant principal de toutes ses composantes */
     public void viderContainer() {
         container.removeAll();
-        // TODO:
-        //  container.add(Box.createHorizontalStrut(100));
         container.repaint();
     }
 
@@ -561,26 +559,34 @@ public class GUI extends JFrame {
      * Classe pour gérer les checkboxes.
      * Crée un JPanel pour un groupe de checkboxes, permettant la sélection de plusieurs consoles.
      */
-    private static class CheckBoxPanel extends JPanel {
+    private class CheckBoxPanel extends JPanel {
 
-        private List<JCheckBox> listeCB = new LinkedList<>();
+        private final List<JCheckBox> listeCB = new LinkedList<>();
 
         /* Constructeur du panel
          * @param	Une des valeurs de l'enum des Attributs de jeu (consoles), lequel contient
          *          à son tour un enum contenant les différentes consoles possibles */
         public CheckBoxPanel(Jeu.Attributs attribut) {
 
+            /* Créer un panel pour recevoir seulement les checkbox, placées en deux rangées,
+             * et un autre pour recevoir le label. */
             JPanel panel = new JPanel();
+            JPanel panelCB = new JPanel();
+
+            GridLayout layout = new GridLayout(0, 2);
+
+            panelCB.setLayout(layout);
             JLabel jLabel = new JLabel(attribut.getAttribut());
             panel.add(jLabel);
 
             // Ajouter un checkbox pour chaque option possible de l'enum correspondant dans la classe Jeu
             for (Enum item : attribut.getValues()) {
                 JCheckBox checkbox = new JCheckBox(item.toString(), false);
-                panel.add(checkbox);
+                panelCB.add(checkbox);
                 listeCB.add(checkbox);
             }
-            add(panel);
+            panel.add(panelCB);
+            panelFormulaire.add(panel);
         }
 
         /* Parcourt les checkbox du panneau et retourne une liste des textes correspondant aux checkboxes
@@ -603,30 +609,37 @@ public class GUI extends JFrame {
      * Classe pour gérer les boutons radio.
      * Crée un JPanel pour un groupe de boutons radio selon un attribut enum de la classe Jeu.
      */
-    private static class RadioPanel extends JPanel {
+    private class RadioPanel extends JPanel {
 
+        /* Créer un panel pour recevoir seulement les radio buttons, placées en deux rangées.
+         * Le panel du formulaire reçoit le label. */
         private final ButtonGroup buttonGroup = new ButtonGroup();
-        private final JPanel panel;
+        private final JPanel panelBoutons;
 
         /* Constructeur du panel
          * @param	Une des valeurs de l'enum des Attributs de jeu (consoles ou cotes), lesquels contiennent
          *          à leur tour un enum contenant les différentes consoles ou cotes possibles */
         public RadioPanel(Jeu.Attributs attribut) {
 
-            panel = new JPanel();
+            panelBoutons = new JPanel();
             JLabel jLabel = new JLabel(attribut.getAttribut());
-            panel.add(jLabel);
+            panelFormulaire.add(jLabel);
 
-            // Ajouter un radio button pour chaque option possible de l'enum correspondant dans la classe Jeu
+            GridLayout layout = new GridLayout(0, 2);
+            panelBoutons.setLayout(layout);
+
+            /* Ajouter un radio button pour chaque option possible de l'enum correspondant dans la classe Jeu.
+             * Y associer une actionCommand pour pouvoir la récupérer dans la méthode getChoix(). */
             for (Enum item : attribut.getValues()) {
                 JRadioButton radioButton = new JRadioButton(item.toString());
+                radioButton.setActionCommand(item.toString());
                 ajouterAuPanneau(radioButton);
             }
-            add(panel);
+            add(panelBoutons);
         }
 
         private void ajouterAuPanneau(JRadioButton radioButton) {
-            panel.add(radioButton);
+            panelBoutons.add(radioButton);
             buttonGroup.add(radioButton);
 
             // Sélectionner le premier élément par défaut

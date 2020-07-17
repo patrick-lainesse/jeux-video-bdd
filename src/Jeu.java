@@ -167,7 +167,6 @@ public class Jeu implements Comparable<Jeu> {
      * l'ajout d'un élément déjà présent dans un LinkedHashSet ne change pas l'ordre des éléments s'y trouvant.
      *
      * @parm console    Nom de la console à ajouter à la liste */
-    // TODO: addConsole, probablement dans une option "modifier jeu" de GUI. Pour l'instant, utilisé par Bdd.addBdd()
     public void addConsole(String console) {
         consoles.add(console);
     }

@@ -161,7 +161,8 @@ public class Jeu implements Comparable<Jeu> {
         this.fabricant = fabricant;
         this.titre = titre;
         this.cote = cote;
-        this.consoles = consoles;
+        this.consoles = new LinkedHashSet<>();
+        this.consoles.addAll(consoles);
     }
 
     /* Ajoute une console à la liste des consoles du jeu.

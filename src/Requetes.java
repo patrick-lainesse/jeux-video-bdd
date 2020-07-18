@@ -1,4 +1,5 @@
 import java.sql.*;
+import java.util.*;
 
 // TODO: connection pool
 public class Requetes {
@@ -47,7 +48,7 @@ public class Requetes {
         try {
             connexion.close();
         } catch (SQLException throwables) {
-            // TODO: Message d'erreur
+            // TODO: Message d'erreur GUI
             throwables.printStackTrace();
         }
     }
@@ -72,24 +73,92 @@ public class Requetes {
     }
 
     // TODO: return boolean?
-    public static void inserer(Jeu jeuCourant) {
+    /* Vérifie si le fabricant et/ou le jeu existe déjà dans la base de données.
+     * Si le jeu s'y retrouve déjà, ajout des consoles à l'entrée existante.
+     * Sinon, le jeu est ajouté à la base de données.
+     *
+     * @param unJeu		Le jeu à ajouter à la base de données */
+    public static void inserer(Jeu nouveauJeu) {
 
         String requete = "INSERT INTO jeu VALUES (?,?,?,?)";
+        Jeu jeuDB = null;
 
+        // Vérifier si le jeu est déjà présent dans la base de données
         try {
-            connecter();
-            //Statement statement = connexion.createStatement();
-            PreparedStatement preparedStatement = connexion.prepareStatement(requete);
-            // TODO: implémenter un getter dans Jeu qui retourne les attributs dans un tableau et mettre ici un for loop
-            preparedStatement.setString(1, jeuCourant.getFabricant());
-            preparedStatement.setString(2, jeuCourant.getTitre());
-            preparedStatement.setString(3, jeuCourant.getCote());
-            preparedStatement.setString(4, jeuCourant.printConsoles());
-            preparedStatement.executeQuery();
-            deconnecter();
+            jeuDB = getJeu(nouveauJeu.getTitre(), nouveauJeu.getFabricant());
         } catch (SQLException throwables) {
             // TODO: message d'erreur
             throwables.printStackTrace();
         }
+
+        // Si le jeu est déjà dans la base de données, ajouter les nouvelles consoles s'il y a lieu
+        // TODO: penser au cas où la cote est différente!
+        if (jeuDB != null) {
+            Collection<String> nouvellesConsoles = nouveauJeu.getConsoles();
+
+            for (String console: nouvellesConsoles) {
+                jeuDB.addConsole(console);
+            }
+
+            // TODO: requête update DB pour les nouveaux jeux
+        }
+
+        else {
+            try {
+                connecter();
+                //Statement statement = connexion.createStatement();
+                PreparedStatement preparedStatement = connexion.prepareStatement(requete);
+                // TODO: implémenter un getter dans Jeu qui retourne les attributs dans un tableau et mettre ici un for loop
+                preparedStatement.setString(1, nouveauJeu.getFabricant());
+                preparedStatement.setString(2, nouveauJeu.getTitre());
+                preparedStatement.setString(3, nouveauJeu.getCote());
+                preparedStatement.setString(4, nouveauJeu.printConsoles());
+                preparedStatement.executeQuery();
+                deconnecter();
+            } catch (SQLException throwables) {
+                // TODO: message d'erreur
+                throwables.printStackTrace();
+            }
+        }
+    }
+
+    // TODO: définir mes propre exception pour pouvoir utiliser avec GUI?
+    /* Recherche un jeu dans la base de données
+     * @param titre			Le nom de ce jeu
+     * @param fabricant		Le nom du fabricant pour ce jeu
+     * @return		        L'objet Jeu correspondant à la recherche, null si non trouvé */
+    public static Jeu getJeu(String titre, String fabricant) throws SQLException {
+
+        ResultSet resultSet = null;
+        Jeu resultat = null;
+        String requete = "SELECT * FROM jeu WHERE nom LIKE ? AND fabricant LIKE ?";
+
+        try {
+            connecter();
+            PreparedStatement preparedStatement = connexion.prepareStatement(requete);
+            preparedStatement.setString(1, titre);
+            preparedStatement.setString(2, fabricant);
+            resultSet = preparedStatement.executeQuery();
+            deconnecter();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+            // TODO: message d'erreur
+        }
+
+        if (resultSet != null) {
+            while (resultSet.next()) {
+
+                // Récupérer la liste des consoles et convertir en ArrayList pour utiliser le constructeur de la classe Jeu
+                String[] tableauConsoles = resultSet.getString("console").split(",");
+                List<String> listConsoles = Arrays.asList(tableauConsoles);
+
+                // Construire un objet Jeu pour passer comme résultat de la méthode
+                resultat = new Jeu(resultSet.getString("fabricant"),
+                        resultSet.getString("nom"),
+                        resultSet.getString("cote"),
+                        listConsoles);
+            }
+        }
+        return resultat;
     }
 }

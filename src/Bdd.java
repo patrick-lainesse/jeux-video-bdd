@@ -16,10 +16,10 @@ import java.io.*;
 // TODO: vérifier code du prof et améliorer le mien si possible
 public class Bdd {
 
-	private Map<String, TreeSet<Jeu>> baseDeDonnees;
+    private Map<String, TreeSet<Jeu>> baseDeDonnees;
 
     public Bdd() {
-    	baseDeDonnees = new LinkedHashMap<>();
+        baseDeDonnees = new LinkedHashMap<>();
     }
 
     /* Vérifie si le fabricant et/ou le jeu existe déjà dans la base de données.
@@ -29,258 +29,266 @@ public class Bdd {
      * @param unJeu		Le jeu à ajouter à la base de données */
     public void addJeu(Jeu unJeu) {
 
-		String unFabricant = unJeu.getFabricant();
+        String unFabricant = unJeu.getFabricant();
 
-		if (baseDeDonnees.containsKey(unFabricant)) {
+        if (baseDeDonnees.containsKey(unFabricant)) {
 
-			TreeSet<Jeu> ts = baseDeDonnees.get(unFabricant);
+            TreeSet<Jeu> ts = baseDeDonnees.get(unFabricant);
 
-			if (ts.contains(unJeu)) {
-				/* Utilise floor pour retrouver le jeu courant dans le TreeSet contenant les jeux associés à ce fabricant
-				 * Utilise requireNonNull pour éviter un nullPointerException */
-				Objects.requireNonNull(ts.floor(unJeu)).getConsoles().addAll(unJeu.getConsoles());
+            if (ts.contains(unJeu)) {
+                /* Utilise floor pour retrouver le jeu courant dans le TreeSet contenant les jeux associés à ce fabricant
+                 * Utilise requireNonNull pour éviter un nullPointerException */
+                Objects.requireNonNull(ts.floor(unJeu)).getConsoles().addAll(unJeu.getConsoles());
 
-			} else {
-				ts.add(unJeu);
-			}
-		} else {
-			TreeSet<Jeu> ts = new TreeSet<>();
-			ts.add(unJeu);
-			baseDeDonnees.put(unFabricant, ts);
-		}
+            } else {
+                ts.add(unJeu);
+            }
+        } else {
+            TreeSet<Jeu> ts = new TreeSet<>();
+            ts.add(unJeu);
+            baseDeDonnees.put(unFabricant, ts);
+        }
     }
 
     /* Recherche un jeu dans la base de données
      * @param titre			Le nom de ce jeu
      * @param fabricant		Le nom du fabricant pour ce jeu
      * @return		L'objet Jeu correspondant à la recherche, null si non trouvé */
-	public Jeu getJeu(String titre, String fabricant) {
+    public Jeu getJeu(String titre, String fabricant) {
 
-		TreeSet<Jeu> listeJeux = baseDeDonnees.get(fabricant);
-		Jeu resultat = null;
+        TreeSet<Jeu> listeJeux = baseDeDonnees.get(fabricant);
+        Jeu resultat = null;
 
-		/* Si la liste de jeux pour le fabricant passé en paramètre n'est pas nulle, parcourir cette liste
-		 * pour voir si ce jeu s'y retrouve */
-    	if (listeJeux != null) {
-			Iterator<Jeu> it = listeJeux.iterator();
+        /* Si la liste de jeux pour le fabricant passé en paramètre n'est pas nulle, parcourir cette liste
+         * pour voir si ce jeu s'y retrouve */
+        if (listeJeux != null) {
+            Iterator<Jeu> it = listeJeux.iterator();
 
-			while(resultat == null && it.hasNext()) {
-				Jeu courant = it.next();
-				if (courant.getTitre().equals(titre)) {
-					resultat = courant;		// Arrêter la recherche dès qu'on obtient un résultat
-				}
-			}
-		}
-		return resultat;
-	}
+            while (resultat == null && it.hasNext()) {
+                Jeu courant = it.next();
+                if (courant.getTitre().equals(titre)) {
+                    resultat = courant;        // Arrêter la recherche dès qu'on obtient un résultat
+                }
+            }
+        }
+        return resultat;
+    }
 
-	/* Lit une liste de jeux contenue dans un fichier .txt et les ajoute à la base de données
-	 * ou ajoute les consoles associées à ce jeu s'il s'y trouve déjà.
-	 * Utilise un BufferedReader pour améliorer la performance à la lecture.
-	 *
-	 * @param nomFile		Le nom du fichier .txt à lire */
-	public void addBdd(String nomFile) {
+    /* Lit une liste de jeux contenue dans un fichier .txt et les ajoute à la base de données
+     * ou ajoute les consoles associées à ce jeu s'il s'y trouve déjà.
+     * Utilise un BufferedReader pour améliorer la performance à la lecture.
+     *
+     * @param nomFile		Le nom du fichier .txt à lire */
+    public void addBdd(String nomFile) {
 
-		FileReader fr = null;
-		boolean existeFichier = true;
-		boolean finFichier = false;
+        // TODO: changer code pour ne plus stocker de bdd, avec Requetes?
 
-		try {
-			fr = new FileReader(nomFile);
-		} catch (java.io.FileNotFoundException e) {
-			System.out.println("Probleme d'ouverture du fichier " + nomFile);
-			existeFichier = false;
-		}
+        FileReader fr = null;
+        boolean existeFichier = true;
+        boolean finFichier = false;
 
-		if (existeFichier) {
-			BufferedReader entree = new BufferedReader(fr);
+        try {
+            fr = new FileReader(nomFile);
+        } catch (java.io.FileNotFoundException e) {
+            System.out.println("Probleme d'ouverture du fichier " + nomFile);
+            existeFichier = false;
+        }
 
-			while (!finFichier) {
-				String ligne = null;		// null si fin de fichier
-				try {
-					ligne = entree.readLine();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-				if (ligne != null) {
+        if (existeFichier) {
+            BufferedReader entree = new BufferedReader(fr);
+
+            while (!finFichier) {
+                String ligne = null;        // null si fin de fichier
+                try {
+                    ligne = entree.readLine();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                if (ligne != null) {
 
 					/*Format d'une entrée:	split(;)
 					 						[0]	[1]		[2]		[3] -> consoles
 					 						EA;NHL 2020;E;PS4,WIIU,XONE,PC */
-					String[] parametres = ligne.split(";");
-					String[] consoles = parametres[3].split(",");
+                    String[] parametres = ligne.split(";");
+                    String[] consoles = parametres[3].split(",");
 
-					Jeu nouveau = new Jeu(parametres[0], parametres[1], parametres[2]);
+                    Jeu nouveau = new Jeu(parametres[0], parametres[1], parametres[2]);
 
-					for (String console : consoles) {
-						nouveau.addConsole(console);
-					}
-					this.addJeu(nouveau);
+                    for (String console : consoles) {
+                        nouveau.addConsole(console);
+                    }
+                    // TODO: enlever addJeu d'ici
+                    this.addJeu(nouveau);
 
-				} else finFichier = true;
-			}
-			try {
-				entree.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-	}
+                    Requetes.inserer(nouveau);
 
-	/* Vérifie si le nom de fichier passé en paramètre est valide, et si oui, vide la base de données puis fait appel
-	 * à addBdd() pour lire un nouveau fichier. */
-	public void loadBdd(String nomFile) {
+                } else finFichier = true;
+            }
+            try {
+                entree.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
-		boolean existeFichier = true;
+    /* Vérifie si le nom de fichier passé en paramètre est valide, et si oui, vide la base de données puis fait appel
+     * à addBdd() pour lire un nouveau fichier. */
+    public void loadBdd(String nomFile) {
 
-		try {
-			new FileReader(nomFile);
-		} catch (java.io.FileNotFoundException e) {
-			System.out.println("Probleme d'ouverture du fichier " + nomFile);
-			existeFichier = false;
-		}
+        boolean existeFichier = true;
 
-		if (existeFichier) {
-			baseDeDonnees = new LinkedHashMap<>();
-			addBdd(nomFile);
-		}
-	}
+        // Vide la base de données sur le serveur SQL
+        Requetes.delete();
 
-	/* Parcourt la base de données et dresse une liste de jeux compatibles avec une certaine console
-	 *
-	 * @param console		La console pour laquelle on cherche à dresser une liste
-	 * @return				ArrayList de jeux compatibles avec la console en paramètre, vide si elle n'est pas dans la base de données. */
-	public ArrayList<Jeu> chercheConsole(String console) {
+        try {
+            new FileReader(nomFile);
+        } catch (java.io.FileNotFoundException e) {
+            System.out.println("Probleme d'ouverture du fichier " + nomFile);
+            existeFichier = false;
+        }
 
-    	ArrayList<Jeu> compatibles = new ArrayList<>();
+        if (existeFichier) {
+            baseDeDonnees = new LinkedHashMap<>();
+            addBdd(nomFile);
+        }
+    }
 
-		Set<String> cles = baseDeDonnees.keySet();
-    	for (String cle: cles) {
-			TreeSet<Jeu> listeFabricant = baseDeDonnees.get(cle);
+    /* Parcourt la base de données et dresse une liste de jeux compatibles avec une certaine console
+     *
+     * @param console		La console pour laquelle on cherche à dresser une liste
+     * @return				ArrayList de jeux compatibles avec la console en paramètre, vide si elle n'est pas dans la base de données. */
+    public ArrayList<Jeu> chercheConsole(String console) {
 
-			for (Jeu jeuCourant : listeFabricant) {
-				if (jeuCourant.getConsoles().contains(console)) {
-					compatibles.add(jeuCourant);
-				}
-			}
-		}
+        ArrayList<Jeu> compatibles = new ArrayList<>();
 
-		return compatibles;
-	}
+        Set<String> cles = baseDeDonnees.keySet();
+        for (String cle : cles) {
+            TreeSet<Jeu> listeFabricant = baseDeDonnees.get(cle);
 
-	/* Retourne la liste de jeux associés à un fabricant.
-	 *
-	 * @param fabricant		Fabricant pour lequel on veut imprimer la liste
-	 * @return		Collection contenant la liste des jeux associés à ce fabricant, null si ne s'y trouve pas */
-	public Collection<Jeu> getJeuxFabricant(String fabricant) { return baseDeDonnees.get(fabricant); }
+            for (Jeu jeuCourant : listeFabricant) {
+                if (jeuCourant.getConsoles().contains(console)) {
+                    compatibles.add(jeuCourant);
+                }
+            }
+        }
 
-	/* Écrit les informations de la base de données dans un fichier .txt sous le format:
-	 * FOCUS;Vampyr;PG;PS4,XONE,PC,MAC,SWITCH
-	 * @param nomFichier		Le nom du fichier .txt à créer */
-	public void saveBdd(String nomFichier) {
+        return compatibles;
+    }
 
-    	File fichier = new File(nomFichier);
-    	FileWriter fr = null;
+    /* Retourne la liste de jeux associés à un fabricant.
+     *
+     * @param fabricant		Fabricant pour lequel on veut imprimer la liste
+     * @return		Collection contenant la liste des jeux associés à ce fabricant, null si ne s'y trouve pas */
+    public Collection<Jeu> getJeuxFabricant(String fabricant) {
+        return baseDeDonnees.get(fabricant);
+    }
 
-    	try {
-    		fr = new FileWriter(fichier);
-    		fr.write(this.toString());
+    /* Écrit les informations de la base de données dans un fichier .txt sous le format:
+     * FOCUS;Vampyr;PG;PS4,XONE,PC,MAC,SWITCH
+     * @param nomFichier		Le nom du fichier .txt à créer */
+    public void saveBdd(String nomFichier) {
 
-		} catch (IOException e) {
-			e.printStackTrace();
-			System.out.println("Erreur lors de l'écriture du fichier.");
-		} finally {
-    		try {
-				assert fr != null;
-				fr.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-				System.out.println("Erreur lors de la tentative du fermeture du fichier après l'écriture.");
-			}
-		}
-	}
+        File fichier = new File(nomFichier);
+        FileWriter fr = null;
 
-	/* Affiche à l'écran toutes les informations relatives aux jeux ayant une cote passée en paramètre
-	 * ##### Modifiée pour le TP2, afin de faire afficher le résultat dans l'interface graphique #####
-	 *
-	 * @param cote			La cote pour laquelle on cherche à afficher une liste */
-	public ArrayList<Jeu> chercheCote(String cote) {
+        try {
+            fr = new FileWriter(fichier);
+            fr.write(this.toString());
 
-		ArrayList<Jeu> liste = new ArrayList<>();
-		Set<String> cles = baseDeDonnees.keySet();
-		for (String cle: cles) {
-			TreeSet<Jeu> listeFabricant = baseDeDonnees.get(cle);
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.out.println("Erreur lors de l'écriture du fichier.");
+        } finally {
+            try {
+                assert fr != null;
+                fr.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+                System.out.println("Erreur lors de la tentative du fermeture du fichier après l'écriture.");
+            }
+        }
+    }
 
-			for (Jeu jeuCourant : listeFabricant) {
-				if (jeuCourant.getCote().equals(cote)) {
-					liste.add(jeuCourant);
-				}
-			}
-		}
-		return liste;
-	}
+    /* Affiche à l'écran toutes les informations relatives aux jeux ayant une cote passée en paramètre
+     * ##### Modifiée pour le TP2, afin de faire afficher le résultat dans l'interface graphique #####
+     *
+     * @param cote			La cote pour laquelle on cherche à afficher une liste */
+    public ArrayList<Jeu> chercheCote(String cote) {
 
-	/* Redéfinition de la méthode toString pour écire les informations de la base de données sous le format:
-	 * FOCUS;Vampyr;PG;PS4,XONE,PC,MAC,SWITCH
-	 * Utilise un StringBuilder pour améliorer la performance à l'écriture */
-	@Override
-	public String toString() {
+        ArrayList<Jeu> liste = new ArrayList<>();
+        Set<String> cles = baseDeDonnees.keySet();
+        for (String cle : cles) {
+            TreeSet<Jeu> listeFabricant = baseDeDonnees.get(cle);
 
-    	StringBuilder epeler = new StringBuilder();
+            for (Jeu jeuCourant : listeFabricant) {
+                if (jeuCourant.getCote().equals(cote)) {
+                    liste.add(jeuCourant);
+                }
+            }
+        }
+        return liste;
+    }
 
-		Set<String> cles = baseDeDonnees.keySet();
-		for (String cle: cles) {
-			TreeSet<Jeu> listeFabricant = baseDeDonnees.get(cle);
+    /* Redéfinition de la méthode toString pour écire les informations de la base de données sous le format:
+     * FOCUS;Vampyr;PG;PS4,XONE,PC,MAC,SWITCH
+     * Utilise un StringBuilder pour améliorer la performance à l'écriture */
+    @Override
+    public String toString() {
 
-			for (Jeu jeuCourant : listeFabricant) {
-				epeler.append(jeuCourant.toString()).append("\n");
-			}
-		}
-		return epeler.toString();
-	}
+        StringBuilder epeler = new StringBuilder();
+
+        Set<String> cles = baseDeDonnees.keySet();
+        for (String cle : cles) {
+            TreeSet<Jeu> listeFabricant = baseDeDonnees.get(cle);
+
+            for (Jeu jeuCourant : listeFabricant) {
+                epeler.append(jeuCourant.toString()).append("\n");
+            }
+        }
+        return epeler.toString();
+    }
 
 
-	/*****************************************************************************************************
-	 * Fonctions utiles pour transposer à l'interface graphique (GUI)
-	 *****************************************************************************************************/
+    /*****************************************************************************************************
+     * Fonctions utiles pour transposer à l'interface graphique (GUI)
+     *****************************************************************************************************/
 
-	/* Parcourt la base de données et ajoute un vecteur de String pour chacun des jeux, dans le but
-	 * de l'afficher dans un JTable.
-	 *
-	 * @return	Un vecteur de jeux, dont chacun de ses attributs sont regroupés dans un vecteur de String */
-	public Vector<Vector<String>> vectoriser() {
+    /* Parcourt la base de données et ajoute un vecteur de String pour chacun des jeux, dans le but
+     * de l'afficher dans un JTable.
+     *
+     * @return	Un vecteur de jeux, dont chacun de ses attributs sont regroupés dans un vecteur de String */
+    public Vector<Vector<String>> vectoriser() {
 
-		Vector<Vector<String>> vecteurJeu = new Vector<>();
+        Vector<Vector<String>> vecteurJeu = new Vector<>();
 
-		Set<String> cles = baseDeDonnees.keySet();
-		for (String cle: cles) {
-			TreeSet<Jeu> listeFabricant = baseDeDonnees.get(cle);
+        Set<String> cles = baseDeDonnees.keySet();
+        for (String cle : cles) {
+            TreeSet<Jeu> listeFabricant = baseDeDonnees.get(cle);
 
-			for (Jeu jeuCourant : listeFabricant) {
-				vecteurJeu.add(jeuCourant.vectoriser());
-			}
-		}
+            for (Jeu jeuCourant : listeFabricant) {
+                vecteurJeu.add(jeuCourant.vectoriser());
+            }
+        }
 
-		return vecteurJeu;
-	}
+        return vecteurJeu;
+    }
 
-	/*****************************************************************************************************
-	 * Fonctions utilisées pour faire des requêtes SQL
-	 *****************************************************************************************************/
+    /*****************************************************************************************************
+     * Fonctions utilisées pour faire des requêtes SQL
+     *****************************************************************************************************/
 
-	// TODO: en-tête
-	public void initialiserDB() {
+    // TODO: en-tête
+    public void initialiserDB() {
 
-		Requetes.delete();
+        Set<String> cles = baseDeDonnees.keySet();
+        for (String cle : cles) {
 
-		Set<String> cles = baseDeDonnees.keySet();
-		for (String cle: cles) {
+            TreeSet<Jeu> listeFabricant = baseDeDonnees.get(cle);
 
-			TreeSet<Jeu> listeFabricant = baseDeDonnees.get(cle);
-
-			for (Jeu jeuCourant : listeFabricant) {
-				Requetes.inserer(jeuCourant);
-			}
-		}
-	}
+            for (Jeu jeuCourant : listeFabricant) {
+                Requetes.inserer(jeuCourant);
+            }
+        }
+    }
 }

@@ -15,6 +15,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
+import java.sql.SQLException;
 import java.util.*;
 import java.util.List;
 import javax.swing.border.TitledBorder;
@@ -193,7 +194,7 @@ public class GUI extends JFrame {
                         afficherBdd();
                         // TODO: itilialiserDB devrait plutôt être dans addBdd, et changer en conséquence:
                         //  delete devrait être dans loadBdd()
-                        baseDeDonnees.initialiserDB();
+                        //baseDeDonnees.initialiserDB();
                     } catch (Exception exception) {
                         JOptionPane.showMessageDialog(new JFrame(),
                                 "Erreur lors de la lecture du fichier.");
@@ -423,6 +424,8 @@ public class GUI extends JFrame {
 
         public static final String A_PROPOS = "\u00C0 propos de Cataloguideo";
         // TODO: Ajouter une variable statique version no et faire un append dans ce message
+        // TODO: changer le no de version
+
         public static final String MSG_A_PROPOS =
                 "Cataloguideo\n\n" +
                         "Version : 1.0.0\n\n" +
@@ -699,7 +702,15 @@ public class GUI extends JFrame {
         }
 
         public void actionPerformed(ActionEvent e) {
-            Jeu jeuCherche = baseDeDonnees.getJeu(tfTitre.getText(), tfFabricant.getText());
+            //Jeu jeuCherche = baseDeDonnees.getJeu(tfTitre.getText(), tfFabricant.getText());
+            Jeu jeuCherche = null;
+
+            try {
+                jeuCherche = Requetes.getJeu(tfTitre.getText(), tfFabricant.getText());
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
+
             if (jeuCherche != null) {
                 Vector<Vector<String>> jeu = new Vector<>();
                 jeu.add(jeuCherche.vectoriser());

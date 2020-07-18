@@ -90,7 +90,7 @@ public class GUI extends JFrame {
                           }
         );
 
-        // Changer le texte des boutons "Oui" et "Non" des boîtes de dialogue
+        // TODO: Oups! Changer le texte des boutons "Oui" et "Non" des boîtes de dialogue
         UIManager.put("JOptionPane.cancelButtonText", "nope");
         UIManager.put(JOptionPane.TOOL_TIP_TEXT_KEY, "yup");
 
@@ -156,7 +156,7 @@ public class GUI extends JFrame {
     /**
      * ***************************** ACTIONS DU MENU ***********************************************************
      * Section des actions déclenchées par des sélections du menu ou la combinaison de clés qui leur sont associées.
-     */
+     * *********************************************************************************************************/
     /* Ouvre une boîte de dialogue invitant l'utilisateur à sélectionner un fichier txt où se trouve une base de
      * données, puis la fait afficher dans un tableau dans l'écran principal. Affiche un message d'erreur en cas d'échec. */
     public class ActionCharger extends AbstractAction {
@@ -172,6 +172,7 @@ public class GUI extends JFrame {
             int reponse = JOptionPane.YES_OPTION;
 
             if (baseDeDonnees != null) {
+                // TODO: Mettre ça en String constantes ailleurs
                 Object[] options = {"J'ai dit: charger!", "Ah non, alors!"};
                 reponse = JOptionPane.showOptionDialog(null,
                         ATTENTION,
@@ -190,9 +191,13 @@ public class GUI extends JFrame {
                     try {
                         baseDeDonnees.loadBdd(fichier);
                         afficherBdd();
+                        // TODO: itilialiserDB devrait plutôt être dans addBdd, et changer en conséquence:
+                        //  delete devrait être dans loadBdd()
+                        baseDeDonnees.initialiserDB();
                     } catch (Exception exception) {
                         JOptionPane.showMessageDialog(new JFrame(),
                                 "Erreur lors de la lecture du fichier.");
+                        // TODO: Message ne fonctionne pas, car ça peut aussi être une erreur de db...
                     }
                 }
             } else {

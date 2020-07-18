@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 //
-// Fichier de la classe Main:	TP1.java
+// Fichier de la classe Main:	GUI.java
 // Fichier:						Bdd.java
 // Session:						Été 2020
 //
@@ -241,7 +241,7 @@ public class Bdd {
 
 
 	/*****************************************************************************************************
-	 * Fonction utiles pour transposer à l'interface graphique (GUI)
+	 * Fonctions utiles pour transposer à l'interface graphique (GUI)
 	 *****************************************************************************************************/
 
 	/* Parcourt la base de données et ajoute un vecteur de String pour chacun des jeux, dans le but
@@ -262,5 +262,25 @@ public class Bdd {
 		}
 
 		return vecteurJeu;
+	}
+
+	/*****************************************************************************************************
+	 * Fonctions utilisées pour faire des requêtes SQL
+	 *****************************************************************************************************/
+
+	// TODO: en-tête
+	public void initialiserDB() {
+
+		Requetes.delete();
+
+		Set<String> cles = baseDeDonnees.keySet();
+		for (String cle: cles) {
+
+			TreeSet<Jeu> listeFabricant = baseDeDonnees.get(cle);
+
+			for (Jeu jeuCourant : listeFabricant) {
+				Requetes.inserer(jeuCourant);
+			}
+		}
 	}
 }

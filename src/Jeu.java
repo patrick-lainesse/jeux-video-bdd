@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 //
-// Fichier de la classe Main:	TP1.java
+// Fichier de la classe Main:	GUI.java
 // Fichier:						Jeu.java
 // Session:						Été 2020
 //
@@ -27,6 +27,7 @@ public class Jeu implements Comparable<Jeu> {
      *****************************************************************************************************/
 
     // TODO: utiliser dans Jeu.java et Bdd.java, voir si toujours pertinent avec MySQL
+
     /**
      * enum contenant la liste des attributs d'un jeu, ainsi que l'enum qui est associé à cet attribut lorsqu'il existe.
      */
@@ -67,6 +68,7 @@ public class Jeu implements Comparable<Jeu> {
         E("E"),
         PG("PG"),
         T("T"),
+        RP("RP"),
         M("M");
 
         private final String cote;
@@ -127,8 +129,8 @@ public class Jeu implements Comparable<Jeu> {
          *
          *  @return     L'abbréviation de la console en format String */
         public static String getAbbreviation(String console) {
-            for(Consoles c : Consoles.values()) {
-                if(console.equals(c.toString())) return c.abbreviation;
+            for (Consoles c : Consoles.values()) {
+                if (console.equals(c.toString())) return c.abbreviation;
             }
             return null;
         }
@@ -172,7 +174,9 @@ public class Jeu implements Comparable<Jeu> {
     }
 
     /* Méthode toString() pour une liste de consoles associées au jeu, facilite l'écriture à l'écran ou dans un fichier txt
-     * format: PS4,XONE,PC,MAC,SWITCH */
+     *
+     * @param console	Une collection de consoles en String
+     * @return	        Un String sous le format suivant: PS4,XONE,PC,MAC,SWITCH */
     private String printConsoles(Collection<String> consoles) {
 
         StringBuilder liste = new StringBuilder();
@@ -184,6 +188,13 @@ public class Jeu implements Comparable<Jeu> {
         }
         return liste.toString();
     }
+
+    /* Méthode toString() pour une liste de consoles associées au jeu lorsqu'aucun paramètres n'est fourni.
+     * @return	Un String sous le format suivant: PS4,XONE,PC,MAC,SWITCH */
+    public String printConsoles() {
+        return printConsoles(consoles);
+    }
+
 
     /*****************************************************************************************************
      * REDÉFINITIONS
@@ -270,7 +281,7 @@ public class Jeu implements Comparable<Jeu> {
 
         Vector<Vector<String>> vecteurJeu = new Vector<>();
 
-        for (Jeu jeu: arrayList) {
+        for (Jeu jeu : arrayList) {
             vecteurJeu.add(jeu.vectoriser());
         }
 

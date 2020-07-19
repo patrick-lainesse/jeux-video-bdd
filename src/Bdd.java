@@ -273,22 +273,4 @@ public class Bdd {
 
         return vecteurJeu;
     }
-
-    /*****************************************************************************************************
-     * Fonctions utilisées pour faire des requêtes SQL
-     *****************************************************************************************************/
-
-    // TODO: en-tête
-    public void initialiserDB() {
-
-        Set<String> cles = baseDeDonnees.keySet();
-        for (String cle : cles) {
-
-            TreeSet<Jeu> listeFabricant = baseDeDonnees.get(cle);
-
-            for (Jeu jeuCourant : listeFabricant) {
-                Requetes.inserer(jeuCourant);
-            }
-        }
-    }
 }

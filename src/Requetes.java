@@ -19,9 +19,7 @@ public class Requetes {
     // des requêtes SQL
     private Bdd baseDeDonnees;
 
-    // TODO: constructeur??
-
-    // TODO: en-tête
+    /* Ouvre une connexion à la base de données pour permettre une requête. */
     private static void connecter() {
         // TODO: ne semble pas nécessaire pour les versions récentes de Java, vérifier sur DESI
         /*try {
@@ -44,6 +42,8 @@ public class Requetes {
         }
     }
 
+    /* Ferme la connexion à la base de données. */
+    // TODO: Possible de forcer une déconnexion dès qu'il y a eu connexion? Thread peut-être?
     private static void deconnecter() {
         try {
             connexion.close();
@@ -53,7 +53,6 @@ public class Requetes {
         }
     }
 
-    // TODO: return boolean?
     /* Vérifie si le fabricant et/ou le jeu existe déjà dans la base de données.
      * Si le jeu s'y retrouve déjà, ajout des consoles à l'entrée existante.
      * Sinon, le jeu est ajouté à la base de données.
@@ -68,7 +67,7 @@ public class Requetes {
         try {
             jeuDB = getJeu(nouveauJeu.getTitre(), nouveauJeu.getFabricant());
         } catch (SQLException throwables) {
-            // TODO: message d'erreur
+            // TODO: message d'erreur GUI
             throwables.printStackTrace();
         }
 
@@ -94,7 +93,7 @@ public class Requetes {
                 preparedStatement.executeQuery();
                 deconnecter();
             } catch (SQLException throwables) {
-                // TODO: message d'erreur
+                // TODO: message d'erreur GUI
                 throwables.printStackTrace();
             }
         }
@@ -120,7 +119,7 @@ public class Requetes {
             deconnecter();
         } catch (SQLException throwables) {
             throwables.printStackTrace();
-            // TODO: message d'erreur
+            // TODO: message d'erreur GUI
         }
 
         if (resultSet != null) {
@@ -140,7 +139,9 @@ public class Requetes {
         return resultat;
     }
 
-    // TODO: en-tête
+    /* Modifie la liste des consoles associées à un jeu déjà présent dans la base de données.
+     *
+     * @param jeuModifie    Objet jeu contenant la liste de consoles mise à jour */
     public static void modifierConsoles(Jeu jeuModifie) {
 
         String requete = "UPDATE jeu SET console = ? WHERE nom LIKE ? AND fabricant LIKE ?";
@@ -159,7 +160,10 @@ public class Requetes {
         }
     }
 
-    // TODO: en-tête
+    /* Élimine toutes les entrées présentes dans la table jeu.
+     * La requête DROP TABLE n'est pas utilisée car ne fonctionne pas sur le serveur de la DESI.
+     * TODO: tester drop table sur DESI */
+    // TODO: return boolean pour que GUI affiche un message d'erreur
     public static void effacer() {
 
         String requete = "DELETE from jeu";
@@ -171,7 +175,7 @@ public class Requetes {
             statement.close();
             deconnecter();
         } catch (SQLException throwables) {
-            // TODO: message erreur
+            // TODO: message erreur GUI
             throwables.printStackTrace();
         } finally {
             // TODO: Pourrait retourner un String à GUI...

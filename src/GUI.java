@@ -191,7 +191,7 @@ public class GUI extends JFrame {
                 if (!fichier.equals(ANNULE)) {
                     baseDeDonnees = new Bdd();
                     try {
-                        baseDeDonnees.loadBdd(fichier);
+                        baseDeDonnees.nouvelleBaseTXT(fichier);
                         afficherBdd();
                     } catch (Exception exception) {
                         JOptionPane.showMessageDialog(new JFrame(),
@@ -217,7 +217,7 @@ public class GUI extends JFrame {
             try {
                 String fichierAjout = choisirFichier();
                 if (!fichierAjout.equals(ANNULE)) {
-                    baseDeDonnees.addBdd(fichierAjout);
+                    baseDeDonnees.ajouterTXT(fichierAjout);
                 } else System.out.println(ANNULE);
                 afficherBdd();
             } catch (Exception exception) {
@@ -293,7 +293,7 @@ public class GUI extends JFrame {
 
             if (!nomFichier.equals(ANNULE)) {
                 try {
-                    baseDeDonnees.saveBdd(nomFichier);
+                    baseDeDonnees.enregistrerTXT(nomFichier);
                     JOptionPane.showMessageDialog(new JFrame(),
                             "Base de donn\u00E9es bien enregistr\u00E9e.");
                 } catch (Exception exception) {

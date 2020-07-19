@@ -16,18 +16,12 @@ import java.io.*;
 // TODO: renommer pour que ce soit plutôt un modèle relié aux fichiers txt
 public class Bdd {
 
-    private Map<String, TreeSet<Jeu>> baseDeDonnees;
-
-    public Bdd() {
-        baseDeDonnees = new LinkedHashMap<>();
-    }
-
     /* Lit une liste de jeux contenue dans un fichier .txt et les ajoute à la base de données
      * ou ajoute les consoles associées à ce jeu s'il s'y trouve déjà.
      * Utilise un BufferedReader pour améliorer la performance à la lecture.
      *
      * @param nomFile		Le nom du fichier .txt à lire */
-    public void addBdd(String nomFile) {
+    public void ajouterTXT(String nomFile) {
 
         FileReader fr = null;
         boolean existeFichier = true;
@@ -77,10 +71,10 @@ public class Bdd {
     }
 
     /* Vérifie si le nom de fichier passé en paramètre est valide, et si oui, vide la base de données puis fait appel
-     * à addBdd() pour lire le fichier passé en paramètre.
+     * à ajouterTXT() pour lire le fichier passé en paramètre.
      *
      * @param nomFile		Le nom du fichier .txt à lire */
-    public void loadBdd(String nomFile) {
+    public void nouvelleBaseTXT(String nomFile) {
 
         boolean existeFichier = true;
 
@@ -95,21 +89,22 @@ public class Bdd {
         if (existeFichier) {
             // Vide la base de données sur le serveur SQL
             Requetes.effacer();
-            addBdd(nomFile);
+            ajouterTXT(nomFile);
         }
     }
 
     /* Écrit les informations de la base de données dans un fichier .txt sous le format:
-     * FOCUS;Vampyr;PG;PS4,XONE,PC,MAC,SWITCH
+     * Fabricant;Titre;COTE;LISTE DES CONSOLES
+     *
      * @param nomFichier		Le nom du fichier .txt à créer */
-    public void saveBdd(String nomFichier) {
+    public void enregistrerTXT(String nomFichier) {
 
         File fichier = new File(nomFichier);
         FileWriter fr = null;
 
         try {
             fr = new FileWriter(fichier);
-            fr.write(this.toString());
+            fr.write(this.transcrirePourFichier());
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -126,13 +121,11 @@ public class Bdd {
         }
     }
 
-    // TODO: renommer car c'est pas tant un toString que ça
-    // TODO: va devoir faire à partir d'une requête
-    /* Redéfinition de la méthode toString pour écire les informations de la base de données sous le format:
-     * FOCUS;Vampyr;PG;PS4,XONE,PC,MAC,SWITCH
-     * Utilise un StringBuilder pour améliorer la performance à l'écriture */
-    @Override
-    public String toString() {
+    /* Retranscrit chacun des jeux au format .txt prédéfini pour la lecture/écriture.
+     * Utilise un StringBuilder pour améliorer la performance à l'écriture
+     *
+     * @return  Un String de plusieurs ligne, où chaque jeu a ce format: Fabricant;Titre;COTE;LISTE DES CONSOLES */
+    public String transcrirePourFichier() {
 
         StringBuilder epeler = new StringBuilder();
 

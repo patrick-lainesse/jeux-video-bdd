@@ -10,6 +10,7 @@
 //								https://www.journaldev.com/878/java-write-to-file
 //////////////////////////////////////////////////////////////////////////////
 
+import java.sql.ResultSet;
 import java.util.*;
 import java.io.*;
 
@@ -118,7 +119,7 @@ public class Bdd {
                         nouveau.addConsole(console);
                     }
                     // TODO: enlever addJeu d'ici
-                    this.addJeu(nouveau);
+                    //this.addJeu(nouveau);
 
                     Requetes.inserer(nouveau);
 
@@ -262,14 +263,24 @@ public class Bdd {
 
         Vector<Vector<String>> vecteurJeu = new Vector<>();
 
-        Set<String> cles = baseDeDonnees.keySet();
+        for (Jeu jeuCourant : Requetes.listerDB()) {
+            vecteurJeu.add(jeuCourant.vectoriser());
+        }
+
+        // TODO: Ménage
+        /*ResultSet listeDB = Requetes.listerDB();
+        while (listeDB.next()) {
+
+        }*/
+
+        /*Set<String> cles = baseDeDonnees.keySet();
         for (String cle : cles) {
             TreeSet<Jeu> listeFabricant = baseDeDonnees.get(cle);
 
             for (Jeu jeuCourant : listeFabricant) {
                 vecteurJeu.add(jeuCourant.vectoriser());
             }
-        }
+        }*/
 
         return vecteurJeu;
     }

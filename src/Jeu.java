@@ -10,6 +10,7 @@
 //								https://www.journaldev.com/878/java-write-to-file
 //////////////////////////////////////////////////////////////////////////////
 
+import java.sql.ResultSet;
 import java.util.*;
 
 public class Jeu implements Comparable<Jeu> {
@@ -157,6 +158,7 @@ public class Jeu implements Comparable<Jeu> {
         consoles = new LinkedHashSet<>();
     }
 
+    // TODO: en-tetes qui expliquent à quoi ils servent
     public Jeu(String fabricant, String titre, String cote, Collection<String> consoles) {
         this.fabricant = fabricant;
         this.titre = titre;

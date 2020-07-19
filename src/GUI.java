@@ -446,6 +446,7 @@ public class GUI extends JFrame {
         }
     }
 
+    // TODO: créer un framework MVC, et mettre ces fonctions et les actions dans la classe controleur
     /*****************************************************************************************************
      * Méthodes potentiellement réutilisables dans les actions
      *****************************************************************************************************/
@@ -688,7 +689,8 @@ public class GUI extends JFrame {
                 nouveauJeu = new Jeu(tfFabricant.getText(), tfTitre.getText(), radioPanelRecherche.getChoix(), choixConsoles);
             }
 
-            baseDeDonnees.addJeu(nouveauJeu);
+            //baseDeDonnees.addJeu(nouveauJeu);
+            Requetes.inserer(nouveauJeu);
 
             JOptionPane.showMessageDialog(new JFrame(),
                     "Jeu ajout\u00E9 \u00E0 la base de donn\u00E9es.");

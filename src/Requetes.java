@@ -91,12 +91,55 @@ public class Requetes {
                 preparedStatement.setString(3, nouveauJeu.getCote());
                 preparedStatement.setString(4, nouveauJeu.printConsoles());
                 preparedStatement.executeQuery();
+                preparedStatement.close();
                 deconnecter();
             } catch (SQLException throwables) {
                 // TODO: message d'erreur GUI
                 throwables.printStackTrace();
             }
         }
+    }
+
+    /* Effectue une requête à la base de données pour obtenir une liste de tous les jeux.
+     *
+     * @return		Un LinkedHashSet pour conserver l'ordre des jeux présents dans la base de données. */
+    public static LinkedHashSet<Jeu> listerDB() {
+
+        LinkedHashSet<Jeu> listeJeux = new LinkedHashSet<>();
+        ResultSet resultSet = null;
+        String requete = "SELECT * FROM jeu";
+
+        try {
+            connecter();
+            Statement statement = connexion.createStatement();
+            resultSet = statement.executeQuery(requete);
+            statement.close();
+            deconnecter();
+        } catch (SQLException throwables) {
+            // TODO: message erreur GUI
+            throwables.printStackTrace();
+        } finally {
+            // TODO: Pourrait retourner un String à GUI...
+        }
+
+        // Ajouter chaque au LinkedHashSet
+        try {
+            while (resultSet.next()) {
+                listeJeux.add(extraireParametres(resultSet));
+            }
+        } catch (SQLException throwables) {
+            // TODO: message erreur GUI
+            throwables.printStackTrace();
+        } finally {
+            try {
+                resultSet.close();
+            } catch (SQLException throwables) {
+                // TODO: message erreur GUI
+                throwables.printStackTrace();
+            }
+        }
+
+        return listeJeux;
     }
 
     // TODO: définir mes propre exception pour pouvoir utiliser avec GUI?
@@ -116,6 +159,7 @@ public class Requetes {
             preparedStatement.setString(1, titre);
             preparedStatement.setString(2, fabricant);
             resultSet = preparedStatement.executeQuery();
+            preparedStatement.close();
             deconnecter();
         } catch (SQLException throwables) {
             throwables.printStackTrace();
@@ -129,12 +173,14 @@ public class Requetes {
                 String[] tableauConsoles = resultSet.getString("console").split(",");
                 List<String> listConsoles = Arrays.asList(tableauConsoles);
 
+                // TODO: constructeur prenant un resultset en paramètre
                 // Construire un objet Jeu pour passer comme résultat de la méthode
                 resultat = new Jeu(resultSet.getString("fabricant"),
                         resultSet.getString("nom"),
                         resultSet.getString("cote"),
                         listConsoles);
             }
+            resultSet.close();
         }
         return resultat;
     }
@@ -153,6 +199,7 @@ public class Requetes {
             preparedStatement.setString(2, jeuModifie.getTitre());
             preparedStatement.setString(3, jeuModifie.getFabricant());
             preparedStatement.executeQuery();
+            preparedStatement.close();
             deconnecter();
         } catch (SQLException throwables) {
             throwables.printStackTrace();
@@ -180,5 +227,29 @@ public class Requetes {
         } finally {
             // TODO: Pourrait retourner un String à GUI...
         }
+    }
+
+    // TODO: Pour appeler le constructeur de Jeu sans avoir à lui faire gérer les SQL Exceptions
+    private static Jeu extraireParametres(ResultSet uneEntree) {
+
+        Jeu nouveauJeu = null;
+
+        // Récupérer la liste des consoles et convertir en ArrayList pour utiliser le constructeur de la classe Jeu
+        String[] tableauConsoles = new String[0];
+        try {
+            tableauConsoles = uneEntree.getString("console").split(",");
+            List<String> listConsoles = Arrays.asList(tableauConsoles);
+
+            // TODO: constructeur prenant un resultset en paramètre
+            // Construire un objet Jeu pour passer comme résultat de la méthode
+            nouveauJeu = new Jeu(uneEntree.getString("fabricant"),
+                    uneEntree.getString("nom"),
+                    uneEntree.getString("cote"),
+                    listConsoles);
+        } catch (SQLException throwables) {
+            // TODO: message erreur
+            throwables.printStackTrace();
+        }
+        return nouveauJeu;
     }
 }

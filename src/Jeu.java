@@ -33,17 +33,20 @@ public class Jeu implements Comparable<Jeu> {
      * enum contenant la liste des attributs d'un jeu, ainsi que l'enum qui est associé à cet attribut lorsqu'il existe.
      */
     public enum Attributs {
-        FABRICANT("Fabricant", null),
-        TITRE("Titre", null),
-        COTE("Cote", Cotes.values()),
-        CONSOLES("Consoles", Consoles.values());
+        FABRICANT("Fabricant", null, "fabricant"),
+        TITRE("Titre", null, "nom"),
+        COTE("Cote", Cotes.values(), "cote"),
+        CONSOLES("Consoles", Consoles.values(), "console");
+        // TODO: corriger pour ajouter le "s" à console dans la DB
 
         private final String attribut;
         final Enum[] values;
+        private final String equivalentDB;
 
-        Attributs(String attribut, Enum[] values) {
+        Attributs(String attribut, Enum[] values, String equivalentDB) {
             this.attribut = attribut;
             this.values = values;
+            this.equivalentDB = equivalentDB;
         }
 
         public String getAttribut() {
@@ -57,6 +60,10 @@ public class Jeu implements Comparable<Jeu> {
         // TODO: Utiliser Enum Set serait probablement plus performant
         public Enum[] getValues() {
             return values;
+        }
+
+        public String getEquivalentDB() {
+            return equivalentDB;
         }
 
         @Override
@@ -176,6 +183,8 @@ public class Jeu implements Comparable<Jeu> {
         consoles.add(console);
     }
 
+    // TODO: voir si je peux me débrouiller avec une seule des deux méthodes printConsoles
+    // TODO: renommmer, car donne l'impression que ça print à System.out
     /* Méthode toString() pour une liste de consoles associées au jeu, facilite l'écriture à l'écran ou dans un fichier txt
      *
      * @param console	Une collection de consoles en String

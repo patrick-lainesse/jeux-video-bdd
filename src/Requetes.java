@@ -100,6 +100,7 @@ public class Requetes {
         }
     }
 
+    // TODO: utiliser obtenirListe à la place?
     /* Effectue une requête à la base de données pour obtenir une liste de tous les jeux.
      *
      * @return		Un LinkedHashSet pour conserver l'ordre des jeux présents dans la base de données. */
@@ -143,6 +144,7 @@ public class Requetes {
     }
 
     // TODO: définir mes propre exception pour pouvoir utiliser avec GUI?
+    // TODO: utiliser obtenirListe à la place?
     /* Recherche un jeu dans la base de données
      * @param titre			Le nom de ce jeu
      * @param fabricant		Le nom du fabricant pour ce jeu
@@ -185,47 +187,6 @@ public class Requetes {
         return resultat;
     }
 
-    /* Parcourt la base de données et dresse une liste de jeux compatibles avec une certaine console
-     *
-     * @param console		La console pour laquelle on cherche à dresser une liste
-     * @return				LinkedHashSet de jeux compatibles avec la console en paramètre, vide si elle n'est pas dans la base de données. */
-    public static LinkedHashSet<Jeu> checherConsole(String console) {
-
-        String requete = "SELECT * FROM jeu WHERE console LIKE ?";
-        LinkedHashSet<Jeu> listeJeux = new LinkedHashSet<>();
-        ResultSet resultSet = null;
-
-        try {
-            connecter();
-            PreparedStatement preparedStatement = connexion.prepareStatement(requete);
-            preparedStatement.setString(1, "%" + console + "%");
-            resultSet = preparedStatement.executeQuery();
-            preparedStatement.close();
-            deconnecter();
-        } catch (SQLException throwables) {
-            // TODO: message erreur GUI
-            throwables.printStackTrace();
-        }
-
-        // Ajouter chaque au LinkedHashSet
-        try {
-            while (resultSet.next()) {
-                listeJeux.add(extraireParametres(resultSet));
-            }
-        } catch (SQLException throwables) {
-            // TODO: message erreur GUI
-            throwables.printStackTrace();
-        } finally {
-            try {
-                resultSet.close();
-            } catch (SQLException throwables) {
-                // TODO: message erreur GUI
-                throwables.printStackTrace();
-            }
-        }
-        return listeJeux;
-    }
-
     /* Effectue des requêtes paramétrées pour obtenir une sous-liste de jeux dans la base de données
      *
      * @param attribut		Attribut utilisé pour restreindre la liste de jeux à obtenir de la base de données
@@ -235,14 +196,7 @@ public class Requetes {
 
         String requete;
 
-        switch (attribut) {
-            case FABRICANT -> requete = "SELECT * FROM jeu WHERE fabricant LIKE ?";
-            case TITRE -> requete = "SELECT * FROM jeu WHERE fabricant LIKE ?";//TODO
-            case COTE -> requete = "SELECT * FROM jeu WHERE cote LIKE ?";
-            case CONSOLES -> requete = "SELECT * FROM jeu WHERE fabricant LIKE ?";//TODO
-            default -> requete = "SELECT * FROM jeu";//TODO
-        }
-
+        requete = "SELECT * FROM jeu WHERE " + attribut.getEquivalentDB() + " LIKE ?";
 
         LinkedHashSet<Jeu> listeJeux = new LinkedHashSet<>();
         ResultSet resultSet = null;
@@ -305,6 +259,7 @@ public class Requetes {
      * La requête DROP TABLE n'est pas utilisée car ne fonctionne pas sur le serveur de la DESI.
      * TODO: tester drop table sur DESI */
     // TODO: return boolean pour que GUI affiche un message d'erreur
+    // TODO: renommer en viderDB
     public static void effacer() {
 
         String requete = "DELETE from jeu";

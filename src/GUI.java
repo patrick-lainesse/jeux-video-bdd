@@ -728,8 +728,7 @@ public class GUI extends JFrame {
 
         public void actionPerformed(ActionEvent e) {
             String consoleCherchee = radioPanelRecherche.getChoix();
-            //ArrayList<Jeu> listeJeux = baseDeDonnees.chercheConsole(Jeu.Consoles.getAbbreviation(consoleCherchee));
-            LinkedHashSet<Jeu> listeJeux = Requetes.checherConsole(Jeu.Consoles.getAbbreviation(consoleCherchee));
+            LinkedHashSet<Jeu> listeJeux = Requetes.obtenirListe(Jeu.Attributs.CONSOLES, Jeu.Consoles.getAbbreviation(consoleCherchee));
 
             if (listeJeux != null) {
                 afficherResultat(Jeu.vectoriserArrayList(listeJeux), TITRE_RESULTAT);

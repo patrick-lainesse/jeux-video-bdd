@@ -728,7 +728,8 @@ public class GUI extends JFrame {
 
         public void actionPerformed(ActionEvent e) {
             String consoleCherchee = radioPanelRecherche.getChoix();
-            ArrayList<Jeu> listeJeux = baseDeDonnees.chercheConsole(Jeu.Consoles.getAbbreviation(consoleCherchee));
+            //ArrayList<Jeu> listeJeux = baseDeDonnees.chercheConsole(Jeu.Consoles.getAbbreviation(consoleCherchee));
+            LinkedHashSet<Jeu> listeJeux = Requetes.checherConsole(Jeu.Consoles.getAbbreviation(consoleCherchee));
 
             if (listeJeux != null) {
                 afficherResultat(Jeu.vectoriserArrayList(listeJeux), TITRE_RESULTAT);
@@ -746,7 +747,8 @@ public class GUI extends JFrame {
 
         public void actionPerformed(ActionEvent e) {
             String coteCherchee = radioPanelRecherche.getChoix();
-            ArrayList<Jeu> listeJeux = baseDeDonnees.chercheCote(coteCherchee);
+            System.out.println("Cote cherchee: " + coteCherchee);
+            LinkedHashSet<Jeu> listeJeux = Requetes.obtenirListe(Jeu.Attributs.COTE , coteCherchee);
             if (listeJeux != null) {
                 afficherResultat(Jeu.vectoriserArrayList(listeJeux), TITRE_RESULTAT);
             } else {
@@ -763,7 +765,7 @@ public class GUI extends JFrame {
 
         public void actionPerformed(ActionEvent e) {
 
-            Collection<Jeu> listeJeux = baseDeDonnees.getJeuxFabricant(tfFabricant.getText());
+            Collection<Jeu> listeJeux = Requetes.obtenirListe(Jeu.Attributs.FABRICANT, tfFabricant.getText());
             if (listeJeux != null) {
                 afficherResultat(Jeu.vectoriserArrayList(listeJeux), TITRE_RESULTAT);
             } else {

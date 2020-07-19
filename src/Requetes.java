@@ -185,6 +185,100 @@ public class Requetes {
         return resultat;
     }
 
+    /* Parcourt la base de données et dresse une liste de jeux compatibles avec une certaine console
+     *
+     * @param console		La console pour laquelle on cherche à dresser une liste
+     * @return				LinkedHashSet de jeux compatibles avec la console en paramètre, vide si elle n'est pas dans la base de données. */
+    public static LinkedHashSet<Jeu> checherConsole(String console) {
+
+        String requete = "SELECT * FROM jeu WHERE console LIKE ?";
+        LinkedHashSet<Jeu> listeJeux = new LinkedHashSet<>();
+        ResultSet resultSet = null;
+
+        try {
+            connecter();
+            PreparedStatement preparedStatement = connexion.prepareStatement(requete);
+            preparedStatement.setString(1, "%" + console + "%");
+            resultSet = preparedStatement.executeQuery();
+            preparedStatement.close();
+            deconnecter();
+        } catch (SQLException throwables) {
+            // TODO: message erreur GUI
+            throwables.printStackTrace();
+        }
+
+        // Ajouter chaque au LinkedHashSet
+        try {
+            while (resultSet.next()) {
+                listeJeux.add(extraireParametres(resultSet));
+            }
+        } catch (SQLException throwables) {
+            // TODO: message erreur GUI
+            throwables.printStackTrace();
+        } finally {
+            try {
+                resultSet.close();
+            } catch (SQLException throwables) {
+                // TODO: message erreur GUI
+                throwables.printStackTrace();
+            }
+        }
+        return listeJeux;
+    }
+
+    /* Effectue des requêtes paramétrées pour obtenir une sous-liste de jeux dans la base de données
+     *
+     * @param attribut		Attribut utilisé pour restreindre la liste de jeux à obtenir de la base de données
+     * @param parametre		La valeur de l'attribut à utiliser dans la requête paramétrée
+     * @return		        Collection ordonnée contenant la liste des jeux associés à la requête, null si ne s'y trouve pas */
+    public static LinkedHashSet<Jeu> obtenirListe(Jeu.Attributs attribut, String parametre) {
+
+        String requete;
+
+        switch (attribut) {
+            case FABRICANT -> requete = "SELECT * FROM jeu WHERE fabricant LIKE ?";
+            case TITRE -> requete = "SELECT * FROM jeu WHERE fabricant LIKE ?";//TODO
+            case COTE -> requete = "SELECT * FROM jeu WHERE cote LIKE ?";
+            case CONSOLES -> requete = "SELECT * FROM jeu WHERE fabricant LIKE ?";//TODO
+            default -> requete = "SELECT * FROM jeu";//TODO
+        }
+
+
+        LinkedHashSet<Jeu> listeJeux = new LinkedHashSet<>();
+        ResultSet resultSet = null;
+
+        try {
+            connecter();
+            PreparedStatement preparedStatement = connexion.prepareStatement(requete);
+            preparedStatement.setString(1, "%" + parametre + "%");
+            resultSet = preparedStatement.executeQuery();
+            preparedStatement.close();
+            deconnecter();
+        } catch (SQLException throwables) {
+            // TODO: message erreur GUI
+            throwables.printStackTrace();
+        }
+
+        // Ajouter chaque au LinkedHashSet
+        try {
+            while (resultSet.next()) {
+                listeJeux.add(extraireParametres(resultSet));
+            }
+        } catch (SQLException throwables) {
+            // TODO: message erreur GUI
+            throwables.printStackTrace();
+        } finally {
+            try {
+                resultSet.close();
+            } catch (SQLException throwables) {
+                // TODO: message erreur GUI
+                throwables.printStackTrace();
+            }
+        }
+        return listeJeux;
+    }
+
+
     /* Modifie la liste des consoles associées à un jeu déjà présent dans la base de données.
      *
      * @param jeuModifie    Objet jeu contenant la liste de consoles mise à jour */

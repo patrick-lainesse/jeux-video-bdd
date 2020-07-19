@@ -10,11 +10,10 @@
 //								https://www.journaldev.com/878/java-write-to-file
 //////////////////////////////////////////////////////////////////////////////
 
-import java.sql.ResultSet;
 import java.util.*;
 import java.io.*;
 
-// TODO: vérifier code du prof et améliorer le mien si possible
+// TODO: renommer pour que ce soit plutôt un modèle relié aux fichiers txt
 public class Bdd {
 
     private Map<String, TreeSet<Jeu>> baseDeDonnees;
@@ -29,8 +28,6 @@ public class Bdd {
      *
      * @param nomFile		Le nom du fichier .txt à lire */
     public void addBdd(String nomFile) {
-
-        // TODO: changer code pour ne plus stocker de bdd, avec Requetes?
 
         FileReader fr = null;
         boolean existeFichier = true;
@@ -102,36 +99,6 @@ public class Bdd {
         }
     }
 
-    /* Parcourt la base de données et dresse une liste de jeux compatibles avec une certaine console
-     *
-     * @param console		La console pour laquelle on cherche à dresser une liste
-     * @return				ArrayList de jeux compatibles avec la console en paramètre, vide si elle n'est pas dans la base de données. */
-    public ArrayList<Jeu> chercheConsole(String console) {
-
-        ArrayList<Jeu> compatibles = new ArrayList<>();
-
-        Set<String> cles = baseDeDonnees.keySet();
-        for (String cle : cles) {
-            TreeSet<Jeu> listeFabricant = baseDeDonnees.get(cle);
-
-            for (Jeu jeuCourant : listeFabricant) {
-                if (jeuCourant.getConsoles().contains(console)) {
-                    compatibles.add(jeuCourant);
-                }
-            }
-        }
-
-        return compatibles;
-    }
-
-    /* Retourne la liste de jeux associés à un fabricant.
-     *
-     * @param fabricant		Fabricant pour lequel on veut imprimer la liste
-     * @return		Collection contenant la liste des jeux associés à ce fabricant, null si ne s'y trouve pas */
-    public Collection<Jeu> getJeuxFabricant(String fabricant) {
-        return baseDeDonnees.get(fabricant);
-    }
-
     /* Écrit les informations de la base de données dans un fichier .txt sous le format:
      * FOCUS;Vampyr;PG;PS4,XONE,PC,MAC,SWITCH
      * @param nomFichier		Le nom du fichier .txt à créer */
@@ -158,26 +125,7 @@ public class Bdd {
         }
     }
 
-    /* Affiche à l'écran toutes les informations relatives aux jeux ayant une cote passée en paramètre
-     * ##### Modifiée pour le TP2, afin de faire afficher le résultat dans l'interface graphique #####
-     *
-     * @param cote			La cote pour laquelle on cherche à afficher une liste */
-    public ArrayList<Jeu> chercheCote(String cote) {
-
-        ArrayList<Jeu> liste = new ArrayList<>();
-        Set<String> cles = baseDeDonnees.keySet();
-        for (String cle : cles) {
-            TreeSet<Jeu> listeFabricant = baseDeDonnees.get(cle);
-
-            for (Jeu jeuCourant : listeFabricant) {
-                if (jeuCourant.getCote().equals(cote)) {
-                    liste.add(jeuCourant);
-                }
-            }
-        }
-        return liste;
-    }
-
+    // TODO: va devoir faire à partir d'une requête
     /* Redéfinition de la méthode toString pour écire les informations de la base de données sous le format:
      * FOCUS;Vampyr;PG;PS4,XONE,PC,MAC,SWITCH
      * Utilise un StringBuilder pour améliorer la performance à l'écriture */

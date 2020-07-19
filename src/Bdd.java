@@ -139,7 +139,7 @@ public class Bdd {
         boolean existeFichier = true;
 
         // Vide la base de données sur le serveur SQL
-        Requetes.delete();
+        Requetes.effacer();
 
         try {
             new FileReader(nomFile);

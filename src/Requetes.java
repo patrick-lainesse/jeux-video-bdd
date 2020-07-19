@@ -53,25 +53,6 @@ public class Requetes {
         }
     }
 
-    // TODO: en-tête
-    public static void delete() {
-
-        String requete = "DELETE from jeu";
-
-        try {
-            connecter();
-            Statement statement = connexion.createStatement();
-            statement.execute(requete);
-            statement.close();
-            deconnecter();
-        } catch (SQLException throwables) {
-            // TODO: message erreur
-            throwables.printStackTrace();
-        } finally {
-            // TODO: Pourrait retourner un String à GUI...
-        }
-    }
-
     // TODO: return boolean?
     /* Vérifie si le fabricant et/ou le jeu existe déjà dans la base de données.
      * Si le jeu s'y retrouve déjà, ajout des consoles à l'entrée existante.
@@ -92,23 +73,20 @@ public class Requetes {
         }
 
         // Si le jeu est déjà dans la base de données, ajouter les nouvelles consoles s'il y a lieu
-        // TODO: penser au cas où la cote est différente!
         if (jeuDB != null) {
             Collection<String> nouvellesConsoles = nouveauJeu.getConsoles();
 
-            for (String console: nouvellesConsoles) {
+            for (String console : nouvellesConsoles) {
                 jeuDB.addConsole(console);
             }
 
-            // TODO: requête update DB pour les nouveaux jeux
-        }
-
-        else {
+            // Ajouter les consoles différentes à la base de données
+            modifierConsoles(jeuDB);
+        } else {
+            // Si le jeu n'est pas trouvé, l'ajouter à la base de données
             try {
                 connecter();
-                //Statement statement = connexion.createStatement();
                 PreparedStatement preparedStatement = connexion.prepareStatement(requete);
-                // TODO: implémenter un getter dans Jeu qui retourne les attributs dans un tableau et mettre ici un for loop
                 preparedStatement.setString(1, nouveauJeu.getFabricant());
                 preparedStatement.setString(2, nouveauJeu.getTitre());
                 preparedStatement.setString(3, nouveauJeu.getCote());
@@ -160,5 +138,43 @@ public class Requetes {
             }
         }
         return resultat;
+    }
+
+    // TODO: en-tête
+    public static void modifierConsoles(Jeu jeuModifie) {
+
+        String requete = "UPDATE jeu SET console = ? WHERE nom LIKE ? AND fabricant LIKE ?";
+
+        try {
+            connecter();
+            PreparedStatement preparedStatement = connexion.prepareStatement(requete);
+            preparedStatement.setString(1, jeuModifie.printConsoles());
+            preparedStatement.setString(2, jeuModifie.getTitre());
+            preparedStatement.setString(3, jeuModifie.getFabricant());
+            preparedStatement.executeQuery();
+            deconnecter();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+            // TODO: message d'erreur
+        }
+    }
+
+    // TODO: en-tête
+    public static void effacer() {
+
+        String requete = "DELETE from jeu";
+
+        try {
+            connecter();
+            Statement statement = connexion.createStatement();
+            statement.execute(requete);
+            statement.close();
+            deconnecter();
+        } catch (SQLException throwables) {
+            // TODO: message erreur
+            throwables.printStackTrace();
+        } finally {
+            // TODO: Pourrait retourner un String à GUI...
+        }
     }
 }

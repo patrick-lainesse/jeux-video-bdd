@@ -46,6 +46,7 @@ public class GUI extends JFrame {
     /**
      * Texte des options des menus
      * TODO: Réécrire en deux enum, un par sous-menu, qui associe texte et action (éventuellement icône, etc.)
+     * TODO: Séparer les erreurs en deux catégories: une pour afficher à l'utilisateur, une pour les développeurs
      */
     private static final String BDD = "Base de donn\u00e9es";
     private static final String RECHERCHE = "Recherche";
@@ -192,9 +193,6 @@ public class GUI extends JFrame {
                     try {
                         baseDeDonnees.loadBdd(fichier);
                         afficherBdd();
-                        // TODO: itilialiserDB devrait plutôt être dans addBdd, et changer en conséquence:
-                        //  delete devrait être dans loadBdd()
-                        //baseDeDonnees.initialiserDB();
                     } catch (Exception exception) {
                         JOptionPane.showMessageDialog(new JFrame(),
                                 "Erreur lors de la lecture du fichier.");
@@ -689,7 +687,6 @@ public class GUI extends JFrame {
                 nouveauJeu = new Jeu(tfFabricant.getText(), tfTitre.getText(), radioPanelRecherche.getChoix(), choixConsoles);
             }
 
-            //baseDeDonnees.addJeu(nouveauJeu);
             Requetes.inserer(nouveauJeu);
 
             JOptionPane.showMessageDialog(new JFrame(),
@@ -704,9 +701,9 @@ public class GUI extends JFrame {
         }
 
         public void actionPerformed(ActionEvent e) {
-            //Jeu jeuCherche = baseDeDonnees.getJeu(tfTitre.getText(), tfFabricant.getText());
             Jeu jeuCherche = null;
 
+            // TODO: Essayer de garder les exceptions SQL dans le fichier Requêtes
             try {
                 jeuCherche = Requetes.getJeu(tfTitre.getText(), tfFabricant.getText());
             } catch (SQLException throwables) {

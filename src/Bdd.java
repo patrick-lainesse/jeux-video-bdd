@@ -23,58 +23,6 @@ public class Bdd {
         baseDeDonnees = new LinkedHashMap<>();
     }
 
-    /* Vérifie si le fabricant et/ou le jeu existe déjà dans la base de données.
-     * Si le jeu s'y retrouve déjà, ajout des consoles à l'entrée existante
-     * Sinon, le jeu est ajouté à la base de données, ainsi que le fabricant si nécessaire
-     *
-     * @param unJeu		Le jeu à ajouter à la base de données */
-    public void addJeu(Jeu unJeu) {
-
-        String unFabricant = unJeu.getFabricant();
-
-        if (baseDeDonnees.containsKey(unFabricant)) {
-
-            TreeSet<Jeu> ts = baseDeDonnees.get(unFabricant);
-
-            if (ts.contains(unJeu)) {
-                /* Utilise floor pour retrouver le jeu courant dans le TreeSet contenant les jeux associés à ce fabricant
-                 * Utilise requireNonNull pour éviter un nullPointerException */
-                Objects.requireNonNull(ts.floor(unJeu)).getConsoles().addAll(unJeu.getConsoles());
-
-            } else {
-                ts.add(unJeu);
-            }
-        } else {
-            TreeSet<Jeu> ts = new TreeSet<>();
-            ts.add(unJeu);
-            baseDeDonnees.put(unFabricant, ts);
-        }
-    }
-
-    /* Recherche un jeu dans la base de données
-     * @param titre			Le nom de ce jeu
-     * @param fabricant		Le nom du fabricant pour ce jeu
-     * @return		L'objet Jeu correspondant à la recherche, null si non trouvé */
-    public Jeu getJeu(String titre, String fabricant) {
-
-        TreeSet<Jeu> listeJeux = baseDeDonnees.get(fabricant);
-        Jeu resultat = null;
-
-        /* Si la liste de jeux pour le fabricant passé en paramètre n'est pas nulle, parcourir cette liste
-         * pour voir si ce jeu s'y retrouve */
-        if (listeJeux != null) {
-            Iterator<Jeu> it = listeJeux.iterator();
-
-            while (resultat == null && it.hasNext()) {
-                Jeu courant = it.next();
-                if (courant.getTitre().equals(titre)) {
-                    resultat = courant;        // Arrêter la recherche dès qu'on obtient un résultat
-                }
-            }
-        }
-        return resultat;
-    }
-
     /* Lit une liste de jeux contenue dans un fichier .txt et les ajoute à la base de données
      * ou ajoute les consoles associées à ce jeu s'il s'y trouve déjà.
      * Utilise un BufferedReader pour améliorer la performance à la lecture.
@@ -118,8 +66,6 @@ public class Bdd {
                     for (String console : consoles) {
                         nouveau.addConsole(console);
                     }
-                    // TODO: enlever addJeu d'ici
-                    //this.addJeu(nouveau);
 
                     Requetes.inserer(nouveau);
 
@@ -134,23 +80,24 @@ public class Bdd {
     }
 
     /* Vérifie si le nom de fichier passé en paramètre est valide, et si oui, vide la base de données puis fait appel
-     * à addBdd() pour lire un nouveau fichier. */
+     * à addBdd() pour lire le fichier passé en paramètre.
+     *
+     * @param nomFile		Le nom du fichier .txt à lire */
     public void loadBdd(String nomFile) {
 
         boolean existeFichier = true;
 
-        // Vide la base de données sur le serveur SQL
-        Requetes.effacer();
-
         try {
             new FileReader(nomFile);
         } catch (java.io.FileNotFoundException e) {
+            // TODO: modifier pour GUI
             System.out.println("Probleme d'ouverture du fichier " + nomFile);
             existeFichier = false;
         }
 
         if (existeFichier) {
-            baseDeDonnees = new LinkedHashMap<>();
+            // Vide la base de données sur le serveur SQL
+            Requetes.effacer();
             addBdd(nomFile);
         }
     }
@@ -266,21 +213,6 @@ public class Bdd {
         for (Jeu jeuCourant : Requetes.listerDB()) {
             vecteurJeu.add(jeuCourant.vectoriser());
         }
-
-        // TODO: Ménage
-        /*ResultSet listeDB = Requetes.listerDB();
-        while (listeDB.next()) {
-
-        }*/
-
-        /*Set<String> cles = baseDeDonnees.keySet();
-        for (String cle : cles) {
-            TreeSet<Jeu> listeFabricant = baseDeDonnees.get(cle);
-
-            for (Jeu jeuCourant : listeFabricant) {
-                vecteurJeu.add(jeuCourant.vectoriser());
-            }
-        }*/
 
         return vecteurJeu;
     }

@@ -113,6 +113,7 @@ public class Bdd {
 
         } catch (IOException e) {
             e.printStackTrace();
+            // TODO: GUI erreur
             System.out.println("Erreur lors de l'écriture du fichier.");
         } finally {
             try {
@@ -125,6 +126,7 @@ public class Bdd {
         }
     }
 
+    // TODO: renommer car c'est pas tant un toString que ça
     // TODO: va devoir faire à partir d'une requête
     /* Redéfinition de la méthode toString pour écire les informations de la base de données sous le format:
      * FOCUS;Vampyr;PG;PS4,XONE,PC,MAC,SWITCH
@@ -134,13 +136,8 @@ public class Bdd {
 
         StringBuilder epeler = new StringBuilder();
 
-        Set<String> cles = baseDeDonnees.keySet();
-        for (String cle : cles) {
-            TreeSet<Jeu> listeFabricant = baseDeDonnees.get(cle);
-
-            for (Jeu jeuCourant : listeFabricant) {
-                epeler.append(jeuCourant.toString()).append("\n");
-            }
+        for (Jeu jeuCourant : Requetes.listerDB()) {
+            epeler.append(jeuCourant.toString()).append("\n");
         }
         return epeler.toString();
     }

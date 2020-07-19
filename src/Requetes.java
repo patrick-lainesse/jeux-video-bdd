@@ -122,25 +122,7 @@ public class Requetes {
         } finally {
             // TODO: Pourrait retourner un String à GUI...
         }
-
-        // Ajouter chaque au LinkedHashSet
-        try {
-            while (resultSet.next()) {
-                listeJeux.add(extraireParametres(resultSet));
-            }
-        } catch (SQLException throwables) {
-            // TODO: message erreur GUI
-            throwables.printStackTrace();
-        } finally {
-            try {
-                resultSet.close();
-            } catch (SQLException throwables) {
-                // TODO: message erreur GUI
-                throwables.printStackTrace();
-            }
-        }
-
-        return listeJeux;
+        return convertirResultSet(resultSet);
     }
 
     // TODO: définir mes propre exception pour pouvoir utiliser avec GUI?
@@ -170,19 +152,8 @@ public class Requetes {
 
         if (resultSet != null) {
             while (resultSet.next()) {
-
-                // Récupérer la liste des consoles et convertir en ArrayList pour utiliser le constructeur de la classe Jeu
-                String[] tableauConsoles = resultSet.getString("console").split(",");
-                List<String> listConsoles = Arrays.asList(tableauConsoles);
-
-                // TODO: constructeur prenant un resultset en paramètre
-                // Construire un objet Jeu pour passer comme résultat de la méthode
-                resultat = new Jeu(resultSet.getString("fabricant"),
-                        resultSet.getString("nom"),
-                        resultSet.getString("cote"),
-                        listConsoles);
+                resultat = extraireParametres(resultSet);
             }
-            resultSet.close();
         }
         return resultat;
     }
@@ -213,7 +184,18 @@ public class Requetes {
             throwables.printStackTrace();
         }
 
-        // Ajouter chaque au LinkedHashSet
+        return convertirResultSet(resultSet);
+    }
+
+    /* Convertit le result set obtenu d'une requête à la base de données en LinkedHashSet de jeux
+     *
+     * @param resultSet		Attribut utilisé pour restreindre la liste de jeux à obtenir de la base de données
+     * @return		        Collection ordonnée contenant la liste des jeux associés à la requête, null si ne s'y trouve pas */
+    private static LinkedHashSet<Jeu> convertirResultSet(ResultSet resultSet) {
+
+        LinkedHashSet<Jeu> listeJeux = new LinkedHashSet<>();
+
+        // Ajouter chaque jeu au LinkedHashSet
         try {
             while (resultSet.next()) {
                 listeJeux.add(extraireParametres(resultSet));
@@ -279,6 +261,7 @@ public class Requetes {
     }
 
     // TODO: Pour appeler le constructeur de Jeu sans avoir à lui faire gérer les SQL Exceptions
+    // TODO: renommer, crée un jeu, n'extrait pas des paramètres...
     private static Jeu extraireParametres(ResultSet uneEntree) {
 
         Jeu nouveauJeu = null;

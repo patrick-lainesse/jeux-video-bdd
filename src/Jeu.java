@@ -158,6 +158,7 @@ public class Jeu implements Comparable<Jeu> {
     /*****************************************************************************************************
      * CODE PRINCIPAL DE LA CLASSE JEU
      *****************************************************************************************************/
+    // TODO: renommer les attributs de Jeu pour correspondre à DB?
     public Jeu(String fabricant, String titre, String cote) {
         this.fabricant = fabricant;
         this.titre = titre;

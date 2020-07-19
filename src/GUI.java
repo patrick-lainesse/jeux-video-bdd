@@ -295,11 +295,11 @@ public class GUI extends JFrame {
                 try {
                     baseDeDonnees.saveBdd(nomFichier);
                     JOptionPane.showMessageDialog(new JFrame(),
-                            "Le jeu a \u00E9t\u00E9 ajout\u00E9 \u00E0 la base de donn\u00E9es.");
+                            "Base de donn\u00E9es bien enregistr\u00E9e.");
                 } catch (Exception exception) {
                     System.out.println(exception.getMessage());
                     JOptionPane.showMessageDialog(new JFrame(),
-                            "Erreur lors de l'enregistrement du jeu.");
+                            "Erreur lors de l'enregistrement du fichier.");
                 }
             } else System.out.println(ANNULE);
         }

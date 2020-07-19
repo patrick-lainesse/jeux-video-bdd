@@ -17,7 +17,7 @@ public class Requetes {
 
     // Sert à stocker des jeux pour ajouter à la base de données ou pour accueillir temporairement les résultats
     // des requêtes SQL
-    private Bdd baseDeDonnees;
+    private FichiersTXT baseDeDonnees;
 
     /* Ouvre une connexion à la base de données pour permettre une requête. */
     private static void connecter() {

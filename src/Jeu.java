@@ -27,7 +27,7 @@ public class Jeu implements Comparable<Jeu> {
      * enum pour stocker des constantes String qui sont réutilisées à plusieurs endroits dans le code.
      *****************************************************************************************************/
 
-    // TODO: utiliser dans Jeu.java et Bdd.java, voir si toujours pertinent avec MySQL
+    // TODO: utiliser dans Jeu.java et FichiersTXT.java, voir si toujours pertinent avec MySQL
 
     /**
      * enum contenant la liste des attributs d'un jeu, ainsi que l'enum qui est associé à cet attribut lorsqu'il existe.

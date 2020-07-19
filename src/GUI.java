@@ -33,7 +33,7 @@ public class GUI extends JFrame {
     JPanel formParent;              // Panel qui reçoit le panel du formulaire, permet plus de flexibilité dans le layout
     JPanel panelFormulaire;         // Affiche le formulaire pour saisir les informations d'un jeu
     JScrollPane tableauScrollPane;  // Recçoit le tableau pour afficher les informations sur les jeux
-    private Bdd baseDeDonnees;
+    private FichiersTXT baseDeDonnees;
 
     /**
      * Éléments de formulaire pouvant se retrouver dans le programme à un moment ou un autre.
@@ -189,7 +189,7 @@ public class GUI extends JFrame {
             if (reponse == JOptionPane.YES_OPTION) {
                 String fichier = choisirFichier();
                 if (!fichier.equals(ANNULE)) {
-                    baseDeDonnees = new Bdd();
+                    baseDeDonnees = new FichiersTXT();
                     try {
                         baseDeDonnees.nouvelleBaseTXT(fichier);
                         afficherBdd();

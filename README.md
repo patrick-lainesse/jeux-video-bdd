@@ -14,7 +14,7 @@ le format que doivent avoir les fichiers en lecture/écriture. Éventuellement, 
 
 ## À propos des différents fichiers
 
-### Jeu.java et Bdd.java
+### Jeu.java et FichiersTXT.java
 Classes pour gérer chaque jeu de la base de données. Développés pour utiliser des Java Collections, seront éventuellement
 remplacé par MySQL. Utilise des Enum pour stocker des constantes en String associées aux jeux. Il y a également des
 méthodes qui ajoutent les données à des vecteurs de String pour faciliter l'affichage dans des JPanel (GUI.java).

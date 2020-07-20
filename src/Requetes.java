@@ -1,7 +1,6 @@
 import java.sql.*;
 import java.util.*;
 
-// TODO: connection pool
 public class Requetes {
 
     // TODO: à changer sur DESI
@@ -13,31 +12,29 @@ public class Requetes {
     public static final String USERNAME = UserData.login;
     public static final String PASSWORD = UserData.passwd;
 
-    private static Connection connexion;
+    public static final String ERR_CONNEXION = "Impossible de se connecter \u00E0 la base de donn\u00E9es.";
+    public static final String ERR_DECONNEXION = "Un probl\u00E8me est survenu lors de la d\u00E9connexion \u00E0 la base de donn\u00E9es.";
+    public static final String ERR_INSERER = "Un problème est survenu lors de l'insertion dans la base de données.";
+    public static final String ERR_LECTURE_DB = "Probl\u00E8me lors de la lecture dans la base de donn\u00E9es";
+    public static final String ERR_VIDER = "La base de donn\u00E9es n'a pu \u00EAtre vid\u00E9e correctement.";
 
-    // Sert à stocker des jeux pour ajouter à la base de données ou pour accueillir temporairement les résultats
-    // des requêtes SQL
-    private FichiersTXT baseDeDonnees;
+    private static Connection connexion;
 
     /* Ouvre une connexion à la base de données pour permettre une requête. */
     private static void connecter() {
-        // TODO: ne semble pas nécessaire pour les versions récentes de Java, vérifier sur DESI
+        // TODO: ne semble pas nécessaire pour les versions récentes de Java, vérifier sur DESI, sinon faire dans même try
         /*try {
             Class.forName(DRIVER);
         } catch (ClassNotFoundException e) {
-            // TODO, ça commence à être trop de try/catch
             e.printStackTrace();
         }*/
 
         {
             try {
                 connexion = DriverManager.getConnection(URL, USERNAME, PASSWORD);
-                //connexion.close();
             } catch (SQLException throwables) {
-                // TODO exception
-                throwables.printStackTrace();
-            } finally {
-                // TODO: nécessaire?
+                System.out.println("connecter(): " + throwables.getMessage());
+                GUI.messageErreur(ERR_CONNEXION);
             }
         }
     }
@@ -48,8 +45,8 @@ public class Requetes {
         try {
             connexion.close();
         } catch (SQLException throwables) {
-            // TODO: Message d'erreur GUI
-            throwables.printStackTrace();
+            System.out.println("deconnecter(): " + throwables.getMessage());
+            GUI.messageErreur(ERR_DECONNEXION);
         }
     }
 
@@ -67,8 +64,8 @@ public class Requetes {
         try {
             jeuDB = getJeu(nouveauJeu.getTitre(), nouveauJeu.getFabricant());
         } catch (SQLException throwables) {
-            // TODO: message d'erreur GUI
-            throwables.printStackTrace();
+            System.out.println("inserer - getJeu: " + throwables.getMessage());
+            GUI.messageErreur(ERR_INSERER);
         }
 
         // Si le jeu est déjà dans la base de données, ajouter les nouvelles consoles s'il y a lieu
@@ -94,13 +91,12 @@ public class Requetes {
                 preparedStatement.close();
                 deconnecter();
             } catch (SQLException throwables) {
-                // TODO: message d'erreur GUI
-                throwables.printStackTrace();
+                System.out.println("inserer - query: " + throwables.getMessage());
+                GUI.messageErreur(ERR_INSERER);
             }
         }
     }
 
-    // TODO: utiliser obtenirListe à la place?
     /* Effectue une requête à la base de données pour obtenir une liste de tous les jeux.
      *
      * @return		Un LinkedHashSet pour conserver l'ordre des jeux présents dans la base de données. */
@@ -117,17 +113,14 @@ public class Requetes {
             statement.close();
             deconnecter();
         } catch (SQLException throwables) {
-            // TODO: message erreur GUI
-            throwables.printStackTrace();
-        } finally {
-            // TODO: Pourrait retourner un String à GUI...
+            System.out.println("listerDB: " + throwables.getMessage());
+            GUI.messageErreur(ERR_LECTURE_DB);
         }
         return convertirResultSet(resultSet);
     }
 
-    // TODO: définir mes propre exception pour pouvoir utiliser avec GUI?
-    // TODO: utiliser obtenirListe à la place?
-    /* Recherche un jeu dans la base de données
+    /* Recherche un jeu dans la base de données.
+     *
      * @param titre			Le nom de ce jeu
      * @param fabricant		Le nom du fabricant pour ce jeu
      * @return		        L'objet Jeu correspondant à la recherche, null si non trouvé */
@@ -146,19 +139,19 @@ public class Requetes {
             preparedStatement.close();
             deconnecter();
         } catch (SQLException throwables) {
-            throwables.printStackTrace();
-            // TODO: message d'erreur GUI
+            System.out.println("getJeu: " + throwables.getMessage());
+            GUI.messageErreur(ERR_LECTURE_DB);
         }
 
         if (resultSet != null) {
             while (resultSet.next()) {
-                resultat = extraireParametres(resultSet);
+                resultat = jeuResultSet(resultSet);
             }
         }
         return resultat;
     }
 
-    /* Effectue des requêtes paramétrées pour obtenir une sous-liste de jeux dans la base de données
+    /* Effectue une requête paramétrée pour obtenir une sous-liste de jeux dans la base de données.
      *
      * @param attribut		Attribut utilisé pour restreindre la liste de jeux à obtenir de la base de données
      * @param parametre		La valeur de l'attribut à utiliser dans la requête paramétrée
@@ -180,14 +173,14 @@ public class Requetes {
             preparedStatement.close();
             deconnecter();
         } catch (SQLException throwables) {
-            // TODO: message erreur GUI
-            throwables.printStackTrace();
+            System.out.println("obtenirListe:s " + throwables.getMessage());
+            GUI.messageErreur(ERR_LECTURE_DB);
         }
 
         return convertirResultSet(resultSet);
     }
 
-    /* Convertit le result set obtenu d'une requête à la base de données en LinkedHashSet de jeux
+    /* Convertit le result set obtenu d'une requête à la base de données en LinkedHashSet de jeux.
      *
      * @param resultSet		Attribut utilisé pour restreindre la liste de jeux à obtenir de la base de données
      * @return		        Collection ordonnée contenant la liste des jeux associés à la requête, null si ne s'y trouve pas */
@@ -198,17 +191,17 @@ public class Requetes {
         // Ajouter chaque jeu au LinkedHashSet
         try {
             while (resultSet.next()) {
-                listeJeux.add(extraireParametres(resultSet));
+                listeJeux.add(jeuResultSet(resultSet));
             }
         } catch (SQLException throwables) {
-            // TODO: message erreur GUI
-            throwables.printStackTrace();
+            System.out.println("convertirResultat - add: " + throwables.getMessage());
+            GUI.messageErreur(ERR_INSERER);
         } finally {
             try {
                 resultSet.close();
             } catch (SQLException throwables) {
-                // TODO: message erreur GUI
-                throwables.printStackTrace();
+                System.out.println("convertirResultat - close: " + throwables.getMessage());
+                GUI.messageErreur(ERR_DECONNEXION);
             }
         }
         return listeJeux;
@@ -232,17 +225,15 @@ public class Requetes {
             preparedStatement.close();
             deconnecter();
         } catch (SQLException throwables) {
-            throwables.printStackTrace();
-            // TODO: message d'erreur
+            System.out.println("modifierConsole: " + throwables.getMessage());
+            GUI.messageErreur(ERR_INSERER);
         }
     }
 
     /* Élimine toutes les entrées présentes dans la table jeu.
      * La requête DROP TABLE n'est pas utilisée car ne fonctionne pas sur le serveur de la DESI.
      * TODO: tester drop table sur DESI */
-    // TODO: return boolean pour que GUI affiche un message d'erreur
-    // TODO: renommer en viderDB
-    public static void effacer() {
+    public static void viderDB() {
 
         String requete = "DELETE from jeu";
 
@@ -253,16 +244,16 @@ public class Requetes {
             statement.close();
             deconnecter();
         } catch (SQLException throwables) {
-            // TODO: message erreur GUI
-            throwables.printStackTrace();
-        } finally {
-            // TODO: Pourrait retourner un String à GUI...
+            System.out.println("viderDB: " + throwables.getMessage());
+            GUI.messageErreur(ERR_VIDER);
         }
     }
 
-    // TODO: Pour appeler le constructeur de Jeu sans avoir à lui faire gérer les SQL Exceptions
-    // TODO: renommer, crée un jeu, n'extrait pas des paramètres...
-    private static Jeu extraireParametres(ResultSet uneEntree) {
+    /* Crée un jeu à partir d'un result set obtenu par une requête SQL.
+     *
+     * @param uneEntree     Un jeu obtenu en résultats d'une requête SQL
+     * @return              Un objet Jeu créé à partir du resultat passé en paramètre */
+    private static Jeu jeuResultSet(ResultSet uneEntree) {
 
         Jeu nouveauJeu = null;
 
@@ -272,15 +263,14 @@ public class Requetes {
             tableauConsoles = uneEntree.getString("console").split(",");
             List<String> listConsoles = Arrays.asList(tableauConsoles);
 
-            // TODO: constructeur prenant un resultset en paramètre
             // Construire un objet Jeu pour passer comme résultat de la méthode
             nouveauJeu = new Jeu(uneEntree.getString("fabricant"),
                     uneEntree.getString("nom"),
                     uneEntree.getString("cote"),
                     listConsoles);
         } catch (SQLException throwables) {
-            // TODO: message erreur
-            throwables.printStackTrace();
+            System.out.println("extraireParametres: " + throwables.getMessage());
+            GUI.messageErreur(ERR_LECTURE_DB);
         }
         return nouveauJeu;
     }

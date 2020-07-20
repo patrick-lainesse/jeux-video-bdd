@@ -15,6 +15,10 @@ import java.io.*;
 
 public class FichiersTXT {
 
+    public static final String ERR_OUVERTURE = "Probl\u00E8me d'ouverture du fichier.";
+    public static final String ERR_LECTURE = "Probl\u00E8me \u00E0 la lecture du fichier .txt.";
+    public static final String ERR_ECRITURE = "Erreur lors de l'\u00E9criture du fichier.";
+
     /* Lit une liste de jeux contenue dans un fichier .txt et les ajoute à la base de données
      * ou ajoute les consoles associées à ce jeu s'il s'y trouve déjà.
      * Utilise un BufferedReader pour améliorer la performance à la lecture.
@@ -29,7 +33,8 @@ public class FichiersTXT {
         try {
             fr = new FileReader(nomFile);
         } catch (java.io.FileNotFoundException e) {
-            System.out.println("Probleme d'ouverture du fichier " + nomFile);
+            System.out.println("ajouterTXT - new FileReader: " + e.getMessage());
+            GUI.messageErreur(ERR_OUVERTURE);
             existeFichier = false;
         }
 
@@ -41,7 +46,8 @@ public class FichiersTXT {
                 try {
                     ligne = entree.readLine();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    System.out.println("ajouterTXT - entree.readLine: " + e.getMessage());
+                    GUI.messageErreur(ERR_LECTURE);
                 }
                 if (ligne != null) {
 
@@ -52,19 +58,18 @@ public class FichiersTXT {
                     String[] consoles = parametres[3].split(",");
 
                     Jeu nouveau = new Jeu(parametres[0], parametres[1], parametres[2]);
-
                     for (String console : consoles) {
                         nouveau.addConsole(console);
                     }
 
                     Requetes.inserer(nouveau);
-
                 } else finFichier = true;
             }
             try {
                 entree.close();
             } catch (IOException e) {
-                e.printStackTrace();
+                System.out.println("ajouterTXT - entree.close(): " + e.getMessage());
+                GUI.messageErreur(ERR_LECTURE);
             }
         }
     }
@@ -80,14 +85,14 @@ public class FichiersTXT {
         try {
             new FileReader(nomFile);
         } catch (java.io.FileNotFoundException e) {
-            // TODO: modifier pour GUI
-            System.out.println("Probleme d'ouverture du fichier " + nomFile);
+            System.out.println("nouvellesBaseTXT: " + e.getMessage());
+            GUI.messageErreur(ERR_OUVERTURE);
             existeFichier = false;
         }
 
         if (existeFichier) {
             // Vide la base de données sur le serveur SQL
-            Requetes.effacer();
+            Requetes.viderDB();
             ajouterTXT(nomFile);
         }
     }
@@ -106,16 +111,15 @@ public class FichiersTXT {
             fr.write(this.transcrirePourFichier());
 
         } catch (IOException e) {
-            e.printStackTrace();
-            // TODO: GUI erreur
-            System.out.println("Erreur lors de l'écriture du fichier.");
+            System.out.println("enregistrerTXT - fr.write(): " + e.getMessage());
+            GUI.messageErreur(ERR_ECRITURE);
         } finally {
             try {
                 assert fr != null;
                 fr.close();
             } catch (IOException e) {
-                e.printStackTrace();
-                System.out.println("Erreur lors de la tentative du fermeture du fichier après l'écriture.");
+                System.out.println("enregistrerTXT - fr.close(): " + e.getMessage());
+                GUI.messageErreur(ERR_ECRITURE);
             }
         }
     }

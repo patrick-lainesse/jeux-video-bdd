@@ -69,6 +69,8 @@ public class GUI extends JFrame {
     public static final String TITRE_RECH_COTE = "Afficher les jeux par cote";
     public static final String TITRE_RESULTAT = "R\u00E9sultat de la recherche";
 
+    public static final String TITRE_ERREUR = "Erreur";
+
     private static final String ANNULE = "Annul\u00e9 par l'utilisateur.";
     private static final String ATTENTION = "Charger une base de donn\u00E9es \u00E0 partir d'un fichier .txt " +
             "entra\u00EEnera une perte des modifications non enregistr\u00E9es sur la base de donn\u00E9es.";
@@ -155,10 +157,19 @@ public class GUI extends JFrame {
         return menuBar;
     }
 
+    public static void messageErreur(String message) {
+
+        JOptionPane.showMessageDialog(new JFrame(),
+                message,
+                TITRE_ERREUR,
+                JOptionPane.ERROR_MESSAGE);
+
+    }
+
     /**
      * ***************************** ACTIONS DU MENU ***********************************************************
      * Section des actions déclenchées par des sélections du menu ou la combinaison de clés qui leur sont associées.
-     * *********************************************************************************************************/
+     *********************************************************************************************************/
     /* Ouvre une boîte de dialogue invitant l'utilisateur à sélectionner un fichier txt où se trouve une base de
      * données, puis la fait afficher dans un tableau dans l'écran principal. Affiche un message d'erreur en cas d'échec. */
     public class ActionCharger extends AbstractAction {
@@ -426,7 +437,7 @@ public class GUI extends JFrame {
 
         public static final String MSG_A_PROPOS =
                 "Cataloguideo\n\n" +
-                        "Version : 1.0.0\n\n" +
+                        "Version : 1.0.1\n\n" +
                         "Cataloguideo est un logiciel de gestion de catalogue pour une boutique de jeux vid\u00E9o,\n" +
                         "permettant d'obtenir des informations sur les jeux en stock en un temps rapide\n" +
                         "et avec une interface agr\u00E9able \u00E0 l'oeil et \u00E0 l'utilisation." +
@@ -445,6 +456,7 @@ public class GUI extends JFrame {
     }
 
     // TODO: créer un framework MVC, et mettre ces fonctions et les actions dans la classe controleur
+
     /*****************************************************************************************************
      * Méthodes potentiellement réutilisables dans les actions
      *****************************************************************************************************/
@@ -747,7 +759,7 @@ public class GUI extends JFrame {
         public void actionPerformed(ActionEvent e) {
             String coteCherchee = radioPanelRecherche.getChoix();
             System.out.println("Cote cherchee: " + coteCherchee);
-            LinkedHashSet<Jeu> listeJeux = Requetes.obtenirListe(Jeu.Attributs.COTE , coteCherchee);
+            LinkedHashSet<Jeu> listeJeux = Requetes.obtenirListe(Jeu.Attributs.COTE, coteCherchee);
             if (listeJeux != null) {
                 afficherResultat(Jeu.vectoriserArrayList(listeJeux), TITRE_RESULTAT);
             } else {

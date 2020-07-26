@@ -20,8 +20,6 @@ import java.util.*;
 import java.util.List;
 import javax.swing.border.TitledBorder;
 
-// TODO: Label des boutons radio et checkbox mal aligné
-// TODO: Padding au haut de chaque frame sauf les tableaux
 public class GUI extends JFrame {
 
     /**
@@ -65,7 +63,7 @@ public class GUI extends JFrame {
     public static final String TITRE_CONTENU_BDD = "Jeux contenus dans la base de donn\u00e9es";
     public static final String TITRE_AJOUT_JEU = "Ajouter un jeu";
     public static final String TITRE_RECH_JEU = "Rechercher un jeu";
-    public static final String TITRE_RECH_CONSOLES = "Afficher les jeux pour cette console";
+    public static final String TITRE_RECH_CONSOLES = "Afficher les jeux par console";
     public static final String TITRE_RECH_COTE = "Afficher les jeux par cote";
     public static final String TITRE_RESULTAT = "R\u00E9sultat de la recherche";
 
@@ -81,7 +79,7 @@ public class GUI extends JFrame {
 
         // Ouvrir le programme pour qu'il occupe les trois quarts de l'écran
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        this.setSize(screenSize.width * 3 / 4, screenSize.height * 3 / 4);
+        this.setSize(screenSize.width * 7 / 8, screenSize.height * 7 / 8);
 
         setTitle(titre);
         container = getContentPane();
@@ -93,10 +91,6 @@ public class GUI extends JFrame {
                               }
                           }
         );
-
-        // TODO: Oups! Changer le texte des boutons "Oui" et "Non" des boîtes de dialogue
-        UIManager.put("JOptionPane.cancelButtonText", "nope");
-        UIManager.put(JOptionPane.TOOL_TIP_TEXT_KEY, "yup");
 
         // Créer et afficher la barre de menus
         menu = creerMenu();
@@ -141,6 +135,8 @@ public class GUI extends JFrame {
         // Ajoute les actions (et donc leurs descriptions) à la barre de menu
         for (Action action : actionsBdd) {
             menuItem = new JMenuItem(action);
+            // TODO: ça fonctionne, mais faut ajouter manuellement charger
+            menuItem.setEnabled(false);
             menuBaseDeDonnees.add(menuItem);
         }
 
@@ -157,13 +153,12 @@ public class GUI extends JFrame {
         return menuBar;
     }
 
+    // TODO: JavaDocs
     public static void messageErreur(String message) {
-
         JOptionPane.showMessageDialog(new JFrame(),
                 message,
                 TITRE_ERREUR,
                 JOptionPane.ERROR_MESSAGE);
-
     }
 
     /**
@@ -184,6 +179,7 @@ public class GUI extends JFrame {
                 pourraient être perdues */
             int reponse = JOptionPane.YES_OPTION;
 
+            // TODO: devrait se débarasser de l'objet baseDeDonnees
             if (baseDeDonnees != null) {
                 // TODO: Mettre ça en String constantes ailleurs
                 Object[] options = {"J'ai dit: charger!", "Ah non, alors!"};
@@ -200,6 +196,7 @@ public class GUI extends JFrame {
             if (reponse == JOptionPane.YES_OPTION) {
                 String fichier = choisirFichier();
                 if (!fichier.equals(ANNULE)) {
+                    // TODO: devrait pas avoir à créer un objet bdd
                     baseDeDonnees = new FichiersTXT();
                     try {
                         baseDeDonnees.nouvelleBaseTXT(fichier);
@@ -279,6 +276,11 @@ public class GUI extends JFrame {
 
             BoutonFlow bouton = new BoutonFlow(new ActionBtnAjoutJeu());
             formParent.add(bouton, BorderLayout.EAST);
+
+            // TODO: tests apparence
+            //panelFormulaire.updateUI();
+            //panelFormulaire.setPreferredSize(new Dimension(250, 550));
+            //panelFormulaire.revalidate();
 
             setVisible(true);
         }
@@ -519,8 +521,12 @@ public class GUI extends JFrame {
     public void preparerFormulaire(String titre) {
         viderContainer();
 
+        // TODO: tests alignement
         panelFormulaire = new JPanel();
-        panelFormulaire.setLayout(new BoxLayout(panelFormulaire, BoxLayout.PAGE_AXIS));
+        GridLayout layout = new GridLayout(0, 1, 0, 0);
+
+        panelFormulaire.setLayout(layout);
+        //panelFormulaire.setLayout(new BoxLayout(panelFormulaire, BoxLayout.PAGE_AXIS));
         panelFormulaire.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         formParent = new JPanel();
@@ -548,7 +554,7 @@ public class GUI extends JFrame {
      */
     private static class CustomTxtField extends JPanel {
 
-        public final Dimension TXT_FIELD_SIZE = new Dimension(700, 20);
+        public final Dimension TXT_FIELD_SIZE = new Dimension(150, 20);
         final JTextField jTextField;
 
         /* Constructeur
@@ -557,12 +563,15 @@ public class GUI extends JFrame {
 
             JPanel panel = new JPanel();
             JLabel jLabel = new JLabel(nomLabel);
+            jLabel.setForeground(Color.RED);
 
             panel.add(jLabel, BorderLayout.LINE_START);
             jTextField = new JTextField();
             jTextField.setColumns(15);
             jTextField.setMaximumSize(TXT_FIELD_SIZE);
             panel.add(jTextField, BorderLayout.LINE_END);
+
+            panel.setBorder(BorderFactory.createEtchedBorder());
 
             add(panel);
         }
@@ -596,7 +605,8 @@ public class GUI extends JFrame {
 
             panelCB.setLayout(layout);
             JLabel jLabel = new JLabel(attribut.getAttribut());
-            panel.add(jLabel);
+            jLabel.setForeground(Color.RED);
+            panelCB.add(jLabel);
 
             // Ajouter un checkbox pour chaque option possible de l'enum correspondant dans la classe Jeu
             for (Enum item : attribut.getValues()) {
@@ -642,7 +652,9 @@ public class GUI extends JFrame {
 
             panelBoutons = new JPanel();
             JLabel jLabel = new JLabel(attribut.getAttribut());
-            panelFormulaire.add(jLabel);
+            jLabel.setForeground(Color.RED);
+            panelBoutons.add(jLabel);
+
 
             GridLayout layout = new GridLayout(0, 2);
             panelBoutons.setLayout(layout);

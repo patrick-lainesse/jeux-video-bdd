@@ -43,11 +43,8 @@ public class GUI extends JFrame {
     RadioPanel radioPanelRecherche;
     CheckBoxPanel checkBoxPanelConsoles;
 
-    /**
-     * Texte des options des menus
-     * TODO: Réécrire en deux enum, un par sous-menu, qui associe texte et action (éventuellement icône, etc.)
-     * TODO: Séparer les erreurs en deux catégories: une pour afficher à l'utilisateur, une pour les développeurs
-     */
+    // Texte des options des menus
+    //TODO: Réécrire en deux enum, un par sous-menu, qui associe texte et action (éventuellement icône, etc.)
     private static final String BDD = "Base de donn\u00e9es";
     private static final String RECHERCHE = "Recherche";
 
@@ -208,7 +205,6 @@ public class GUI extends JFrame {
             int reponse = JOptionPane.YES_OPTION;
 
             if (baseChargee) {
-                // TODO: Mettre ça en String constantes ailleurs
                 Object[] options = {"J'ai dit: charger!", "Ah non, alors!"};
                 reponse = JOptionPane.showOptionDialog(null,
                         ATTENTION,
@@ -229,9 +225,8 @@ public class GUI extends JFrame {
                         activerMenu();
                         baseChargee = true;
                     } catch (Exception exception) {
-                        JOptionPane.showMessageDialog(new JFrame(),
-                                "Erreur lors de la lecture du fichier.");
-                        // TODO: Message ne fonctionne pas, car ça peut aussi être une erreur de db...
+                        messageErreur("Erreur lors du chargement de la base de données.");
+                        System.out.println("ActionCharger - actionPerformed: " + exception.getMessage());
                     }
                 }
             } else {
@@ -258,14 +253,15 @@ public class GUI extends JFrame {
                 } else System.out.println(ANNULE);
                 afficherBdd();
             } catch (Exception exception) {
-                JOptionPane.showMessageDialog(new JFrame(),
-                        "Erreur lors de la lecture du fichier.");
-                // TODO: Message d'erreur adéquat? + Sout?
+                messageErreur("Erreur lors de l'ajout du fichier.");
+                System.out.println("ActionAjoutFichier: " + exception.getMessage());
             }
         }
     }
 
-    /* Affiche la base de données et les dernières modifications qui ont pu lui être apportées. */
+    /**
+     * Affiche la base de données et les dernières modifications qui ont pu lui être apportées.
+     */
     public class ActionRafraichir extends AbstractAction {
         public ActionRafraichir() {
             super(RAFRAICHIR);
@@ -278,8 +274,10 @@ public class GUI extends JFrame {
         }
     }
 
-    /* Fait apparaître formulaire pour saisir les données d'un nouveau jeu à ajouter à la base de données.
-     * Au clic sur le bouton, le jeu est ajouté à la base de données. */
+    /**
+     * Fait apparaître formulaire pour saisir les données d'un nouveau jeu à ajouter à la base de données.
+     * Au clic sur le bouton, le jeu est ajouté à la base de données.
+     */
     public class ActionAjoutJeu extends AbstractAction {
         public ActionAjoutJeu() {
             super(AJOUT_JEU);
@@ -311,7 +309,9 @@ public class GUI extends JFrame {
         }
     }
 
-    /* Enregistrer la base de données dans un fichier. */
+    /**
+     * Enregistrer la base de données dans un fichier.
+     */
     public class ActionEnregistrer extends AbstractAction {
         public ActionEnregistrer() {
             super(ENREGISTRER);
@@ -335,10 +335,8 @@ public class GUI extends JFrame {
                     JOptionPane.showMessageDialog(new JFrame(),
                             "Base de donn\u00E9es bien enregistr\u00E9e.");
                 } catch (Exception exception) {
-                    System.out.println(exception.getMessage());
-                    JOptionPane.showMessageDialog(new JFrame(),
-                            "Erreur lors de l'enregistrement du fichier.");
-                    // TODO: gestion messages erreur
+                    System.out.println("ActionEnregistrer: " + exception.getMessage());
+                    messageErreur("Erreur lors de l'enregistrement du fichier.");
                 }
             } else System.out.println(ANNULE);
         }
@@ -356,8 +354,10 @@ public class GUI extends JFrame {
         }
     }
 
-    /* Fait apparaître un formulaire pour saisir un fabricant et le titre d'un jeu. Au clic sur le bouton,
-     * lance la recherche dans la base de donnée et affiche les informations sur le jeu s'il est trouvé. */
+    /**
+     * Fait apparaître un formulaire pour saisir un fabricant et le titre d'un jeu. Au clic sur le bouton,
+     * lance la recherche dans la base de donnée et affiche les informations sur le jeu s'il est trouvé.
+     */
     public class ActionRechJeu extends AbstractAction {
         public ActionRechJeu() {
             super(RECHERCHE_JEU);
@@ -384,8 +384,10 @@ public class GUI extends JFrame {
         }
     }
 
-    /* Affiche une série de boutons radio invitant l'utilisateur à sélectionner une console.
-     * Affiche ensuite dans un tableau les infos des jeux disponibles sur la console sélectionnée. */
+    /**
+     * Affiche une série de boutons radio invitant l'utilisateur à sélectionner une console.
+     * Affiche ensuite dans un tableau les infos des jeux disponibles sur la console sélectionnée.
+     */
     public class ActionRechParConsole extends AbstractAction {
         public ActionRechParConsole() {
             super(RECHERCHE_PAR_CONSOLE);
@@ -407,8 +409,10 @@ public class GUI extends JFrame {
         }
     }
 
-    /* Affiche une série de boutons radio invitant l'utilisateur à sélectionner une cote.
-     * Affiche ensuite dans un tableau les infos des jeux disponibles pour la cote sélectionnée. */
+    /**
+     * Affiche une série de boutons radio invitant l'utilisateur à sélectionner une cote.
+     * Affiche ensuite dans un tableau les infos des jeux disponibles pour la cote sélectionnée.
+     */
     public class ActionRechParCote extends AbstractAction {
         public ActionRechParCote() {
             super(RECHERCHE_PAR_COTE);
@@ -432,8 +436,10 @@ public class GUI extends JFrame {
         }
     }
 
-    /* Affiche un text field pour saisir un fabricant et afficher la liste de jeux
-     * publiés par ce fabricant. Aucun raccourcé clavier n'est associé à cette action. */
+    /**
+     * Affiche un text field pour saisir un fabricant et afficher la liste de jeux
+     * publiés par ce fabricant. Aucun raccourcé clavier n'est associé à cette action.
+     */
     public class ActionRechParFabricant extends AbstractAction {
         public ActionRechParFabricant() {
             super(RECHERCHE_PAR_FABRICANT);
@@ -456,7 +462,9 @@ public class GUI extends JFrame {
         }
     }
 
-    /* Affiche un frame avec les informations sur le programme. */
+    /**
+     * Affiche un frame avec les informations sur le programme.
+     */
     public static class ActionAPropos extends AbstractAction {
 
         public static final String A_PROPOS = "\u00C0 propos de Cataloguideo";
@@ -480,8 +488,6 @@ public class GUI extends JFrame {
             JOptionPane.showMessageDialog(new JFrame(), MSG_A_PROPOS);
         }
     }
-
-    // TODO: créer un framework MVC, et mettre ces fonctions et les actions dans la classe controleur
 
     /*****************************************************************************************************
      * Méthodes potentiellement réutilisables dans les actions
@@ -520,15 +526,17 @@ public class GUI extends JFrame {
         setVisible(true);
     }
 
-    /* Saisit le nom du fichier sélectionné par l'utilisateur et son emplacement.
-     * @return	Le path absolu du fichier sélectionné, en String. */
+    /**
+     * Saisit le nom du fichier sélectionné par l'utilisateur et son emplacement.
+     *
+     * @return Le path absolu du fichier sélectionné, en String.
+     */
     public String choisirFichier() {
         final JFileChooser fileChooser = new JFileChooser();
         int returnVal = fileChooser.showOpenDialog(menu);
 
         if (returnVal == JFileChooser.APPROVE_OPTION) {
             File fichier = fileChooser.getSelectedFile();
-
             return fichier.getAbsolutePath();
         } else return ANNULE;
     }
@@ -572,7 +580,9 @@ public class GUI extends JFrame {
         container.add(formParent, BorderLayout.WEST);
     }
 
-    /* Vide le contenant principal de toutes ses composantes */
+    /**
+     * Vide le contenant principal de toutes ses composantes
+     */
     public void viderContainer() {
         container.removeAll();
         container.repaint();
@@ -591,8 +601,11 @@ public class GUI extends JFrame {
         public final Dimension TXT_FIELD_SIZE = new Dimension(150, 20);
         final JTextField jTextField;
 
-        /* Constructeur
-         * @parm nomLabel    Le texte du label qui s'affichera à côté du JTextField */
+        /**
+         * Constructeur
+         *
+         * @parm nomLabel    Le texte du label qui s'affichera à côté du JTextField
+         */
         public CustomTxtField(String nomLabel) {
 
             JPanel panel = new JPanel();
@@ -610,8 +623,11 @@ public class GUI extends JFrame {
             add(panel);
         }
 
-        /* Retourne le texte saisi dans le textField.
-         * @return	La cote sélectionnée pour le jeu à créer */
+        /**
+         * Retourne le texte saisi dans le textField.
+         *
+         * @return La cote sélectionnée pour le jeu à créer
+         */
         public String getText() {
             return jTextField.getText();
         }
@@ -625,9 +641,12 @@ public class GUI extends JFrame {
 
         private final List<JCheckBox> listeCB = new LinkedList<>();
 
-        /* Constructeur du panel
-         * @param	Une des valeurs de l'enum des Attributs de jeu (consoles), lequel contient
-         *          à son tour un enum contenant les différentes consoles possibles */
+        /**
+         * Constructeur du panel
+         *
+         * @param attribut Une des valeurs de l'enum des Attributs de jeu (consoles), lequel contient
+         *                 à son tour un enum contenant les différentes consoles possibles
+         */
         public CheckBoxPanel(Jeu.Attributs attribut) {
 
             /* Créer un panel pour recevoir seulement les checkbox, placées en deux rangées,
@@ -652,8 +671,11 @@ public class GUI extends JFrame {
             panelFormulaire.add(panel);
         }
 
-        /* Parcourt les checkbox du panneau et retourne une liste des textes correspondant aux checkboxes
-         * @return	La liste de consoles sélectionnées par l'utilisateur */
+        /**
+         * Parcourt les checkbox du panneau et retourne une liste des textes correspondant aux checkboxes
+         *
+         * @return La liste de consoles sélectionnées par l'utilisateur
+         */
         public Collection<String> getChoix() {
 
             ArrayList<String> choix = new ArrayList<>();
@@ -679,9 +701,12 @@ public class GUI extends JFrame {
         private final ButtonGroup buttonGroup = new ButtonGroup();
         private final JPanel panelBoutons;
 
-        /* Constructeur du panel
-         * @param	Une des valeurs de l'enum des Attributs de jeu (consoles ou cotes), lesquels contiennent
-         *          à leur tour un enum contenant les différentes consoles ou cotes possibles */
+        /**
+         * Constructeur du panel
+         *
+         * @param attribut Une des valeurs de l'enum des Attributs de jeu (consoles ou cotes), lesquels contiennent
+         *                 à leur tour un enum contenant les différentes consoles ou cotes possibles
+         */
         public RadioPanel(Jeu.Attributs attribut) {
 
             panelBoutons = new JPanel();
@@ -713,8 +738,11 @@ public class GUI extends JFrame {
             }
         }
 
-        /* Retourne la cote associée au bouton sélectionné.
-         * @return	La cote sélectionnée pour le jeu à créer */
+        /**
+         * Retourne la cote associée au bouton sélectionné.
+         *
+         * @return La cote sélectionnée pour le jeu à créer
+         */
         public String getChoix() {
             ButtonModel model = buttonGroup.getSelection();
             return model.getActionCommand();
@@ -792,7 +820,7 @@ public class GUI extends JFrame {
                 afficherResultat(Jeu.vectoriserArrayList(listeJeux), TITRE_RESULTAT);
             } else {
                 JOptionPane.showMessageDialog(new JFrame(),
-                        "Aucun jeu associé à cette console.");
+                        "Aucun jeu associ\u00E9 \u00E0 cette console.");
             }
         }
     }
@@ -804,13 +832,12 @@ public class GUI extends JFrame {
 
         public void actionPerformed(ActionEvent e) {
             String coteCherchee = radioPanelRecherche.getChoix();
-            System.out.println("Cote cherchee: " + coteCherchee);
             LinkedHashSet<Jeu> listeJeux = Requetes.obtenirListe(Jeu.Attributs.COTE, coteCherchee);
             if (listeJeux != null) {
                 afficherResultat(Jeu.vectoriserArrayList(listeJeux), TITRE_RESULTAT);
             } else {
                 JOptionPane.showMessageDialog(new JFrame(),
-                        "Aucun jeu associé à cette cote dans la base de données.");
+                        "Aucun jeu associ\u00E9 \u00E0 cette cote dans la base de donn\u00E9es.");
             }
         }
     }
@@ -827,7 +854,7 @@ public class GUI extends JFrame {
                 afficherResultat(Jeu.vectoriserArrayList(listeJeux), TITRE_RESULTAT);
             } else {
                 JOptionPane.showMessageDialog(new JFrame(),
-                        "Aucun jeu ne correspond à ce fabricant dans la base de données.");
+                        "Aucun jeu ne correspond \u00E0 ce fabricant dans la base de donn\u00E9es.");
             }
         }
     }
@@ -845,8 +872,11 @@ public class GUI extends JFrame {
         public static final String BTN_RECHERCHER = "Rechercher";
         // TODO: Un énum qui associe le texte et l'action du bouton pour éviter d'avoir à la passer en paramètre
 
-        /* Constructeur
-         * @parm action    L'action associée au bouton */
+        /**
+         * Constructeur
+         *
+         * @parm action    L'action associée au bouton
+         */
         public BoutonFlow(Action action) {
 
             setLayout(new FlowLayout());

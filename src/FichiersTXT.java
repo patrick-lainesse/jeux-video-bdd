@@ -19,11 +19,13 @@ public class FichiersTXT {
     public static final String ERR_LECTURE = "Probl\u00E8me \u00E0 la lecture du fichier .txt.";
     public static final String ERR_ECRITURE = "Erreur lors de l'\u00E9criture du fichier.";
 
-    /* Lit une liste de jeux contenue dans un fichier .txt et les ajoute à la base de données
+    /**
+     * Lit une liste de jeux contenue dans un fichier .txt et les ajoute à la base de données
      * ou ajoute les consoles associées à ce jeu s'il s'y trouve déjà.
      * Utilise un BufferedReader pour améliorer la performance à la lecture.
      *
-     * @param nomFile		Le nom du fichier .txt à lire */
+     * @param nomFile Le nom du fichier .txt à lire
+     */
     public static void ajouterTXT(String nomFile) {
 
         FileReader fr = null;
@@ -74,10 +76,12 @@ public class FichiersTXT {
         }
     }
 
-    /* Vérifie si le nom de fichier passé en paramètre est valide, et si oui, vide la base de données puis fait appel
+    /**
+     * Vérifie si le nom de fichier passé en paramètre est valide, et si oui, vide la base de données puis fait appel
      * à ajouterTXT() pour lire le fichier passé en paramètre.
      *
-     * @param nomFile		Le nom du fichier .txt à lire */
+     * @param nomFile Le nom du fichier .txt à lire
+     */
     public static void nouvelleBaseTXT(String nomFile) {
 
         boolean existeFichier = true;
@@ -97,10 +101,12 @@ public class FichiersTXT {
         }
     }
 
-    /* Écrit les informations de la base de données dans un fichier .txt sous le format:
+    /**
+     * Écrit les informations de la base de données dans un fichier .txt sous le format:
      * Fabricant;Titre;COTE;LISTE DES CONSOLES
      *
-     * @param nomFichier		Le nom du fichier .txt à créer */
+     * @param nomFichier Le nom du fichier .txt à créer
+     */
     public static void enregistrerTXT(String nomFichier) {
 
         File fichier = new File(nomFichier);
@@ -124,10 +130,12 @@ public class FichiersTXT {
         }
     }
 
-    /* Retranscrit chacun des jeux au format .txt prédéfini pour la lecture/écriture.
+    /**
+     * Retranscrit chacun des jeux au format .txt prédéfini pour la lecture/écriture.
      * Utilise un StringBuilder pour améliorer la performance à l'écriture
      *
-     * @return  Un String de plusieurs ligne, où chaque jeu a ce format: Fabricant;Titre;COTE;LISTE DES CONSOLES */
+     * @return Un String de plusieurs ligne, où chaque jeu a ce format: Fabricant;Titre;COTE;LISTE DES CONSOLES
+     */
     public static String transcrirePourFichier() {
 
         StringBuilder epeler = new StringBuilder();
@@ -143,10 +151,12 @@ public class FichiersTXT {
      * Fonctions utiles pour transposer à l'interface graphique (GUI)
      *****************************************************************************************************/
 
-    /* Parcourt la base de données et ajoute un vecteur de String pour chacun des jeux, dans le but
+    /**
+     * Parcourt la base de données et ajoute un vecteur de String pour chacun des jeux, dans le but
      * de l'afficher dans un JTable.
      *
-     * @return	Un vecteur de jeux, dont chacun de ses attributs sont regroupés dans un vecteur de String */
+     * @return Un vecteur de jeux, dont chacun de ses attributs sont regroupés dans un vecteur de String
+     */
     public static Vector<Vector<String>> vectoriser() {
 
         Vector<Vector<String>> vecteurJeu = new Vector<>();

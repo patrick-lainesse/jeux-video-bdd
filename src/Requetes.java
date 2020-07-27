@@ -20,7 +20,9 @@ public class Requetes {
 
     private static Connection connexion;
 
-    /* Ouvre une connexion à la base de données pour permettre une requête. */
+    /**
+     * Ouvre une connexion à la base de données pour permettre une requête.
+     */
     private static void connecter() {
         // TODO: ne semble pas nécessaire pour les versions récentes de Java, vérifier sur DESI, sinon faire dans même try
         /*try {
@@ -39,7 +41,9 @@ public class Requetes {
         }
     }
 
-    /* Ferme la connexion à la base de données. */
+    /**
+     * Ferme la connexion à la base de données.
+     */
     private static void deconnecter() {
         try {
             connexion.close();
@@ -49,11 +53,13 @@ public class Requetes {
         }
     }
 
-    /* Vérifie si le fabricant et/ou le jeu existe déjà dans la base de données.
+    /**
+     * Vérifie si le fabricant et/ou le jeu existe déjà dans la base de données.
      * Si le jeu s'y retrouve déjà, ajout des consoles à l'entrée existante.
      * Sinon, le jeu est ajouté à la base de données.
      *
-     * @param unJeu		Le jeu à ajouter à la base de données */
+     * @param nouveauJeu Le jeu à ajouter à la base de données
+     */
     public static void inserer(Jeu nouveauJeu) {
 
         String requete = "INSERT INTO jeu VALUES (?,?,?,?)";
@@ -96,9 +102,11 @@ public class Requetes {
         }
     }
 
-    /* Effectue une requête à la base de données pour obtenir une liste de tous les jeux.
+    /**
+     * Effectue une requête à la base de données pour obtenir une liste de tous les jeux.
      *
-     * @return		Un LinkedHashSet pour conserver l'ordre des jeux présents dans la base de données. */
+     * @return Un LinkedHashSet pour conserver l'ordre des jeux présents dans la base de données.
+     */
     public static LinkedHashSet<Jeu> listerDB() {
 
         LinkedHashSet<Jeu> listeJeux = new LinkedHashSet<>();
@@ -118,11 +126,13 @@ public class Requetes {
         return convertirResultSet(resultSet);
     }
 
-    /* Recherche un jeu dans la base de données.
+    /**
+     * Recherche un jeu dans la base de données.
      *
-     * @param titre			Le nom de ce jeu
-     * @param fabricant		Le nom du fabricant pour ce jeu
-     * @return		        L'objet Jeu correspondant à la recherche, null si non trouvé */
+     * @param titre     Le nom de ce jeu
+     * @param fabricant Le nom du fabricant pour ce jeu
+     * @return L'objet Jeu correspondant à la recherche, null si non trouvé
+     */
     public static Jeu getJeu(String titre, String fabricant) throws SQLException {
 
         ResultSet resultSet = null;
@@ -150,18 +160,18 @@ public class Requetes {
         return resultat;
     }
 
-    /* Effectue une requête paramétrée pour obtenir une sous-liste de jeux dans la base de données.
+    /**
+     * Effectue une requête paramétrée pour obtenir une sous-liste de jeux dans la base de données.
      *
-     * @param attribut		Attribut utilisé pour restreindre la liste de jeux à obtenir de la base de données
-     * @param parametre		La valeur de l'attribut à utiliser dans la requête paramétrée
-     * @return		        Collection ordonnée contenant la liste des jeux associés à la requête, null si ne s'y trouve pas */
+     * @param attribut  Attribut utilisé pour restreindre la liste de jeux à obtenir de la base de données
+     * @param parametre La valeur de l'attribut à utiliser dans la requête paramétrée
+     * @return Collection ordonnée contenant la liste des jeux associés à la requête, null si ne s'y trouve pas
+     */
     public static LinkedHashSet<Jeu> obtenirListe(Jeu.Attributs attribut, String parametre) {
 
         String requete;
 
         requete = "SELECT * FROM jeu WHERE " + attribut.getEquivalentDB() + " LIKE ?";
-
-        LinkedHashSet<Jeu> listeJeux = new LinkedHashSet<>();
         ResultSet resultSet = null;
 
         try {
@@ -179,10 +189,12 @@ public class Requetes {
         return convertirResultSet(resultSet);
     }
 
-    /* Convertit le result set obtenu d'une requête à la base de données en LinkedHashSet de jeux.
+    /**
+     * Convertit le result set obtenu d'une requête à la base de données en LinkedHashSet de jeux.
      *
-     * @param resultSet		Attribut utilisé pour restreindre la liste de jeux à obtenir de la base de données
-     * @return		        Collection ordonnée contenant la liste des jeux associés à la requête, null si ne s'y trouve pas */
+     * @param resultSet Attribut utilisé pour restreindre la liste de jeux à obtenir de la base de données
+     * @return Collection ordonnée contenant la liste des jeux associés à la requête, null si ne s'y trouve pas
+     */
     private static LinkedHashSet<Jeu> convertirResultSet(ResultSet resultSet) {
 
         LinkedHashSet<Jeu> listeJeux = new LinkedHashSet<>();
@@ -233,9 +245,11 @@ public class Requetes {
         }
     }
 
-    /* Élimine toutes les entrées présentes dans la table jeu.
+    /**
+     * Élimine toutes les entrées présentes dans la table jeu.
      * La requête DROP TABLE n'est pas utilisée car ne fonctionne pas sur le serveur de la DESI.
-     * TODO: tester drop table sur DESI */
+     * TODO: tester drop table sur DESI
+     */
     public static void viderDB() {
 
         String requete = "DELETE from jeu";
@@ -252,10 +266,12 @@ public class Requetes {
         }
     }
 
-    /* Crée un jeu à partir d'un result set obtenu par une requête SQL.
+    /**
+     * Crée un jeu à partir d'un result set obtenu par une requête SQL.
      *
-     * @param uneEntree     Un jeu obtenu en résultats d'une requête SQL
-     * @return              Un objet Jeu créé à partir du resultat passé en paramètre */
+     * @param uneEntree Un jeu obtenu en résultats d'une requête SQL
+     * @return Un objet Jeu créé à partir du resultat passé en paramètre
+     */
     private static Jeu jeuResultSet(ResultSet uneEntree) {
 
         Jeu nouveauJeu = null;

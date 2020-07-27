@@ -125,18 +125,22 @@ public class Jeu implements Comparable<Jeu> {
             return console;
         }
 
-        /*  Fonction qui retourne l'abbréviation associée au nom d'une console, nécessaire pour effectuer une
-         *  recherche dans la base de données ou pour enregistrer la base de données en format .txt
+        /**
+         * Fonction qui retourne l'abbréviation associée au nom d'une console, nécessaire pour effectuer une
+         * recherche dans la base de données ou pour enregistrer la base de données en format .txt
          *
-         *  @return     L'abbréviation de la console en format String */
+         * @return L'abbréviation de la console en format String
+         */
         public String getAbbreviation() {
             return abbreviation;
         }
 
-        /*  Surcharge de la méthode. Permet d'être appelée statiquement pour comparer un String à l'ensemble
-         *  des constantes de l'enum Consoles.
+        /**
+         * Surcharge de la méthode. Permet d'être appelée statiquement pour comparer un String à l'ensemble
+         * des constantes de l'enum Consoles.
          *
-         *  @return     L'abbréviation de la console en format String */
+         * @return L'abbréviation de la console en format String
+         */
         public static String getAbbreviation(String console) {
             for (Consoles c : Consoles.values()) {
                 if (console.equals(c.toString())) return c.abbreviation;
@@ -175,21 +179,26 @@ public class Jeu implements Comparable<Jeu> {
         this.consoles.addAll(consoles);
     }
 
-    /* Ajoute une console à la liste des consoles du jeu.
+    /**
+     * Ajoute une console à la liste des consoles du jeu.
      * On peut simplement ajouter des consoles à la liste sans vérifier si elles s'y retrouvent déjà, car
      * l'ajout d'un élément déjà présent dans un LinkedHashSet ne change pas l'ordre des éléments s'y trouvant.
      *
-     * @parm console    Nom de la console à ajouter à la liste */
+     * @parm console    Nom de la console à ajouter à la liste
+     */
     public void addConsole(String console) {
         consoles.add(console);
     }
 
     // TODO: voir si je peux me débrouiller avec une seule des deux méthodes printConsoles
     // TODO: renommmer, car donne l'impression que ça print à System.out
-    /* Méthode toString() pour une liste de consoles associées au jeu, facilite l'écriture à l'écran ou dans un fichier txt
+
+    /**
+     * Méthode toString() pour une liste de consoles associées au jeu, facilite l'écriture à l'écran ou dans un fichier txt
      *
-     * @param console	Une collection de consoles en String
-     * @return	        Un String sous le format suivant: PS4,XONE,PC,MAC,SWITCH */
+     * @param console Une collection de consoles en String
+     * @return Un String sous le format suivant: PS4,XONE,PC,MAC,SWITCH
+     */
     private String printConsoles(Collection<String> consoles) {
 
         StringBuilder liste = new StringBuilder();
@@ -202,8 +211,11 @@ public class Jeu implements Comparable<Jeu> {
         return liste.toString();
     }
 
-    /* Méthode toString() pour une liste de consoles associées au jeu lorsqu'aucun paramètres n'est fourni.
-     * @return	Un String sous le format suivant: PS4,XONE,PC,MAC,SWITCH */
+    /**
+     * Méthode toString() pour une liste de consoles associées au jeu lorsqu'aucun paramètres n'est fourni.
+     *
+     * @return Un String sous le format suivant: PS4,XONE,PC,MAC,SWITCH
+     */
     public String printConsoles() {
         return printConsoles(consoles);
     }
@@ -239,9 +251,11 @@ public class Jeu implements Comparable<Jeu> {
         return fabricant + ";" + titre + ";" + cote + ";" + printConsoles(consoles);
     }
 
-    /* Nécessaire puisque equals est redéfinie et les jeux seront placés dans un LinkedHashSet
+    /**
+     * Nécessaire puisque equals est redéfinie et les jeux seront placés dans un LinkedHashSet
      * Seuls le fabricant et le titre des jeux sont utilisés, soient les même paramètres utilisés
-     * pour la comparaison avec equals() */
+     * pour la comparaison avec equals()
+     */
     @Override
     public int hashCode() {
         return fabricant.hashCode() * 444 + titre.hashCode() * 19;
@@ -270,10 +284,12 @@ public class Jeu implements Comparable<Jeu> {
      * Fonction pour faciliter la transposition à l'interface graphique (GUI)
      *****************************************************************************************************/
 
-    /* Place chacun des attribut du jeu dans un vecteur de String, afin de faciliter son ajout sous forme d'une
+    /**
+     * Place chacun des attribut du jeu dans un vecteur de String, afin de faciliter son ajout sous forme d'une
      * ligne dans un JTable.
      *
-     * @return	Un vecteur String contenant chacun des attributs d'un jeu */
+     * @return Un vecteur String contenant chacun des attributs d'un jeu
+     */
     public Vector<String> vectoriser() {
 
         Vector<String> ligne = new Vector<>();
@@ -285,11 +301,12 @@ public class Jeu implements Comparable<Jeu> {
         return ligne;
     }
 
-    /* Ajoute chaque Jeu contenu dans un ArrayList à un vecteur de vecteurs de String,
+    /**
+     * Ajoute chaque Jeu contenu dans un ArrayList à un vecteur de vecteurs de String,
      * afin de les afficher dans un JTable.
      *
-     * @return	Un vecteur de vecteurs de String représentant les attributs de chaque jeu */
-    //public static Vector<Vector<String>> vectoriserArrayList(ArrayList<Jeu> arrayList) {
+     * @return Un vecteur de vecteurs de String représentant les attributs de chaque jeu
+     */
     public static Vector<Vector<String>> vectoriserArrayList(Collection<Jeu> arrayList) {
 
         Vector<Vector<String>> vecteurJeu = new Vector<>();

@@ -14,7 +14,7 @@ public class Requetes {
 
     public static final String ERR_CONNEXION = "Impossible de se connecter \u00E0 la base de donn\u00E9es.";
     public static final String ERR_DECONNEXION = "Un probl\u00E8me est survenu lors de la d\u00E9connexion \u00E0 la base de donn\u00E9es.";
-    public static final String ERR_INSERER = "Un problème est survenu lors de l'insertion dans la base de données.";
+    public static final String ERR_INSERER = "Un probl\u00E8me est survenu lors de l'insertion dans la base de donn\u00E9es.";
     public static final String ERR_LECTURE_DB = "Probl\u00E8me lors de la lecture dans la base de donn\u00E9es";
     public static final String ERR_VIDER = "La base de donn\u00E9es n'a pu \u00EAtre vid\u00E9e correctement.";
 
@@ -207,12 +207,16 @@ public class Requetes {
     }
 
 
-    /* Modifie la liste des consoles associées à un jeu déjà présent dans la base de données.
+    /**
+     * Modifie la liste des consoles associées à un jeu déjà présent dans la base de données.
      *
-     * @param jeuModifie    Objet jeu contenant la liste de consoles mise à jour */
+     * @param jeuModifie Objet jeu contenant la liste de consoles mise à jour
+     */
     public static void modifierConsoles(Jeu jeuModifie) {
 
-        String requete = "UPDATE jeu SET console = ? WHERE nom LIKE ? AND fabricant LIKE ?";
+        String requete = "UPDATE jeu SET " + Jeu.Attributs.CONSOLES.getEquivalentDB()
+                + " = ? WHERE " + Jeu.Attributs.TITRE.getEquivalentDB() + " LIKE ? AND "
+                + Jeu.Attributs.FABRICANT.getEquivalentDB() + " LIKE ?";
 
         try {
             connecter();

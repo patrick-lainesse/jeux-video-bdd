@@ -24,7 +24,7 @@ public class FichiersTXT {
      * Utilise un BufferedReader pour améliorer la performance à la lecture.
      *
      * @param nomFile		Le nom du fichier .txt à lire */
-    public void ajouterTXT(String nomFile) {
+    public static void ajouterTXT(String nomFile) {
 
         FileReader fr = null;
         boolean existeFichier = true;
@@ -78,7 +78,7 @@ public class FichiersTXT {
      * à ajouterTXT() pour lire le fichier passé en paramètre.
      *
      * @param nomFile		Le nom du fichier .txt à lire */
-    public void nouvelleBaseTXT(String nomFile) {
+    public static void nouvelleBaseTXT(String nomFile) {
 
         boolean existeFichier = true;
 
@@ -101,14 +101,14 @@ public class FichiersTXT {
      * Fabricant;Titre;COTE;LISTE DES CONSOLES
      *
      * @param nomFichier		Le nom du fichier .txt à créer */
-    public void enregistrerTXT(String nomFichier) {
+    public static void enregistrerTXT(String nomFichier) {
 
         File fichier = new File(nomFichier);
         FileWriter fr = null;
 
         try {
             fr = new FileWriter(fichier);
-            fr.write(this.transcrirePourFichier());
+            fr.write(transcrirePourFichier());
 
         } catch (IOException e) {
             System.out.println("enregistrerTXT - fr.write(): " + e.getMessage());
@@ -128,7 +128,7 @@ public class FichiersTXT {
      * Utilise un StringBuilder pour améliorer la performance à l'écriture
      *
      * @return  Un String de plusieurs ligne, où chaque jeu a ce format: Fabricant;Titre;COTE;LISTE DES CONSOLES */
-    public String transcrirePourFichier() {
+    public static String transcrirePourFichier() {
 
         StringBuilder epeler = new StringBuilder();
 
@@ -147,7 +147,7 @@ public class FichiersTXT {
      * de l'afficher dans un JTable.
      *
      * @return	Un vecteur de jeux, dont chacun de ses attributs sont regroupés dans un vecteur de String */
-    public Vector<Vector<String>> vectoriser() {
+    public static Vector<Vector<String>> vectoriser() {
 
         Vector<Vector<String>> vecteurJeu = new Vector<>();
 

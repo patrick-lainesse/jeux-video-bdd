@@ -20,6 +20,7 @@ import java.util.*;
 import java.util.List;
 import javax.swing.border.TitledBorder;
 
+// TODO: on voit pas bouton avec fonction ajout Jeu
 public class GUI extends JFrame {
 
     /**
@@ -31,9 +32,10 @@ public class GUI extends JFrame {
     JPanel formParent;              // Panel qui reçoit le panel du formulaire, permet plus de flexibilité dans le layout
     JPanel panelFormulaire;         // Affiche le formulaire pour saisir les informations d'un jeu
     JScrollPane tableauScrollPane;  // Recçoit le tableau pour afficher les informations sur les jeux
-    private FichiersTXT baseDeDonnees;      // TODO: on ne devrait pas utiliser ça
+    private boolean baseChargee;    // Pour savoir s'il y a déjà une base chargée dans le logiciel
 
-    private JMenu menuBaseDeDonnees;       // TODO: JavaDocs
+    // Sous-menus de la barre de menu
+    private JMenu menuBaseDeDonnees;
     private JMenu menuRecherche;
 
     /**
@@ -99,6 +101,7 @@ public class GUI extends JFrame {
         menu = creerMenu();
         setJMenuBar(menu);
         setVisible(true);
+        baseChargee = false;
     }
 
     /**
@@ -177,7 +180,8 @@ public class GUI extends JFrame {
 
     /**
      * Affiche un message d'erreur dans une boîte de dialogue.
-     * @param message   Le message à afficher.
+     *
+     * @param message Le message à afficher.
      */
     public static void messageErreur(String message) {
         JOptionPane.showMessageDialog(new JFrame(),
@@ -190,8 +194,10 @@ public class GUI extends JFrame {
      * ***************************** ACTIONS DU MENU ***********************************************************
      * Section des actions déclenchées par des sélections du menu ou la combinaison de clés qui leur sont associées.
      *********************************************************************************************************/
-    /* Ouvre une boîte de dialogue invitant l'utilisateur à sélectionner un fichier txt où se trouve une base de
-     * données, puis la fait afficher dans un tableau dans l'écran principal. Affiche un message d'erreur en cas d'échec. */
+    /**
+     * Ouvre une boîte de dialogue invitant l'utilisateur à sélectionner un fichier txt où se trouve une base de
+     * données, puis la fait afficher dans un tableau dans l'écran principal. Affiche un message d'erreur en cas d'échec.
+     */
     public class ActionCharger extends AbstractAction {
         public ActionCharger() {
             super(CHARGER);
@@ -204,8 +210,7 @@ public class GUI extends JFrame {
                 pourraient être perdues */
             int reponse = JOptionPane.YES_OPTION;
 
-            // TODO: devrait se débarasser de l'objet baseDeDonnees
-            if (baseDeDonnees != null) {
+            if (baseChargee) {
                 // TODO: Mettre ça en String constantes ailleurs
                 Object[] options = {"J'ai dit: charger!", "Ah non, alors!"};
                 reponse = JOptionPane.showOptionDialog(null,
@@ -221,12 +226,11 @@ public class GUI extends JFrame {
             if (reponse == JOptionPane.YES_OPTION) {
                 String fichier = choisirFichier();
                 if (!fichier.equals(ANNULE)) {
-                    // TODO: devrait pas avoir à créer un objet bdd
-                    baseDeDonnees = new FichiersTXT();
                     try {
-                        baseDeDonnees.nouvelleBaseTXT(fichier);
+                        FichiersTXT.nouvelleBaseTXT(fichier);
                         afficherBdd();
                         activerMenu();
+                        baseChargee = true;
                     } catch (Exception exception) {
                         JOptionPane.showMessageDialog(new JFrame(),
                                 "Erreur lors de la lecture du fichier.");
@@ -239,7 +243,9 @@ public class GUI extends JFrame {
         }
     }
 
-    /* Permet d'ajouter un nouveau fichier de base de données à celui déjà chargé. */
+    /**
+     * Permet d'ajouter un nouveau fichier txt de base de données.
+     */
     public class ActionAjoutFichier extends AbstractAction {
         public ActionAjoutFichier() {
             super(AJOUT_FICHIER);
@@ -251,12 +257,13 @@ public class GUI extends JFrame {
             try {
                 String fichierAjout = choisirFichier();
                 if (!fichierAjout.equals(ANNULE)) {
-                    baseDeDonnees.ajouterTXT(fichierAjout);
+                    FichiersTXT.ajouterTXT(fichierAjout);
                 } else System.out.println(ANNULE);
                 afficherBdd();
             } catch (Exception exception) {
                 JOptionPane.showMessageDialog(new JFrame(),
                         "Erreur lors de la lecture du fichier.");
+                // TODO: Message d'erreur adéquat? + Sout?
             }
         }
     }
@@ -303,11 +310,6 @@ public class GUI extends JFrame {
             BoutonFlow bouton = new BoutonFlow(new ActionBtnAjoutJeu());
             formParent.add(bouton, BorderLayout.EAST);
 
-            // TODO: tests apparence
-            //panelFormulaire.updateUI();
-            //panelFormulaire.setPreferredSize(new Dimension(250, 550));
-            //panelFormulaire.revalidate();
-
             setVisible(true);
         }
     }
@@ -332,13 +334,14 @@ public class GUI extends JFrame {
 
             if (!nomFichier.equals(ANNULE)) {
                 try {
-                    baseDeDonnees.enregistrerTXT(nomFichier);
+                    FichiersTXT.enregistrerTXT(nomFichier);
                     JOptionPane.showMessageDialog(new JFrame(),
                             "Base de donn\u00E9es bien enregistr\u00E9e.");
                 } catch (Exception exception) {
                     System.out.println(exception.getMessage());
                     JOptionPane.showMessageDialog(new JFrame(),
                             "Erreur lors de l'enregistrement du fichier.");
+                    // TODO: gestion messages erreur
                 }
             } else System.out.println(ANNULE);
         }
@@ -460,12 +463,10 @@ public class GUI extends JFrame {
     public static class ActionAPropos extends AbstractAction {
 
         public static final String A_PROPOS = "\u00C0 propos de Cataloguideo";
-        // TODO: Ajouter une variable statique version no et faire un append dans ce message
-        // TODO: changer le no de version
 
         public static final String MSG_A_PROPOS =
                 "Cataloguideo\n\n" +
-                        "Version : 1.0.1\n\n" +
+                        "Version : 1.0.2\n\n" +
                         "Cataloguideo est un logiciel de gestion de catalogue pour une boutique de jeux vid\u00E9o,\n" +
                         "permettant d'obtenir des informations sur les jeux en stock en un temps rapide\n" +
                         "et avec une interface agr\u00E9able \u00E0 l'oeil et \u00E0 l'utilisation." +
@@ -488,15 +489,21 @@ public class GUI extends JFrame {
     /*****************************************************************************************************
      * Méthodes potentiellement réutilisables dans les actions
      *****************************************************************************************************/
-    /* Parcourt la base de données pour créer un vecteur permettant l'appel du constructeur JTable pour afficher en tableau. */
+    /**
+     * Parcourt la base de données pour créer un vecteur nécessaire à l'appel du constructeur JTable pour afficher en JTable.
+     */
     public void afficherBdd() {
-        Vector<Vector<String>> lignes = baseDeDonnees.vectoriser();
+        Vector<Vector<String>> lignes = FichiersTXT.vectoriser();
         afficherResultat(lignes, TITRE_CONTENU_BDD);
     }
 
-    /* Crée un tableau qui prend toute la largeur du container principal pour y afficher
-     * le résultat d'une recherche de jeu(x). */
-    // TODO: Créer une fonction pour lancer un dialog box avec les infos du jeu lorsqu'on double-clique un jeu dans le tableau
+    /**
+     * Crée un tableau qui prend toute la largeur du container principal pour y afficher
+     * le résultat d'une recherche de jeu(x).
+     *
+     * @param listeJeux Vecteur de la liste des jeux, donc chaque paramètre est dans un vecteur
+     * @param titre     Titre à afficher au haut du panel du tableau
+     */
     public void afficherResultat(Vector<Vector<String>> listeJeux, String titre) {
 
         // Crée l'en-tête du tableau
@@ -541,21 +548,22 @@ public class GUI extends JFrame {
                 TitledBorder.TOP));
     }
 
-    /* Prépare le container principal pour y insérer des éléments de formulaires.
+    /**
+     * Prépare le container principal pour y insérer des éléments de formulaires.
      * Éléments positionnés:
-     *           - panelFormulaire: Panneau contenant les zones de textes, boutons radio, etc, inséré dans le panelNorth
-     *           - panelNorth: Panneau situé au haut du container principal.
-     *                         Les boutons sont placés après le panneau du formulaire.
-     * @param titre     Le titre qui s'affiche au haut du cadre du formulaire */
+     * - panelFormulaire: Panneau contenant les zones de textes, boutons radio, etc, inséré dans le panelNorth
+     * - panelNorth: Panneau situé au haut du container principal.
+     * Les boutons sont placés après le panneau du formulaire.
+     *
+     * @param titre Le titre qui s'affiche au haut du cadre du formulaire
+     */
     public void preparerFormulaire(String titre) {
         viderContainer();
 
-        // TODO: tests alignement
         panelFormulaire = new JPanel();
         GridLayout layout = new GridLayout(0, 1, 0, 0);
 
         panelFormulaire.setLayout(layout);
-        //panelFormulaire.setLayout(new BoxLayout(panelFormulaire, BoxLayout.PAGE_AXIS));
         panelFormulaire.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         formParent = new JPanel();

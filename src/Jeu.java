@@ -31,13 +31,13 @@ public class Jeu implements Comparable<Jeu> {
 
     /**
      * enum contenant la liste des attributs d'un jeu, ainsi que l'enum qui est associé à cet attribut lorsqu'il existe.
+     * Permet de conserver les String associés à l'objet jeu en un seul endroit pour les modifier pour tout le projet.
      */
     public enum Attributs {
         FABRICANT("Fabricant", null, "fabricant"),
         TITRE("Titre", null, "nom"),
         COTE("Cote", Cotes.values(), "cote"),
-        CONSOLES("Consoles", Consoles.values(), "console");
-        // TODO: corriger pour ajouter le "s" à console dans la DB
+        CONSOLES("Consoles", Consoles.values(), "consoles");
 
         private final String attribut;
         final Enum[] values;
@@ -53,11 +53,12 @@ public class Jeu implements Comparable<Jeu> {
             return attribut;
         }
 
-        /*  Fonction essentielle de cet enum, elle retourne l'énumération des attributs associés à un des enum contenus
-         *  dans Jeu.
+        /**
+         * Fonction essentielle de cet enum, elle retourne l'énumération des attributs associés à un des enum contenus
+         * dans Jeu.
          *
-         *  @return     Un tableau des valeurs possibles associés à l'attribut de Jeu */
-        // TODO: Utiliser Enum Set serait probablement plus performant
+         * @return Un tableau des valeurs possibles associés à l'attribut de Jeu
+         */
         public Enum[] getValues() {
             return values;
         }
@@ -158,7 +159,6 @@ public class Jeu implements Comparable<Jeu> {
     /*****************************************************************************************************
      * CODE PRINCIPAL DE LA CLASSE JEU
      *****************************************************************************************************/
-    // TODO: renommer les attributs de Jeu pour correspondre à DB?
     public Jeu(String fabricant, String titre, String cote) {
         this.fabricant = fabricant;
         this.titre = titre;

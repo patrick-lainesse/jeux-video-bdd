@@ -1,3 +1,16 @@
+///////////////////////////////////////////////////////////////////////////////
+//
+// Fichier de la classe Main:	GUI.java
+// Fichier:						Requetes.java
+// Description:                 Classe qui gère les requêtes au serveur MySQL
+// Session:						Été 2020
+//
+// Auteur:						Patrick Lainesse
+// Matricule:					740302
+// Sources:						docs.oracle.com
+//								https://www.journaldev.com/878/java-write-to-file
+//////////////////////////////////////////////////////////////////////////////
+
 import java.sql.*;
 import java.util.*;
 

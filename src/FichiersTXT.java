@@ -2,6 +2,7 @@
 //
 // Fichier de la classe Main:	GUI.java
 // Fichier:						FichiersTXT.java
+// Description:                 Classe qui gère les interactions avec les fichiers .txt
 // Session:						Été 2020
 //
 // Auteur:						Patrick Lainesse
@@ -160,11 +161,9 @@ public class FichiersTXT {
     public static Vector<Vector<String>> vectoriser() {
 
         Vector<Vector<String>> vecteurJeu = new Vector<>();
-
         for (Jeu jeuCourant : Requetes.listerDB()) {
             vecteurJeu.add(jeuCourant.vectoriser());
         }
-
         return vecteurJeu;
     }
 }

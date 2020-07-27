@@ -3,6 +3,7 @@
 // Fichier de la classe Main:	GUI.java
 // Fichier:						GUI.java
 // Session:						Été 2020
+// Description:                 Classe qui gère l'interface graphique du logiciel
 //
 // Auteur:						Patrick Lainesse
 // Matricule:					740302
@@ -20,15 +21,18 @@ import java.util.*;
 import java.util.List;
 import javax.swing.border.TitledBorder;
 
+// TODO: une classe Main séparée
 public class GUI extends JFrame {
+
+    public static final String NOM_LOGICIEL = "Cataloguideo";
 
     /* Panneaux principaux où s'affichent les différents éléments graphiques de l'appli.
      * Déclarés ici pour permettre aux différentes méthodes d'interagir avec eux lorsque nécessaire. */
     private final JMenuBar menu;
     private final Container container;  // Contenant de la fenêtre principale de l'application
     JPanel formParent;              // Panel qui reçoit le panel du formulaire, permet plus de flexibilité dans le layout
-    JPanel panelFormulaire;         // Affiche le formulaire pour saisir les informations d'un jeu
-    JScrollPane tableauScrollPane;  // Recçoit le tableau pour afficher les informations sur les jeux
+    JPanel panelFormulaire;         // Regroupe les éléments des formulaires pour saisir les informations d'un jeu
+    JScrollPane tableauScrollPane;  // Reçoit le tableau pour afficher les informations sur les jeux
     private boolean baseChargee;    // Pour savoir s'il y a déjà une base chargée dans le logiciel
 
     // Sous-menus de la barre de menu
@@ -74,13 +78,13 @@ public class GUI extends JFrame {
 
     /* Crée la fenêtre pour afficher le programme et initialise le menu principal.
      * Initialisé avec un container principal vide. */
-    public GUI(String titre) {
+    public GUI() {
 
         // Ouvrir le programme pour qu'il occupe les trois quarts de l'écran
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         this.setSize(screenSize.width * 7 / 8, screenSize.height * 7 / 8);
 
-        setTitle(titre);
+        setTitle(NOM_LOGICIEL);
         container = getContentPane();
 
         // Envoyer le exit code 0 lorsque l'application est fermée par le bouton du coin supérieur droit.
@@ -172,6 +176,29 @@ public class GUI extends JFrame {
         }
     }
 
+    /*****************************************************************************************************
+     * Méthodes reliées à l'affichage dans les différents panels
+     *****************************************************************************************************/
+    /**
+     * Ajoute un titre et en encadré pour un panel.
+     *
+     * @param component Le panneau sur lequel on veut apposer un titre
+     * @param titre     Le titre à afficher
+     */
+    public void titrerPanel(JComponent component, String titre) {
+        component.setBorder(BorderFactory.createTitledBorder(
+                BorderFactory.createEtchedBorder(), titre, TitledBorder.LEFT,
+                TitledBorder.TOP));
+    }
+
+    /**
+     * Vide le contenant principal de toutes ses composantes
+     */
+    public void viderContainer() {
+        container.removeAll();
+        container.repaint();
+    }
+
     /**
      * Affiche un message d'erreur dans une boîte de dialogue.
      *
@@ -185,8 +212,84 @@ public class GUI extends JFrame {
     }
 
     /**
+     * Parcourt la base de données pour créer un vecteur nécessaire à l'appel du constructeur JTable pour afficher en JTable.
+     */
+    public void afficherBdd() {
+        Vector<Vector<String>> lignes = FichiersTXT.vectoriser();
+        afficherResultat(lignes, TITRE_CONTENU_BDD);
+    }
+
+    /**
+     * Crée un tableau qui prend toute la largeur du container principal pour y afficher
+     * le résultat d'une recherche de jeu(x).
+     *
+     * @param listeJeux Vecteur de la liste des jeux, donc chaque paramètre est dans un vecteur
+     * @param titre     Titre à afficher au haut du panel du tableau
+     */
+    public void afficherResultat(Vector<Vector<String>> listeJeux, String titre) {
+
+        // Crée l'en-tête du tableau
+        Vector<String> nomColonnes = new Vector<>();
+        for (Jeu.Attributs attribut : Jeu.Attributs.values()) {
+            nomColonnes.add(attribut.getAttribut());
+        }
+
+        // Crée une table pour afficher le tableau
+        JTable table = new JTable(listeJeux, nomColonnes);
+
+        viderContainer();
+        tableauScrollPane = new JScrollPane(table);
+        titrerPanel(tableauScrollPane, titre);
+
+        container.add(tableauScrollPane, BorderLayout.CENTER);
+        setVisible(true);
+    }
+
+    /**
+     * Saisit le nom du fichier sélectionné par l'utilisateur et son emplacement.
+     *
+     * @return Le path absolu du fichier sélectionné, en String.
+     */
+    public String choisirFichier() {
+        final JFileChooser fileChooser = new JFileChooser();
+        int returnVal = fileChooser.showOpenDialog(menu);
+
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
+            File fichier = fileChooser.getSelectedFile();
+            return fichier.getAbsolutePath();
+        } else return ANNULE;
+    }
+
+    /**
+     * Prépare le container principal pour y insérer des éléments de formulaires.
+     * Éléments positionnés:
+     * - panelFormulaire: Panneau contenant les zones de textes, boutons radio, etc, inséré dans le panelNorth
+     * - panelNorth: Panneau situé au haut du container principal.
+     * Les boutons sont placés après le panneau du formulaire.
+     *
+     * @param titre Le titre qui s'affiche au haut du cadre du formulaire
+     */
+    public void preparerFormulaire(String titre) {
+        viderContainer();
+
+        panelFormulaire = new JPanel();
+        GridLayout layout = new GridLayout(0, 1, 0, 0);
+
+        panelFormulaire.setLayout(layout);
+        panelFormulaire.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        formParent = new JPanel();
+        formParent.setLayout(new BorderLayout());
+        formParent.add(panelFormulaire, BorderLayout.NORTH);
+        formParent.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        titrerPanel(formParent, titre);
+        container.add(formParent, BorderLayout.WEST);
+    }
+
+    /**
      * ***************************** ACTIONS DU MENU ***********************************************************
-     * Section des actions déclenchées par des sélections du menu ou la combinaison de clés qui leur sont associées.
+     * Actions déclenchées par des sélections du menu ou la combinaison de clés qui leur sont associées.
      *********************************************************************************************************/
     /**
      * Ouvre une boîte de dialogue invitant l'utilisateur à sélectionner un fichier txt où se trouve une base de
@@ -225,7 +328,7 @@ public class GUI extends JFrame {
                         activerMenu();
                         baseChargee = true;
                     } catch (Exception exception) {
-                        messageErreur("Erreur lors du chargement de la base de données.");
+                        messageErreur("Erreur lors du chargement de la base de donn\u00E9es.");
                         System.out.println("ActionCharger - actionPerformed: " + exception.getMessage());
                     }
                 }
@@ -483,113 +586,123 @@ public class GUI extends JFrame {
         }
 
         public void actionPerformed(ActionEvent e) {
-
-            // TODO: ajouter un icone avec un logo laid
             JOptionPane.showMessageDialog(new JFrame(), MSG_A_PROPOS);
         }
     }
 
-    /*****************************************************************************************************
-     * Méthodes potentiellement réutilisables dans les actions
-     *****************************************************************************************************/
     /**
-     * Parcourt la base de données pour créer un vecteur nécessaire à l'appel du constructeur JTable pour afficher en JTable.
+     * ***************************** ACTIONS DES BOUTONS ***********************************************************
+     * Action associés aux différents boutons du programme.
+     * *************************************************************************************************************
      */
-    public void afficherBdd() {
-        Vector<Vector<String>> lignes = FichiersTXT.vectoriser();
-        afficherResultat(lignes, TITRE_CONTENU_BDD);
-    }
-
-    /**
-     * Crée un tableau qui prend toute la largeur du container principal pour y afficher
-     * le résultat d'une recherche de jeu(x).
-     *
-     * @param listeJeux Vecteur de la liste des jeux, donc chaque paramètre est dans un vecteur
-     * @param titre     Titre à afficher au haut du panel du tableau
-     */
-    public void afficherResultat(Vector<Vector<String>> listeJeux, String titre) {
-
-        // Crée l'en-tête du tableau
-        Vector<String> nomColonnes = new Vector<>();
-        for (Jeu.Attributs attribut : Jeu.Attributs.values()) {
-            nomColonnes.add(attribut.getAttribut());
+    public class ActionBtnAjoutJeu extends AbstractAction {
+        public ActionBtnAjoutJeu() {
+            super(BoutonFlow.BTN_AJOUT_JEU);
         }
 
-        // Crée une table pour afficher le tableau
-        JTable table = new JTable(listeJeux, nomColonnes);
+        public void actionPerformed(ActionEvent e) {
+            // Vérifier si des consoles ont été sélectionnées, car il est possible d'ajouter un jeu sans y associer de consoles.
+            Collection<String> choixConsoles = checkBoxPanelConsoles.getChoix();
+            Jeu nouveauJeu;
 
-        viderContainer();
-        tableauScrollPane = new JScrollPane(table);
-        titrerPanel(tableauScrollPane, titre);
+            if (choixConsoles.isEmpty()) {
+                nouveauJeu = new Jeu(tfFabricant.getText(), tfTitre.getText(), radioPanelRecherche.getChoix());
+            } else {
+                /* Convertir les choix écrits au long en abbréviation pour comparer à la base de données
+                   Par exemple, Playstation 4 devient PS4 */
+                choixConsoles = Jeu.Consoles.getAbbreviation(choixConsoles);
+                nouveauJeu = new Jeu(tfFabricant.getText(), tfTitre.getText(), radioPanelRecherche.getChoix(), choixConsoles);
+            }
 
-        container.add(tableauScrollPane, BorderLayout.CENTER);
-        setVisible(true);
+            Requetes.inserer(nouveauJeu);
+
+            JOptionPane.showMessageDialog(new JFrame(),
+                    "Jeu ajout\u00E9 \u00E0 la base de donn\u00E9es.");
+            afficherBdd();
+        }
     }
 
-    /**
-     * Saisit le nom du fichier sélectionné par l'utilisateur et son emplacement.
-     *
-     * @return Le path absolu du fichier sélectionné, en String.
-     */
-    public String choisirFichier() {
-        final JFileChooser fileChooser = new JFileChooser();
-        int returnVal = fileChooser.showOpenDialog(menu);
+    public class ActionBtnRechJeu extends AbstractAction {
+        public ActionBtnRechJeu() {
+            super(BoutonFlow.BTN_RECHERCHER);
+        }
 
-        if (returnVal == JFileChooser.APPROVE_OPTION) {
-            File fichier = fileChooser.getSelectedFile();
-            return fichier.getAbsolutePath();
-        } else return ANNULE;
+        public void actionPerformed(ActionEvent e) {
+            Jeu jeuCherche = null;
+
+            try {
+                jeuCherche = Requetes.getJeu(tfTitre.getText(), tfFabricant.getText());
+            } catch (SQLException throwables) {
+                messageErreur("Probl\u00E8me lors de la recherche dans la base de donn\u00E9es.");
+                System.out.println("ActionBtnRechJeu: " + throwables.getMessage());
+                ;
+            }
+
+            if (jeuCherche != null) {
+                Vector<Vector<String>> jeu = new Vector<>();
+                jeu.add(jeuCherche.vectoriser());
+                afficherResultat(jeu, TITRE_RESULTAT);
+            } else {
+                JOptionPane.showMessageDialog(new JFrame(),
+                        "Aucun jeu ne correspond \u00E0 ces crit\u00E8res dans la base de donn\u00E9es.");
+            }
+        }
     }
 
-    /**
-     * Ajoute un titre et en encadré pour un panel.
-     *
-     * @param component Le panneau sur lequel on veut apposer un titre
-     * @param titre     Le titre à afficher
-     */
-    public void titrerPanel(JComponent component, String titre) {
-        component.setBorder(BorderFactory.createTitledBorder(
-                BorderFactory.createEtchedBorder(), titre, TitledBorder.LEFT,
-                TitledBorder.TOP));
+    public class ActionBtnRechConsole extends AbstractAction {
+        public ActionBtnRechConsole() {
+            super(BoutonFlow.BTN_RECHERCHER);
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            String consoleCherchee = radioPanelRecherche.getChoix();
+            LinkedHashSet<Jeu> listeJeux = Requetes.obtenirListe(Jeu.Attributs.CONSOLES, Jeu.Consoles.getAbbreviation(consoleCherchee));
+
+            if (listeJeux != null) {
+                afficherResultat(Jeu.vectoriserArrayList(listeJeux), TITRE_RESULTAT);
+            } else {
+                JOptionPane.showMessageDialog(new JFrame(),
+                        "Aucun jeu associ\u00E9 \u00E0 cette console.");
+            }
+        }
     }
 
-    /**
-     * Prépare le container principal pour y insérer des éléments de formulaires.
-     * Éléments positionnés:
-     * - panelFormulaire: Panneau contenant les zones de textes, boutons radio, etc, inséré dans le panelNorth
-     * - panelNorth: Panneau situé au haut du container principal.
-     * Les boutons sont placés après le panneau du formulaire.
-     *
-     * @param titre Le titre qui s'affiche au haut du cadre du formulaire
-     */
-    public void preparerFormulaire(String titre) {
-        viderContainer();
+    public class ActionBtnRechCote extends AbstractAction {
+        public ActionBtnRechCote() {
+            super(BoutonFlow.BTN_RECHERCHER);
+        }
 
-        panelFormulaire = new JPanel();
-        GridLayout layout = new GridLayout(0, 1, 0, 0);
-
-        panelFormulaire.setLayout(layout);
-        panelFormulaire.setAlignmentX(Component.LEFT_ALIGNMENT);
-
-        formParent = new JPanel();
-        formParent.setLayout(new BorderLayout());
-        formParent.add(panelFormulaire, BorderLayout.NORTH);
-        formParent.setAlignmentX(Component.LEFT_ALIGNMENT);
-
-        titrerPanel(formParent, titre);
-        container.add(formParent, BorderLayout.WEST);
+        public void actionPerformed(ActionEvent e) {
+            String coteCherchee = radioPanelRecherche.getChoix();
+            LinkedHashSet<Jeu> listeJeux = Requetes.obtenirListe(Jeu.Attributs.COTE, coteCherchee);
+            if (listeJeux != null) {
+                afficherResultat(Jeu.vectoriserArrayList(listeJeux), TITRE_RESULTAT);
+            } else {
+                JOptionPane.showMessageDialog(new JFrame(),
+                        "Aucun jeu associ\u00E9 \u00E0 cette cote dans la base de donn\u00E9es.");
+            }
+        }
     }
 
-    /**
-     * Vide le contenant principal de toutes ses composantes
-     */
-    public void viderContainer() {
-        container.removeAll();
-        container.repaint();
+    public class ActionBtnRechFabricant extends AbstractAction {
+        public ActionBtnRechFabricant() {
+            super(BoutonFlow.BTN_RECHERCHER);
+        }
+
+        public void actionPerformed(ActionEvent e) {
+
+            Collection<Jeu> listeJeux = Requetes.obtenirListe(Jeu.Attributs.FABRICANT, tfFabricant.getText());
+            if (listeJeux != null) {
+                afficherResultat(Jeu.vectoriserArrayList(listeJeux), TITRE_RESULTAT);
+            } else {
+                JOptionPane.showMessageDialog(new JFrame(),
+                        "Aucun jeu ne correspond \u00E0 ce fabricant dans la base de donn\u00E9es.");
+            }
+        }
     }
 
 /*****************************************************************************************************
- * Classes personnalisées pour gérer certains éléments graphiques réutilisables.
+ * Classes personnalisées pour gérer certains éléments des formulaires.
  *****************************************************************************************************/
 
     /**
@@ -750,116 +863,6 @@ public class GUI extends JFrame {
     }
 
     /**
-     * ***************************** ACTIONS DES BOUTONS ***********************************************************
-     * Action associés aux différents boutons du programme.
-     * *************************************************************************************************************
-     */
-    public class ActionBtnAjoutJeu extends AbstractAction {
-        public ActionBtnAjoutJeu() {
-            super(BoutonFlow.BTN_AJOUT_JEU);
-        }
-
-        public void actionPerformed(ActionEvent e) {
-            // Vérifier si des consoles ont été sélectionnées, car il est possible d'ajouter un jeu sans y associer de consoles.
-            Collection<String> choixConsoles = checkBoxPanelConsoles.getChoix();
-            Jeu nouveauJeu;
-
-            if (choixConsoles.isEmpty()) {
-                nouveauJeu = new Jeu(tfFabricant.getText(), tfTitre.getText(), radioPanelRecherche.getChoix());
-            } else {
-                /* Convertir les choix écrits au long en abbréviation pour comparer à la base de données
-                   Par exemple, Playstation 4 devient PS4 */
-                choixConsoles = Jeu.Consoles.getAbbreviation(choixConsoles);
-                nouveauJeu = new Jeu(tfFabricant.getText(), tfTitre.getText(), radioPanelRecherche.getChoix(), choixConsoles);
-            }
-
-            Requetes.inserer(nouveauJeu);
-
-            JOptionPane.showMessageDialog(new JFrame(),
-                    "Jeu ajout\u00E9 \u00E0 la base de donn\u00E9es.");
-            afficherBdd();
-        }
-    }
-
-    public class ActionBtnRechJeu extends AbstractAction {
-        public ActionBtnRechJeu() {
-            super(BoutonFlow.BTN_RECHERCHER);
-        }
-
-        public void actionPerformed(ActionEvent e) {
-            Jeu jeuCherche = null;
-
-            // TODO: Essayer de garder les exceptions SQL dans le fichier Requêtes
-            try {
-                jeuCherche = Requetes.getJeu(tfTitre.getText(), tfFabricant.getText());
-            } catch (SQLException throwables) {
-                throwables.printStackTrace();
-            }
-
-            if (jeuCherche != null) {
-                Vector<Vector<String>> jeu = new Vector<>();
-                jeu.add(jeuCherche.vectoriser());
-                afficherResultat(jeu, TITRE_RESULTAT);
-            } else {
-                JOptionPane.showMessageDialog(new JFrame(),
-                        "Aucun jeu ne correspond \u00E0 ces crit\u00E8res dans la base de donn\u00E9es.");
-            }
-        }
-    }
-
-    public class ActionBtnRechConsole extends AbstractAction {
-        public ActionBtnRechConsole() {
-            super(BoutonFlow.BTN_RECHERCHER);
-        }
-
-        public void actionPerformed(ActionEvent e) {
-            String consoleCherchee = radioPanelRecherche.getChoix();
-            LinkedHashSet<Jeu> listeJeux = Requetes.obtenirListe(Jeu.Attributs.CONSOLES, Jeu.Consoles.getAbbreviation(consoleCherchee));
-
-            if (listeJeux != null) {
-                afficherResultat(Jeu.vectoriserArrayList(listeJeux), TITRE_RESULTAT);
-            } else {
-                JOptionPane.showMessageDialog(new JFrame(),
-                        "Aucun jeu associ\u00E9 \u00E0 cette console.");
-            }
-        }
-    }
-
-    public class ActionBtnRechCote extends AbstractAction {
-        public ActionBtnRechCote() {
-            super(BoutonFlow.BTN_RECHERCHER);
-        }
-
-        public void actionPerformed(ActionEvent e) {
-            String coteCherchee = radioPanelRecherche.getChoix();
-            LinkedHashSet<Jeu> listeJeux = Requetes.obtenirListe(Jeu.Attributs.COTE, coteCherchee);
-            if (listeJeux != null) {
-                afficherResultat(Jeu.vectoriserArrayList(listeJeux), TITRE_RESULTAT);
-            } else {
-                JOptionPane.showMessageDialog(new JFrame(),
-                        "Aucun jeu associ\u00E9 \u00E0 cette cote dans la base de donn\u00E9es.");
-            }
-        }
-    }
-
-    public class ActionBtnRechFabricant extends AbstractAction {
-        public ActionBtnRechFabricant() {
-            super(BoutonFlow.BTN_RECHERCHER);
-        }
-
-        public void actionPerformed(ActionEvent e) {
-
-            Collection<Jeu> listeJeux = Requetes.obtenirListe(Jeu.Attributs.FABRICANT, tfFabricant.getText());
-            if (listeJeux != null) {
-                afficherResultat(Jeu.vectoriserArrayList(listeJeux), TITRE_RESULTAT);
-            } else {
-                JOptionPane.showMessageDialog(new JFrame(),
-                        "Aucun jeu ne correspond \u00E0 ce fabricant dans la base de donn\u00E9es.");
-            }
-        }
-    }
-
-    /**
      * Classe pour gérer les boutons. Crée un JPanel contenant un bouton.
      *
      * @requires formulaire déjà créé (des TextFields) pour que le ActionListener puisse aller chercher les données
@@ -886,6 +889,6 @@ public class GUI extends JFrame {
     }
 
     public static void main(String[] args) {
-        new GUI("Cataloguideo");
+        new GUI();
     }
 }

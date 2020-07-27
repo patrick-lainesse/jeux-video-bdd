@@ -2,6 +2,7 @@
 //
 // Fichier de la classe Main:	GUI.java
 // Fichier:						Jeu.java
+// Description:                 Classe pour représenter l'objet Jeu
 // Session:						Été 2020
 //
 // Auteur:						Patrick Lainesse
@@ -10,7 +11,6 @@
 //								https://www.journaldev.com/878/java-write-to-file
 //////////////////////////////////////////////////////////////////////////////
 
-import java.sql.ResultSet;
 import java.util.*;
 
 public class Jeu implements Comparable<Jeu> {
@@ -26,8 +26,6 @@ public class Jeu implements Comparable<Jeu> {
      * CONSTANTES STRING
      * enum pour stocker des constantes String qui sont réutilisées à plusieurs endroits dans le code.
      *****************************************************************************************************/
-
-    // TODO: utiliser dans Jeu.java et FichiersTXT.java, voir si toujours pertinent avec MySQL
 
     /**
      * enum contenant la liste des attributs d'un jeu, ainsi que l'enum qui est associé à cet attribut lorsqu'il existe.
@@ -151,11 +149,9 @@ public class Jeu implements Comparable<Jeu> {
         public static Collection<String> getAbbreviation(Collection<String> listeConsoles) {
 
             Collection<String> listeTraduite = new LinkedHashSet<>();
-
             for (String nomConsole : listeConsoles) {
                 listeTraduite.add(Consoles.getAbbreviation(nomConsole));
             }
-
             return listeTraduite;
         }
     }
@@ -163,6 +159,7 @@ public class Jeu implements Comparable<Jeu> {
     /*****************************************************************************************************
      * CODE PRINCIPAL DE LA CLASSE JEU
      *****************************************************************************************************/
+    // Constructeur pour créer un jeu sans y ajouter de consoles associées
     public Jeu(String fabricant, String titre, String cote) {
         this.fabricant = fabricant;
         this.titre = titre;
@@ -170,7 +167,7 @@ public class Jeu implements Comparable<Jeu> {
         consoles = new LinkedHashSet<>();
     }
 
-    // TODO: en-tetes qui expliquent à quoi ils servent
+    // Constructeur utilisé lorsque toutes les caractéristiques d'un jeu sont fournies
     public Jeu(String fabricant, String titre, String cote, Collection<String> consoles) {
         this.fabricant = fabricant;
         this.titre = titre;
@@ -190,13 +187,11 @@ public class Jeu implements Comparable<Jeu> {
         consoles.add(console);
     }
 
-    // TODO: voir si je peux me débrouiller avec une seule des deux méthodes printConsoles
-    // TODO: renommmer, car donne l'impression que ça print à System.out
-
     /**
-     * Méthode toString() pour une liste de consoles associées au jeu, facilite l'écriture à l'écran ou dans un fichier txt
+     * Méthode toString() pour une liste de consoles associées au jeu, facilite l'écriture à l'écran
+     * ou dans un fichier txt. Utilisée comme un getter pour l'autre définition de printConsoles().
      *
-     * @param console Une collection de consoles en String
+     * @param consoles Une collection de consoles en String
      * @return Un String sous le format suivant: PS4,XONE,PC,MAC,SWITCH
      */
     private String printConsoles(Collection<String> consoles) {

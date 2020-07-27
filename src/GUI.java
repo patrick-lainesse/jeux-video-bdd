@@ -31,7 +31,10 @@ public class GUI extends JFrame {
     JPanel formParent;              // Panel qui reçoit le panel du formulaire, permet plus de flexibilité dans le layout
     JPanel panelFormulaire;         // Affiche le formulaire pour saisir les informations d'un jeu
     JScrollPane tableauScrollPane;  // Recçoit le tableau pour afficher les informations sur les jeux
-    private FichiersTXT baseDeDonnees;
+    private FichiersTXT baseDeDonnees;      // TODO: on ne devrait pas utiliser ça
+
+    private JMenu menuBaseDeDonnees;       // TODO: JavaDocs
+    private JMenu menuRecherche;
 
     /**
      * Éléments de formulaire pouvant se retrouver dans le programme à un moment ou un autre.
@@ -98,19 +101,20 @@ public class GUI extends JFrame {
         setVisible(true);
     }
 
-    /* Crée la barre de menu. Chaque item du menu est associé à une Action pour clarifier l'organisation du code
+    /**
+     * Crée la barre de menu. Chaque item du menu est associé à une Action pour clarifier l'organisation du code
      * tout en facilitant l'association des méthodes à des raccourcis clavier (et icones, boutons, etc si nécessaire)
-     * @return  Un component JMenuBar entièrement rempli */
+     *
+     * @return Un component JMenuBar entièrement rempli
+     */
     public JMenuBar creerMenu() {
 
         // Tableaux d'actions, un par menu principal de la barre de menu
         Action[] actionsBdd = {
-                new ActionCharger(),
                 new ActionRafraichir(),
                 new ActionAjoutFichier(),
                 new ActionAjoutJeu(),
-                new ActionEnregistrer(),
-                new ActionQuitter()
+                new ActionEnregistrer()
         };
 
         Action[] actionsRecherche = {
@@ -125,23 +129,25 @@ public class GUI extends JFrame {
         menuBar = new JMenuBar();
 
         // Créer les menus principaux
-        JMenu menuBaseDeDonnees = new JMenu(BDD);
-        JMenu menuRecherche = new JMenu(RECHERCHE);
+        menuBaseDeDonnees = new JMenu(BDD);
+        menuRecherche = new JMenu(RECHERCHE);
 
-        // Ajouté ActionCharger séparément car ce sera la seule active
-        // TODO: Mettre enabled ActionCharger, et tout le reste disabled, puis rendre enabled après avoir chargé une bdd
-        //menuBaseDeDonnees.add(new JMenuItem(new ActionCharger()));
+        /* Ajouter ActionCharger séparément pour qu'elle reste active */
+        menuBaseDeDonnees.add(new JMenuItem(new ActionCharger()));
 
-        // Ajoute les actions (et donc leurs descriptions) à la barre de menu
+        // Ajoute les actions (et donc leurs descriptions) à la barre de menu, puis les rend désactivées
         for (Action action : actionsBdd) {
             menuItem = new JMenuItem(action);
-            // TODO: ça fonctionne, mais faut ajouter manuellement charger
             menuItem.setEnabled(false);
             menuBaseDeDonnees.add(menuItem);
         }
 
+        /* Ajouter ActionQuitter séparément pour qu'elle reste active */
+        menuBaseDeDonnees.add(new JMenuItem(new ActionQuitter()));
+
         for (Action action : actionsRecherche) {
             menuItem = new JMenuItem(action);
+            menuItem.setEnabled(false);
             menuRecherche.add(menuItem);
         }
 
@@ -153,7 +159,26 @@ public class GUI extends JFrame {
         return menuBar;
     }
 
-    // TODO: JavaDocs
+    /**
+     * Rend actives toutes les options du menu. Utilisée lorsque une base de donnée est chargée dans le programme.
+     */
+    public void activerMenu() {
+
+        int nbMenuItems = menuBaseDeDonnees.getItemCount();
+        for (int i = 0; i < nbMenuItems; i++) {
+            menuBaseDeDonnees.getItem(i).setEnabled(true);
+        }
+
+        nbMenuItems = menuRecherche.getItemCount();
+        for (int i = 0; i < nbMenuItems; i++) {
+            menuRecherche.getItem(i).setEnabled(true);
+        }
+    }
+
+    /**
+     * Affiche un message d'erreur dans une boîte de dialogue.
+     * @param message   Le message à afficher.
+     */
     public static void messageErreur(String message) {
         JOptionPane.showMessageDialog(new JFrame(),
                 message,
@@ -201,6 +226,7 @@ public class GUI extends JFrame {
                     try {
                         baseDeDonnees.nouvelleBaseTXT(fichier);
                         afficherBdd();
+                        activerMenu();
                     } catch (Exception exception) {
                         JOptionPane.showMessageDialog(new JFrame(),
                                 "Erreur lors de la lecture du fichier.");
@@ -503,9 +529,12 @@ public class GUI extends JFrame {
         } else return ANNULE;
     }
 
-    /* Ajoute un titre et en encadré pour un panel.
-     * @param component     Le panneau sur lequel on veut apposer un titre
-     * @param titre         Le titre à afficher */
+    /**
+     * Ajoute un titre et en encadré pour un panel.
+     *
+     * @param component Le panneau sur lequel on veut apposer un titre
+     * @param titre     Le titre à afficher
+     */
     public void titrerPanel(JComponent component, String titre) {
         component.setBorder(BorderFactory.createTitledBorder(
                 BorderFactory.createEtchedBorder(), titre, TitledBorder.LEFT,

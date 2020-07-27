@@ -40,7 +40,6 @@ public class Requetes {
     }
 
     /* Ferme la connexion à la base de données. */
-    // TODO: Possible de forcer une déconnexion dès qu'il y a eu connexion? Thread peut-être?
     private static void deconnecter() {
         try {
             connexion.close();
@@ -260,7 +259,7 @@ public class Requetes {
         // Récupérer la liste des consoles et convertir en ArrayList pour utiliser le constructeur de la classe Jeu
         String[] tableauConsoles = new String[0];
         try {
-            tableauConsoles = uneEntree.getString("console").split(",");
+            tableauConsoles = uneEntree.getString("consoles").split(",");
             List<String> listConsoles = Arrays.asList(tableauConsoles);
 
             // Construire un objet Jeu pour passer comme résultat de la méthode

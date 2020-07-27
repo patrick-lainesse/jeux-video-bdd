@@ -20,13 +20,10 @@ import java.util.*;
 import java.util.List;
 import javax.swing.border.TitledBorder;
 
-// TODO: on voit pas bouton avec fonction ajout Jeu
 public class GUI extends JFrame {
 
-    /**
-     * Panneaux principaux où s'affichent les différents éléments graphiques de l'appli.
-     * Déclarés ici pour permettre aux différentes méthodes d'interagir avec eux lorsque nécessaire.
-     */
+    /* Panneaux principaux où s'affichent les différents éléments graphiques de l'appli.
+     * Déclarés ici pour permettre aux différentes méthodes d'interagir avec eux lorsque nécessaire. */
     private final JMenuBar menu;
     private final Container container;  // Contenant de la fenêtre principale de l'application
     JPanel formParent;              // Panel qui reçoit le panel du formulaire, permet plus de flexibilité dans le layout
@@ -305,7 +302,7 @@ public class GUI extends JFrame {
 
             // Panel de checkboxes pour sélectionner des consoles
             checkBoxPanelConsoles = new CheckBoxPanel(Jeu.Attributs.CONSOLES);
-            panelFormulaire.add(checkBoxPanelConsoles);
+            formParent.add(checkBoxPanelConsoles);
 
             BoutonFlow bouton = new BoutonFlow(new ActionBtnAjoutJeu());
             formParent.add(bouton, BorderLayout.EAST);

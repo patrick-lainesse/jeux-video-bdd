@@ -21,7 +21,6 @@ import java.util.*;
 import java.util.List;
 import javax.swing.border.TitledBorder;
 
-// TODO: une classe Main séparée
 public class GUI extends JFrame {
 
     public static final String NOM_LOGICIEL = "Cataloguideo";
@@ -48,7 +47,6 @@ public class GUI extends JFrame {
     RadioPanel radioPanelRecherche;
     CheckBoxPanel checkBoxPanelConsoles;
 
-    // TODO: regrouper erreurs en un Enum
     public static final String ANNULE = "Annul\u00e9 par l'utilisateur.";
     public static final String ATTENTION = "Charger une base de donn\u00E9es \u00E0 partir d'un fichier .txt " +
             "entra\u00EEnera une perte des modifications non enregistr\u00E9es sur la base de donn\u00E9es.";
@@ -185,6 +183,7 @@ public class GUI extends JFrame {
     /*++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
      + Méthodes reliées à l'affichage dans les différents panels
      ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+
     /**
      * Ajoute un titre et en encadré pour un panel.
      *
@@ -320,6 +319,7 @@ public class GUI extends JFrame {
     /*+++++++++++++++++++++++++++++++ACTIONS DU MENU++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
      + Actions déclenchées par des sélections du menu ou la combinaison de clés qui leur sont associées.
      ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+
     /**
      * Ouvre une boîte de dialogue invitant l'utilisateur à sélectionner un fichier txt où se trouve une base de
      * données, puis la fait afficher dans un tableau dans l'écran principal. Affiche un message d'erreur en cas d'échec.
@@ -683,13 +683,7 @@ public class GUI extends JFrame {
         public void actionPerformed(ActionEvent e) {
             String consoleCherchee = radioPanelRecherche.getChoix();
             LinkedHashSet<Jeu> listeJeux = Requetes.obtenirListe(Jeu.Attributs.CONSOLES, Jeu.Consoles.getAbbreviation(consoleCherchee));
-
-            if (listeJeux != null) {
-                afficherResultat(Jeu.vectoriserArrayList(listeJeux), Titres.TITRE_RESULTAT.toString());
-            } else {
-                JOptionPane.showMessageDialog(new JFrame(),
-                        "Aucun jeu associ\u00E9 \u00E0 cette console.");
-            }
+            afficherResultat(Jeu.vectoriserArrayList(listeJeux), Titres.TITRE_RESULTAT.toString());
         }
     }
 
@@ -701,12 +695,7 @@ public class GUI extends JFrame {
         public void actionPerformed(ActionEvent e) {
             String coteCherchee = radioPanelRecherche.getChoix();
             LinkedHashSet<Jeu> listeJeux = Requetes.obtenirListe(Jeu.Attributs.COTE, coteCherchee);
-            if (listeJeux != null) {
-                afficherResultat(Jeu.vectoriserArrayList(listeJeux), Titres.TITRE_RESULTAT.toString());
-            } else {
-                JOptionPane.showMessageDialog(new JFrame(),
-                        "Aucun jeu associ\u00E9 \u00E0 cette cote dans la base de donn\u00E9es.");
-            }
+            afficherResultat(Jeu.vectoriserArrayList(listeJeux), Titres.TITRE_RESULTAT.toString());
         }
     }
 
@@ -716,24 +705,18 @@ public class GUI extends JFrame {
         }
 
         public void actionPerformed(ActionEvent e) {
-
             Collection<Jeu> listeJeux = Requetes.obtenirListe(Jeu.Attributs.FABRICANT, tfFabricant.getText());
-            if (listeJeux != null) {
-                afficherResultat(Jeu.vectoriserArrayList(listeJeux), Titres.TITRE_RESULTAT.toString());
-            } else {
-                JOptionPane.showMessageDialog(new JFrame(),
-                        "Aucun jeu ne correspond \u00E0 ce fabricant dans la base de donn\u00E9es.");
-            }
+            afficherResultat(Jeu.vectoriserArrayList(listeJeux), Titres.TITRE_RESULTAT.toString());
         }
     }
 
-/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- + Classes personnalisées pour gérer certains éléments des formulaires.
- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++/
-    /**
-     * Classe pour gérer les TextField ainsi que les labels qui leur sont associés
-     * Crée un JPanel contenant un textfield et un label associé.
-     */
+    /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+     + Classes personnalisées pour gérer certains éléments des formulaires.
+     +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++/
+        /**
+         * Classe pour gérer les TextField ainsi que les labels qui leur sont associés
+         * Crée un JPanel contenant un textfield et un label associé.
+         */
     private static class CustomTxtField extends JPanel {
 
         public final Dimension TXT_FIELD_SIZE = new Dimension(150, 20);
@@ -742,7 +725,7 @@ public class GUI extends JFrame {
         /**
          * Constructeur
          *
-         * @param nomLabel    Le texte du label qui s'affichera à côté du JTextField
+         * @param nomLabel Le texte du label qui s'affichera à côté du JTextField
          */
         public CustomTxtField(String nomLabel) {
 
@@ -832,7 +815,7 @@ public class GUI extends JFrame {
      * Classe pour gérer les boutons radio.
      * Crée un JPanel pour un groupe de boutons radio selon un attribut enum de la classe Jeu.
      */
-    private class RadioPanel extends JPanel {
+    private static class RadioPanel extends JPanel {
 
         /* Créer un panel pour recevoir seulement les radio buttons, placées en deux rangées.
          * Le panel du formulaire reçoit le label. */
@@ -897,12 +880,11 @@ public class GUI extends JFrame {
         // Texte à afficher sur les différents boutons
         public static final String BTN_AJOUT_JEU = "Ajouter le jeu";
         public static final String BTN_RECHERCHER = "Rechercher";
-        // TODO: Un énum qui associe le texte et l'action du bouton pour éviter d'avoir à la passer en paramètre
 
         /**
          * Constructeur
          *
-         * @param action    L'action associée au bouton
+         * @param action L'action associée au bouton
          */
         public BoutonFlow(Action action) {
 

@@ -16,11 +16,14 @@ import java.util.*;
 
 public class Requetes {
 
-    // TODO: à changer sur DESI
-    public static final String DRIVER = "org.mariadb.jdbc.Driver";
-    //public static final String DRIVER = "com.mysql.jdbc.Driver";
-    //public static final String URL = "jdbc:mysql://localhost";
-    public static final String URL = "jdbc:mariadb://localhost:3306/lainessp_jeu";
+    // TODO: Pour se connecter sur le serveur de la DESI
+    public static final String DRIVER = "com.mysql.jdbc.Driver";
+    public static final String URL = "jdbc:mysql://mysql.iro.umontreal.ca/lainessp_jeu";
+
+    // Pour se connecter à une base de données locale
+    /*public static final String URL = "jdbc:mariadb://localhost:3306/lainessp_jeu";
+    public static final String DRIVER = "org.mariadb.jdbc.Driver";*/
+
 
     public static final String USERNAME = UserData.login;
     public static final String PASSWORD = UserData.passwd;
@@ -37,18 +40,18 @@ public class Requetes {
      * Ouvre une connexion à la base de données pour permettre une requête.
      */
     private static void connecter() {
-        // TODO: ne semble pas nécessaire pour les versions récentes de Java, vérifier sur DESI, sinon faire dans même try
-        /*try {
+        try {
             Class.forName(DRIVER);
         } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }*/
+            GUI.messageErreur(ERR_CONNEXION);
+            System.out.println("connecter()/Class.forName: " + e.getMessage());
+        }
 
         {
             try {
                 connexion = DriverManager.getConnection(URL, USERNAME, PASSWORD);
             } catch (SQLException throwables) {
-                System.out.println("connecter(): " + throwables.getMessage());
+                System.out.println("connecter()/getConnection: " + throwables.getMessage());
                 GUI.messageErreur(ERR_CONNEXION);
             }
         }
@@ -122,7 +125,6 @@ public class Requetes {
      */
     public static LinkedHashSet<Jeu> listerDB() {
 
-        LinkedHashSet<Jeu> listeJeux = new LinkedHashSet<>();
         ResultSet resultSet = null;
         String requete = "SELECT * FROM jeu";
 
@@ -261,7 +263,6 @@ public class Requetes {
     /**
      * Élimine toutes les entrées présentes dans la table jeu.
      * La requête DROP TABLE n'est pas utilisée car ne fonctionne pas sur le serveur de la DESI.
-     * TODO: tester drop table sur DESI
      */
     public static void viderDB() {
 

@@ -20,12 +20,10 @@ public class Jeu implements Comparable<Jeu> {
     final private String cote;
     final private Collection<String> consoles;
 
-    /*****************************************************************************************************
-     * ### Section ajoutée pour le TP2 ###
-     *
-     * CONSTANTES STRING
-     * enum pour stocker des constantes String qui sont réutilisées à plusieurs endroits dans le code.
-     *****************************************************************************************************/
+    /*++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+     + CONSTANTES STRING
+     + enum pour stocker des constantes String qui sont réutilisées à plusieurs endroits dans le code.
+     ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
     /**
      * enum contenant la liste des attributs d'un jeu, ainsi que l'enum qui est associé à cet attribut lorsqu'il existe.
@@ -181,7 +179,7 @@ public class Jeu implements Comparable<Jeu> {
      * On peut simplement ajouter des consoles à la liste sans vérifier si elles s'y retrouvent déjà, car
      * l'ajout d'un élément déjà présent dans un LinkedHashSet ne change pas l'ordre des éléments s'y trouvant.
      *
-     * @parm console    Nom de la console à ajouter à la liste
+     * @param console    Nom de la console à ajouter à la liste
      */
     public void addConsole(String console) {
         consoles.add(console);
@@ -275,9 +273,9 @@ public class Jeu implements Comparable<Jeu> {
         return consoles;
     }
 
-    /*****************************************************************************************************
-     * Fonction pour faciliter la transposition à l'interface graphique (GUI)
-     *****************************************************************************************************/
+    /*++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+     + Fonction pour faciliter la transposition à l'interface graphique (GUI)
+     ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
     /**
      * Place chacun des attribut du jeu dans un vecteur de String, afin de faciliter son ajout sous forme d'une

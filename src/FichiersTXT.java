@@ -148,9 +148,9 @@ public class FichiersTXT {
     }
 
 
-    /*****************************************************************************************************
-     * Fonctions utiles pour transposer à l'interface graphique (GUI)
-     *****************************************************************************************************/
+    /*++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+     + Fonctions utiles pour transposer à l'interface graphique (GUI)
+     ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
     /**
      * Parcourt la base de données et ajoute un vecteur de String pour chacun des jeux, dans le but

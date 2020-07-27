@@ -16,13 +16,9 @@ import java.util.*;
 
 public class Requetes {
 
-    // TODO: Pour se connecter sur le serveur de la DESI
-    public static final String DRIVER = "com.mysql.jdbc.Driver";
-    public static final String URL = "jdbc:mysql://mysql.iro.umontreal.ca/lainessp_jeu";
-
-    // Pour se connecter à une base de données locale
-    /*public static final String URL = "jdbc:mariadb://localhost:3306/lainessp_jeu";
-    public static final String DRIVER = "org.mariadb.jdbc.Driver";*/
+    // TODO: À changer pour se connecter à votre base de données locale
+    public static final String URL = "jdbc:mariadb://localhost:3306/lainessp_jeu";
+    public static final String DRIVER = "org.mariadb.jdbc.Driver";
 
 
     public static final String USERNAME = UserData.login;

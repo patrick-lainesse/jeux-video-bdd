@@ -1,9 +1,5 @@
 public class UserData {
-
-    // TODO: Entrez les informations de votre compte mysql
-    //public static String login = "*****_web";
-    //public static String passwd = "**************";
-
-    public static String login = "root";
-    public static String passwd = "";
+    // TODO: À changer pour se connecter à votre base de données locale
+    public static final String login = "root";
+    public static final String passwd = "";
 }

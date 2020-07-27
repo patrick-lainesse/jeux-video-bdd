@@ -8,7 +8,7 @@
 // Auteur:						Patrick Lainesse
 // Matricule:					740302
 // Sources:						Général: docs.oracle.com
-//								JOptionPane: https://stackoverflow.com/questions/15853112/joptionpane-yes-no-option/15853127
+//								JOptionPane: https://stackoverflow.com/questions/15853112/joptionpane+yes+no+option/15853127
 //                              Menu et actions: https://docs.oracle.com/javase/tutorial/displayCode.html?code=https://docs.oracle.com/javase/tutorial/uiswing/examples/misc/ActionDemoProject/src/misc/ActionDemo.java
 //////////////////////////////////////////////////////////////////////////////
 
@@ -25,6 +25,7 @@ import javax.swing.border.TitledBorder;
 public class GUI extends JFrame {
 
     public static final String NOM_LOGICIEL = "Cataloguideo";
+    public static final String VERSION = "1.0.3";
 
     /* Panneaux principaux où s'affichent les différents éléments graphiques de l'appli.
      * Déclarés ici pour permettre aux différentes méthodes d'interagir avec eux lorsque nécessaire. */
@@ -35,7 +36,7 @@ public class GUI extends JFrame {
     JScrollPane tableauScrollPane;  // Reçoit le tableau pour afficher les informations sur les jeux
     private boolean baseChargee;    // Pour savoir s'il y a déjà une base chargée dans le logiciel
 
-    // Sous-menus de la barre de menu
+    // Sous+menus de la barre de menu
     private JMenu menuBaseDeDonnees;
     private JMenu menuRecherche;
 
@@ -47,33 +48,9 @@ public class GUI extends JFrame {
     RadioPanel radioPanelRecherche;
     CheckBoxPanel checkBoxPanelConsoles;
 
-    // Texte des options des menus
-    //TODO: Réécrire en deux enum, un par sous-menu, qui associe texte et action (éventuellement icône, etc.)
-    private static final String BDD = "Base de donn\u00e9es";
-    private static final String RECHERCHE = "Recherche";
-
-    private static final String CHARGER = "Charger nouvelle base de donn\u00e9es";
-    private static final String RAFRAICHIR = "Actualiser l'affichage de la base de donn\u00e9es";
-    private static final String AJOUT_FICHIER = "Ajouter fichier de base de donn\u00e9es";
-    private static final String RECHERCHE_JEU = "Rechercher un jeu";
-    private static final String AJOUT_JEU = "+ Ajouter un nouveau jeu";
-    private static final String RECHERCHE_PAR_CONSOLE = "Afficher les jeux par console";
-    private static final String RECHERCHE_PAR_COTE = "Afficher les jeux par cote";
-    private static final String RECHERCHE_PAR_FABRICANT = "Afficher les jeux par fabricant";
-    private static final String ENREGISTRER = "Enregistrer sous...";
-    private static final String QUITTER = "Quitter";
-
-    public static final String TITRE_CONTENU_BDD = "Jeux contenus dans la base de donn\u00e9es";
-    public static final String TITRE_AJOUT_JEU = "Ajouter un jeu";
-    public static final String TITRE_RECH_JEU = "Rechercher un jeu";
-    public static final String TITRE_RECH_CONSOLES = "Afficher les jeux par console";
-    public static final String TITRE_RECH_COTE = "Afficher les jeux par cote";
-    public static final String TITRE_RESULTAT = "R\u00E9sultat de la recherche";
-
-    public static final String TITRE_ERREUR = "Erreur";
-
-    private static final String ANNULE = "Annul\u00e9 par l'utilisateur.";
-    private static final String ATTENTION = "Charger une base de donn\u00E9es \u00E0 partir d'un fichier .txt " +
+    // TODO: regrouper erreurs en un Enum
+    public static final String ANNULE = "Annul\u00e9 par l'utilisateur.";
+    public static final String ATTENTION = "Charger une base de donn\u00E9es \u00E0 partir d'un fichier .txt " +
             "entra\u00EEnera une perte des modifications non enregistr\u00E9es sur la base de donn\u00E9es.";
 
     /* Crée la fenêtre pour afficher le programme et initialise le menu principal.
@@ -100,6 +77,35 @@ public class GUI extends JFrame {
         setJMenuBar(menu);
         setVisible(true);
         baseChargee = false;
+    }
+
+    /**
+     * Texte des options des menus.
+     */
+    public enum ChoixMenu {
+        BDD("Base de donn\u00e9es"),
+        RECHERCHE("Recherche"),
+        CHARGER("Charger nouvelle base de donn\u00e9es"),
+        RAFRAICHIR("Actualiser l'affichage de la base de donn\u00e9es"),
+        AJOUT_FICHIER("Ajouter fichier de base de donn\u00e9es"),
+        RECHERCHE_JEU("Rechercher un jeu"),
+        AJOUT_JEU("+ Ajouter un nouveau jeu"),
+        RECHERCHE_PAR_CONSOLE("Afficher les jeux par console"),
+        RECHERCHE_PAR_COTE("Afficher les jeux par cote"),
+        RECHERCHE_PAR_FABRICANT("Afficher les jeux par fabricant"),
+        ENREGISTRER("Enregistrer sous..."),
+        QUITTER("Quitter");
+
+        private final String choix;
+
+        ChoixMenu(String choix) {
+            this.choix = choix;
+        }
+
+        @Override
+        public String toString() {
+            return choix;
+        }
     }
 
     /**
@@ -130,8 +136,8 @@ public class GUI extends JFrame {
         menuBar = new JMenuBar();
 
         // Créer les menus principaux
-        menuBaseDeDonnees = new JMenu(BDD);
-        menuRecherche = new JMenu(RECHERCHE);
+        menuBaseDeDonnees = new JMenu(ChoixMenu.BDD.toString());
+        menuRecherche = new JMenu(ChoixMenu.RECHERCHE.toString());
 
         /* Ajouter ActionCharger séparément pour qu'elle reste active */
         menuBaseDeDonnees.add(new JMenuItem(new ActionCharger()));
@@ -176,9 +182,9 @@ public class GUI extends JFrame {
         }
     }
 
-    /*****************************************************************************************************
-     * Méthodes reliées à l'affichage dans les différents panels
-     *****************************************************************************************************/
+    /*++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+     + Méthodes reliées à l'affichage dans les différents panels
+     ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
     /**
      * Ajoute un titre et en encadré pour un panel.
      *
@@ -207,7 +213,7 @@ public class GUI extends JFrame {
     public static void messageErreur(String message) {
         JOptionPane.showMessageDialog(new JFrame(),
                 message,
-                TITRE_ERREUR,
+                Titres.TITRE_ERREUR.toString(),
                 JOptionPane.ERROR_MESSAGE);
     }
 
@@ -216,7 +222,7 @@ public class GUI extends JFrame {
      */
     public void afficherBdd() {
         Vector<Vector<String>> lignes = FichiersTXT.vectoriser();
-        afficherResultat(lignes, TITRE_CONTENU_BDD);
+        afficherResultat(lignes, Titres.TITRE_CONTENU_BDD.toString());
     }
 
     /**
@@ -228,7 +234,7 @@ public class GUI extends JFrame {
      */
     public void afficherResultat(Vector<Vector<String>> listeJeux, String titre) {
 
-        // Crée l'en-tête du tableau
+        // Crée l'en+tête du tableau
         Vector<String> nomColonnes = new Vector<>();
         for (Jeu.Attributs attribut : Jeu.Attributs.values()) {
             nomColonnes.add(attribut.getAttribut());
@@ -263,8 +269,8 @@ public class GUI extends JFrame {
     /**
      * Prépare le container principal pour y insérer des éléments de formulaires.
      * Éléments positionnés:
-     * - panelFormulaire: Panneau contenant les zones de textes, boutons radio, etc, inséré dans le panelNorth
-     * - panelNorth: Panneau situé au haut du container principal.
+     * + panelFormulaire: Panneau contenant les zones de textes, boutons radio, etc, inséré dans le panelNorth
+     * + panelNorth: Panneau situé au haut du container principal.
      * Les boutons sont placés après le panneau du formulaire.
      *
      * @param titre Le titre qui s'affiche au haut du cadre du formulaire
@@ -288,16 +294,39 @@ public class GUI extends JFrame {
     }
 
     /**
-     * ***************************** ACTIONS DU MENU ***********************************************************
-     * Actions déclenchées par des sélections du menu ou la combinaison de clés qui leur sont associées.
-     *********************************************************************************************************/
+     * Texte s'affichant comme titres des panels.
+     */
+    public enum Titres {
+        TITRE_CONTENU_BDD("Jeux contenus dans la base de donn\u00e9es"),
+        TITRE_AJOUT_JEU("Ajouter un jeu"),
+        TITRE_RECH_JEU("Rechercher un jeu"),
+        TITRE_RECH_CONSOLES("Afficher les jeux par console"),
+        TITRE_RECH_COTE("Afficher les jeux par cote"),
+        TITRE_RESULTAT("R\u00E9sultat de la recherche"),
+        TITRE_ERREUR("Erreur");
+
+        private final String titre;
+
+        Titres(String titre) {
+            this.titre = titre;
+        }
+
+        @Override
+        public String toString() {
+            return titre;
+        }
+    }
+
+    /*+++++++++++++++++++++++++++++++ACTIONS DU MENU++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+     + Actions déclenchées par des sélections du menu ou la combinaison de clés qui leur sont associées.
+     ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
     /**
      * Ouvre une boîte de dialogue invitant l'utilisateur à sélectionner un fichier txt où se trouve une base de
      * données, puis la fait afficher dans un tableau dans l'écran principal. Affiche un message d'erreur en cas d'échec.
      */
     public class ActionCharger extends AbstractAction {
         public ActionCharger() {
-            super(CHARGER);
+            super(ChoixMenu.CHARGER.toString());
             putValue(MNEMONIC_KEY, KeyEvent.VK_N);
             putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_DOWN_MASK));
         }
@@ -329,7 +358,7 @@ public class GUI extends JFrame {
                         baseChargee = true;
                     } catch (Exception exception) {
                         messageErreur("Erreur lors du chargement de la base de donn\u00E9es.");
-                        System.out.println("ActionCharger - actionPerformed: " + exception.getMessage());
+                        System.out.println("ActionCharger + actionPerformed: " + exception.getMessage());
                     }
                 }
             } else {
@@ -343,7 +372,7 @@ public class GUI extends JFrame {
      */
     public class ActionAjoutFichier extends AbstractAction {
         public ActionAjoutFichier() {
-            super(AJOUT_FICHIER);
+            super(ChoixMenu.AJOUT_FICHIER.toString());
             putValue(MNEMONIC_KEY, KeyEvent.VK_F);
             putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_F, 2));
         }
@@ -367,7 +396,7 @@ public class GUI extends JFrame {
      */
     public class ActionRafraichir extends AbstractAction {
         public ActionRafraichir() {
-            super(RAFRAICHIR);
+            super(ChoixMenu.RAFRAICHIR.toString());
             putValue(MNEMONIC_KEY, KeyEvent.VK_R);
             putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_R, 2));
         }
@@ -383,13 +412,13 @@ public class GUI extends JFrame {
      */
     public class ActionAjoutJeu extends AbstractAction {
         public ActionAjoutJeu() {
-            super(AJOUT_JEU);
+            super(ChoixMenu.AJOUT_JEU.toString());
             putValue(MNEMONIC_KEY, KeyEvent.VK_PLUS);
             putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_EQUALS, 2));
         }
 
         public void actionPerformed(ActionEvent e) {
-            preparerFormulaire(TITRE_AJOUT_JEU);
+            preparerFormulaire(Titres.TITRE_AJOUT_JEU.toString());
 
             // Zones de texte pour saisir le fabricant et le titre du jeu
             tfFabricant = new CustomTxtField(Jeu.Attributs.FABRICANT.getAttribut());
@@ -417,7 +446,7 @@ public class GUI extends JFrame {
      */
     public class ActionEnregistrer extends AbstractAction {
         public ActionEnregistrer() {
-            super(ENREGISTRER);
+            super(ChoixMenu.ENREGISTRER.toString());
             putValue(DISPLAYED_MNEMONIC_INDEX_KEY, 12);
             putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_S, 2));
         }
@@ -447,7 +476,7 @@ public class GUI extends JFrame {
 
     public static class ActionQuitter extends AbstractAction {
         public ActionQuitter() {
-            super(QUITTER);
+            super(ChoixMenu.QUITTER.toString());
             putValue(MNEMONIC_KEY, KeyEvent.VK_Q);
             putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_Q, 2));
         }
@@ -463,14 +492,14 @@ public class GUI extends JFrame {
      */
     public class ActionRechJeu extends AbstractAction {
         public ActionRechJeu() {
-            super(RECHERCHE_JEU);
+            super(ChoixMenu.RECHERCHE_JEU.toString());
             putValue(MNEMONIC_KEY, KeyEvent.VK_J);
             putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_J, 2));
         }
 
         public void actionPerformed(ActionEvent e) {
 
-            preparerFormulaire(TITRE_RECH_JEU);
+            preparerFormulaire(Titres.TITRE_RECH_JEU.toString());
 
             // Ajouter TextField pour saisir les infos du jeu à rechercher
             tfFabricant = new CustomTxtField(Jeu.Attributs.FABRICANT.getAttribut());
@@ -493,14 +522,14 @@ public class GUI extends JFrame {
      */
     public class ActionRechParConsole extends AbstractAction {
         public ActionRechParConsole() {
-            super(RECHERCHE_PAR_CONSOLE);
+            super(ChoixMenu.RECHERCHE_PAR_CONSOLE.toString());
             putValue(MNEMONIC_KEY, KeyEvent.VK_M);
             putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_M, 2));
         }
 
         public void actionPerformed(ActionEvent e) {
 
-            preparerFormulaire(TITRE_RECH_CONSOLES);
+            preparerFormulaire(Titres.TITRE_RECH_CONSOLES.toString());
 
             // Boutons radio pour le choix de la console
             radioPanelRecherche = new RadioPanel(Jeu.Attributs.CONSOLES);
@@ -518,13 +547,13 @@ public class GUI extends JFrame {
      */
     public class ActionRechParCote extends AbstractAction {
         public ActionRechParCote() {
-            super(RECHERCHE_PAR_COTE);
+            super(ChoixMenu.RECHERCHE_PAR_COTE.toString());
             putValue(MNEMONIC_KEY, KeyEvent.VK_C);
             putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_C, 2));
         }
 
         public void actionPerformed(ActionEvent e) {
-            preparerFormulaire(TITRE_RECH_COTE);
+            preparerFormulaire(Titres.TITRE_RECH_COTE.toString());
 
             // Boutons radio pour le choix de la console
             radioPanelRecherche = new RadioPanel(Jeu.Attributs.COTE);
@@ -545,13 +574,13 @@ public class GUI extends JFrame {
      */
     public class ActionRechParFabricant extends AbstractAction {
         public ActionRechParFabricant() {
-            super(RECHERCHE_PAR_FABRICANT);
+            super(ChoixMenu.RECHERCHE_PAR_FABRICANT.toString());
         }
 
         public void actionPerformed(ActionEvent e) {
 
             // Zone de texte pour saisir le nom du fabricant
-            preparerFormulaire(TITRE_RECH_JEU);
+            preparerFormulaire(Titres.TITRE_RECH_JEU.toString());
 
             // Ajouter TextField pour saisir les infos du jeu à rechercher
             tfFabricant = new CustomTxtField(Jeu.Attributs.FABRICANT.getAttribut());
@@ -574,7 +603,7 @@ public class GUI extends JFrame {
 
         public static final String MSG_A_PROPOS =
                 "Cataloguideo\n\n" +
-                        "Version : 1.0.2\n\n" +
+                        "Version : " + VERSION + "\n\n" +
                         "Cataloguideo est un logiciel de gestion de catalogue pour une boutique de jeux vid\u00E9o,\n" +
                         "permettant d'obtenir des informations sur les jeux en stock en un temps rapide\n" +
                         "et avec une interface agr\u00E9able \u00E0 l'oeil et \u00E0 l'utilisation." +
@@ -590,11 +619,9 @@ public class GUI extends JFrame {
         }
     }
 
-    /**
-     * ***************************** ACTIONS DES BOUTONS ***********************************************************
-     * Action associés aux différents boutons du programme.
-     * *************************************************************************************************************
-     */
+    /* +++++++++++++++++++++++++++++ ACTIONS DES BOUTONS +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+     + Action associés aux différents boutons du programme.
+     +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
     public class ActionBtnAjoutJeu extends AbstractAction {
         public ActionBtnAjoutJeu() {
             super(BoutonFlow.BTN_AJOUT_JEU);
@@ -635,13 +662,12 @@ public class GUI extends JFrame {
             } catch (SQLException throwables) {
                 messageErreur("Probl\u00E8me lors de la recherche dans la base de donn\u00E9es.");
                 System.out.println("ActionBtnRechJeu: " + throwables.getMessage());
-                ;
             }
 
             if (jeuCherche != null) {
                 Vector<Vector<String>> jeu = new Vector<>();
                 jeu.add(jeuCherche.vectoriser());
-                afficherResultat(jeu, TITRE_RESULTAT);
+                afficherResultat(jeu, Titres.TITRE_RESULTAT.toString());
             } else {
                 JOptionPane.showMessageDialog(new JFrame(),
                         "Aucun jeu ne correspond \u00E0 ces crit\u00E8res dans la base de donn\u00E9es.");
@@ -659,7 +685,7 @@ public class GUI extends JFrame {
             LinkedHashSet<Jeu> listeJeux = Requetes.obtenirListe(Jeu.Attributs.CONSOLES, Jeu.Consoles.getAbbreviation(consoleCherchee));
 
             if (listeJeux != null) {
-                afficherResultat(Jeu.vectoriserArrayList(listeJeux), TITRE_RESULTAT);
+                afficherResultat(Jeu.vectoriserArrayList(listeJeux), Titres.TITRE_RESULTAT.toString());
             } else {
                 JOptionPane.showMessageDialog(new JFrame(),
                         "Aucun jeu associ\u00E9 \u00E0 cette console.");
@@ -676,7 +702,7 @@ public class GUI extends JFrame {
             String coteCherchee = radioPanelRecherche.getChoix();
             LinkedHashSet<Jeu> listeJeux = Requetes.obtenirListe(Jeu.Attributs.COTE, coteCherchee);
             if (listeJeux != null) {
-                afficherResultat(Jeu.vectoriserArrayList(listeJeux), TITRE_RESULTAT);
+                afficherResultat(Jeu.vectoriserArrayList(listeJeux), Titres.TITRE_RESULTAT.toString());
             } else {
                 JOptionPane.showMessageDialog(new JFrame(),
                         "Aucun jeu associ\u00E9 \u00E0 cette cote dans la base de donn\u00E9es.");
@@ -693,7 +719,7 @@ public class GUI extends JFrame {
 
             Collection<Jeu> listeJeux = Requetes.obtenirListe(Jeu.Attributs.FABRICANT, tfFabricant.getText());
             if (listeJeux != null) {
-                afficherResultat(Jeu.vectoriserArrayList(listeJeux), TITRE_RESULTAT);
+                afficherResultat(Jeu.vectoriserArrayList(listeJeux), Titres.TITRE_RESULTAT.toString());
             } else {
                 JOptionPane.showMessageDialog(new JFrame(),
                         "Aucun jeu ne correspond \u00E0 ce fabricant dans la base de donn\u00E9es.");
@@ -701,10 +727,9 @@ public class GUI extends JFrame {
         }
     }
 
-/*****************************************************************************************************
- * Classes personnalisées pour gérer certains éléments des formulaires.
- *****************************************************************************************************/
-
+/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ + Classes personnalisées pour gérer certains éléments des formulaires.
+ +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++/
     /**
      * Classe pour gérer les TextField ainsi que les labels qui leur sont associés
      * Crée un JPanel contenant un textfield et un label associé.
@@ -717,7 +742,7 @@ public class GUI extends JFrame {
         /**
          * Constructeur
          *
-         * @parm nomLabel    Le texte du label qui s'affichera à côté du JTextField
+         * @param nomLabel    Le texte du label qui s'affichera à côté du JTextField
          */
         public CustomTxtField(String nomLabel) {
 
@@ -864,8 +889,7 @@ public class GUI extends JFrame {
 
     /**
      * Classe pour gérer les boutons. Crée un JPanel contenant un bouton.
-     *
-     * @requires formulaire déjà créé (des TextFields) pour que le ActionListener puisse aller chercher les données
+     * Nécessite un formulaire déjà créé (des TextFields) pour que le ActionListener puisse aller chercher les données
      * nécessaires pour lancer la méthode associée.
      */
     private static class BoutonFlow extends JPanel {
@@ -878,7 +902,7 @@ public class GUI extends JFrame {
         /**
          * Constructeur
          *
-         * @parm action    L'action associée au bouton
+         * @param action    L'action associée au bouton
          */
         public BoutonFlow(Action action) {
 

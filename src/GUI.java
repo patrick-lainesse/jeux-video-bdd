@@ -6,7 +6,6 @@
 // Description:                 Classe qui gère l'interface graphique du logiciel
 //
 // Auteur:						Patrick Lainesse
-// Matricule:					740302
 // Sources:						Général: docs.oracle.com
 //								JOptionPane: https://stackoverflow.com/questions/15853112/joptionpane+yes+no+option/15853127
 //                              Menu et actions: https://docs.oracle.com/javase/tutorial/displayCode.html?code=https://docs.oracle.com/javase/tutorial/uiswing/examples/misc/ActionDemoProject/src/misc/ActionDemo.java
@@ -16,7 +15,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
-import java.sql.SQLException;
 import java.util.*;
 import java.util.List;
 import javax.swing.border.TitledBorder;
@@ -657,12 +655,7 @@ public class GUI extends JFrame {
         public void actionPerformed(ActionEvent e) {
             Jeu jeuCherche = null;
 
-            try {
-                jeuCherche = Requetes.getJeu(tfTitre.getText(), tfFabricant.getText());
-            } catch (SQLException throwables) {
-                messageErreur("Probl\u00E8me lors de la recherche dans la base de donn\u00E9es.");
-                System.out.println("ActionBtnRechJeu: " + throwables.getMessage());
-            }
+            jeuCherche = Requetes.getJeu(tfTitre.getText(), tfFabricant.getText());
 
             if (jeuCherche != null) {
                 Vector<Vector<String>> jeu = new Vector<>();

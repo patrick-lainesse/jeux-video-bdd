@@ -6,7 +6,6 @@
 // Session:						Été 2020
 //
 // Auteur:						Patrick Lainesse
-// Matricule:					740302
 // Sources:						docs.oracle.com
 //								https://www.journaldev.com/878/java-write-to-file
 //////////////////////////////////////////////////////////////////////////////
@@ -78,12 +77,7 @@ public class Requetes {
         Jeu jeuDB = null;
 
         // Vérifier si le jeu est déjà présent dans la base de données
-        try {
-            jeuDB = getJeu(nouveauJeu.getTitre(), nouveauJeu.getFabricant());
-        } catch (SQLException throwables) {
-            System.out.println("inserer - getJeu: " + throwables.getMessage());
-            GUI.messageErreur(ERR_INSERER);
-        }
+        jeuDB = getJeu(nouveauJeu.getTitre(), nouveauJeu.getFabricant());
 
         // Si le jeu est déjà dans la base de données, ajouter les nouvelles consoles s'il y a lieu
         if (jeuDB != null) {
@@ -121,6 +115,7 @@ public class Requetes {
      */
     public static LinkedHashSet<Jeu> listerDB() {
 
+        LinkedHashSet<Jeu> listeJeux = new LinkedHashSet<>();
         ResultSet resultSet = null;
         String requete = "SELECT * FROM jeu";
 
@@ -128,13 +123,14 @@ public class Requetes {
             connecter();
             Statement statement = connexion.createStatement();
             resultSet = statement.executeQuery(requete);
+            listeJeux = convertirResultSet(resultSet);
             statement.close();
             deconnecter();
         } catch (SQLException throwables) {
             System.out.println("listerDB: " + throwables.getMessage());
             GUI.messageErreur(ERR_LECTURE_DB);
         }
-        return convertirResultSet(resultSet);
+        return listeJeux;
     }
 
     /**
@@ -144,7 +140,7 @@ public class Requetes {
      * @param fabricant Le nom du fabricant pour ce jeu
      * @return L'objet Jeu correspondant à la recherche, null si non trouvé
      */
-    public static Jeu getJeu(String titre, String fabricant) throws SQLException {
+    public static Jeu getJeu(String titre, String fabricant) {
 
         ResultSet resultSet = null;
         Jeu resultat = null;
@@ -156,6 +152,14 @@ public class Requetes {
             preparedStatement.setString(1, titre);
             preparedStatement.setString(2, fabricant);
             resultSet = preparedStatement.executeQuery();
+
+            if (resultSet != null) {
+                while (resultSet.next()) {
+                    ResultSet resultSetLigne = resultSet;
+                    resultat = jeuResultSet(resultSetLigne);
+                }
+            }
+
             preparedStatement.close();
             deconnecter();
         } catch (SQLException throwables) {
@@ -163,11 +167,6 @@ public class Requetes {
             GUI.messageErreur(ERR_LECTURE_DB);
         }
 
-        if (resultSet != null) {
-            while (resultSet.next()) {
-                resultat = jeuResultSet(resultSet);
-            }
-        }
         return resultat;
     }
 
@@ -190,8 +189,6 @@ public class Requetes {
             PreparedStatement preparedStatement = connexion.prepareStatement(requete);
             preparedStatement.setString(1, "%" + parametre + "%");
             resultSet = preparedStatement.executeQuery();
-            preparedStatement.close();
-            deconnecter();
         } catch (SQLException throwables) {
             System.out.println("obtenirListe:s " + throwables.getMessage());
             GUI.messageErreur(ERR_LECTURE_DB);
@@ -213,7 +210,8 @@ public class Requetes {
         // Ajouter chaque jeu au LinkedHashSet
         try {
             while (resultSet.next()) {
-                listeJeux.add(jeuResultSet(resultSet));
+                ResultSet resultSetLigne = resultSet;
+                listeJeux.add(jeuResultSet(resultSetLigne));
             }
         } catch (SQLException throwables) {
             System.out.println("convertirResultat - add: " + throwables.getMessage());
@@ -247,7 +245,7 @@ public class Requetes {
             preparedStatement.setString(1, jeuModifie.printConsoles());
             preparedStatement.setString(2, jeuModifie.getTitre());
             preparedStatement.setString(3, jeuModifie.getFabricant());
-            preparedStatement.executeQuery();
+            preparedStatement.executeUpdate();
             preparedStatement.close();
             deconnecter();
         } catch (SQLException throwables) {

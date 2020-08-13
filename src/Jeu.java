@@ -6,7 +6,6 @@
 // Session:						Été 2020
 //
 // Auteur:						Patrick Lainesse
-// Matricule:					740302
 // Sources:						docs.oracle.com
 //								https://www.journaldev.com/878/java-write-to-file
 //////////////////////////////////////////////////////////////////////////////
